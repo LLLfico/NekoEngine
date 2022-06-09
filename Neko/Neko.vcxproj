@@ -11,11 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
     <ClInclude Include="src\Neko.h" />
   </ItemGroup>
@@ -72,6 +74,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessToFile>false</PreprocessToFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Neko\vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
