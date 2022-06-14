@@ -9,3 +9,6 @@
 #else	
 	#error neko only support windows now
 #endif
+
+
+#define BIT(x) (1 << x)
