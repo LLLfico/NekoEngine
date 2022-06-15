@@ -25,6 +25,12 @@
     <ClInclude Include="src\core\EntryPoint.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\Layer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\LayerStack.h">
+      <Filter>core</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Log.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -50,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Layer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\LayerStack.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Log.cpp">

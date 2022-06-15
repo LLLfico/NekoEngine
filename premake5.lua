@@ -61,14 +61,17 @@ project "Neko"
 
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "NEKO_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Distribution"
 		defines "NEKO_DIST"
+		buildoptions "/MD"
 		symbols "On"
 		
 project "SandBox"
@@ -105,13 +108,16 @@ project "SandBox"
 
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "NEKO_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Distribution"
 		defines "NEKO_DIST"
+		buildoptions "/MD"
 		symbols "On"
 

@@ -20,7 +20,13 @@ namespace Neko {
 	void Application::OnEvent(Event& e) {
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
-		NEKO_CORE_TRACE("{0}", e);
+		// NEKO_CORE_TRACE("{0}", e);
+
+		for (auto it = m_layerStack.end(); it != m_layerStack.begin(); ) {
+			(*--it)->OnEvent(e);
+			if (e.handled)
+				break;
+		}
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e) {
@@ -34,9 +40,21 @@ namespace Neko {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			for (Layer* layer : m_layerStack) {
+				layer->OnUpdate();
+			}
+
 			m_window->OnUpdate();
 			
 		}
+	}
+
+	void Application::PushLayer(Layer* layer) {
+		m_layerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* overlay) {
+		m_layerStack.PushOverlay(overlay);
 	}
 
 }

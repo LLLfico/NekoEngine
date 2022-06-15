@@ -84,6 +84,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/MDd %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -106,6 +107,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,6 +130,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,6 +148,8 @@
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\EntryPoint.h" />
+    <ClInclude Include="src\core\Layer.h" />
+    <ClInclude Include="src\core\LayerStack.h" />
     <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\core\events\ApplicationEvent.h" />
@@ -156,6 +161,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp" />
+    <ClCompile Include="src\core\Layer.cpp" />
+    <ClCompile Include="src\core\LayerStack.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
