@@ -10,6 +10,13 @@ workspace "Neko"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include Directories relative to root floder 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Neko/vendor/GLFW/include"
+
+-- include premake file like c++ include (copy text here)
+include "Neko/vendor/GLFW"
+
 project "Neko"
 	location "Neko"
 	kind "SharedLib"
@@ -17,6 +24,9 @@ project "Neko"
 
 	targetdir("bin/" ..outputdir.. "/%{prj.name}")
 	objdir("bin-int/" ..outputdir.. "/%{prj.name}")
+
+	pchheader "pch.h"
+	pchsource "Neko/src/pch.cpp"
 
 	files{
 		"%{prj.name}/src/**.h",
@@ -27,6 +37,12 @@ project "Neko"
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}",
+	}
+
+	links{
+		"GLFW",
+		"opengl32.lib",
 	}
 
 	filter "system:windows"

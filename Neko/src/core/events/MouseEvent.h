@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Neko {
 
 	class NEKO_API MouseMovedEvent : public Event {

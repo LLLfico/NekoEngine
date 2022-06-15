@@ -5,8 +5,6 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
-#include <memory>
-
 namespace Neko {
 	class NEKO_API Log {
 	public:

@@ -1,9 +1,8 @@
 #pragma once
 
+#include "pch.h"
 #include "core/Core.h"
 
-#include <string>
-#include <functional>
 
 namespace Neko {
 
