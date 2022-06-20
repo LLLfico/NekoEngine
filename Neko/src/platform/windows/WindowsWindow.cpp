@@ -5,6 +5,7 @@
 #include "core/events/MouseEvent.h"
 #include "core/events/KeyEvent.h"
 
+#include <glad/glad.h>
 
 namespace Neko {
 
@@ -43,6 +44,8 @@ namespace Neko {
 
 		m_window = glfwCreateWindow((int)infos.width, (int)infos.height, infos.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		NEKO_CORE_ASSERT(status, "Failed to initialize Glad!");
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
 
@@ -83,6 +86,14 @@ namespace Neko {
 					break;
 				}
 			}
+		});
+
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int codepoint) {
+			// codepoint is an unicode character
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			KeyTypedEvent event(codepoint);
+			data.callback(event);
 		});
 
 		glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {

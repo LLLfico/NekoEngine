@@ -4,3 +4,6 @@
 [submodule "Neko/vendor/GLFW"]
 	path = Neko/vendor/GLFW
 	url = https://github.com/TheCherno/glfw.git
+[submodule "Neko/vendor/imgui"]
+	path = Neko/vendor/imgui
+	url = https://github.com/TheCherno/imgui.git

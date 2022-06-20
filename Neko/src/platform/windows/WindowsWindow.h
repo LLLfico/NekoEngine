@@ -18,6 +18,8 @@ namespace Neko {
 		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_data.callback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+
+		inline virtual void* GetNativeWindow() const override { return m_window; }
 	private:
 		virtual void Init(const WindowInfos& infos);
 		virtual void Shutdown();

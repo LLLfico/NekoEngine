@@ -13,9 +13,16 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include Directories relative to root floder 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Neko/vendor/GLFW/include"
+IncludeDir["Glad"] = "Neko/vendor/Glad/include"
+IncludeDir["ImGui"] = "Neko/vendor/imgui"
+
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
+include "Neko/vendor/Glad"
+include "Neko/vendor/imgui"
+
+startproject "SandBox"
 
 project "Neko"
 	location "Neko"
@@ -38,10 +45,14 @@ project "Neko"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}",
 	}
 
 	links{
 		"GLFW",
+		"Glad",
+		"ImGui",
 		"opengl32.lib",
 	}
 
@@ -53,6 +64,7 @@ project "Neko"
 		defines{
 			"NEKO_PLATFORM_WINDOWS",
 			"NEKO_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands{
