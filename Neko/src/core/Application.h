@@ -4,11 +4,10 @@
 #include "Window.h"
 #include "LayerStack.h"
 
-
-
 namespace Neko {
 
 	class WindowCloseEvent;
+	class ImGuiLayer;
 
 	class NEKO_API Application {
 	public:
@@ -29,6 +28,7 @@ namespace Neko {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_window;
+		ImGuiLayer* m_imguiLayer;
 		bool m_running = true;
 		LayerStack m_layerStack;
 

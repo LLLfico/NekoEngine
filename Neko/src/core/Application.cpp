@@ -3,12 +3,13 @@
 
 #include "events/ApplicationEvent.h"
 #include "Log.h"
+#include "imgui/ImGuiLayer.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Input.h"
-
+#include <glm/glm.hpp>
 
 namespace Neko {
 
@@ -21,6 +22,9 @@ namespace Neko {
 
 		m_window = std::unique_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(NEKO_BIND_EVENT_FN(Application::OnEvent));
+
+		m_imguiLayer = new ImGuiLayer();
+		PushOverlay(m_imguiLayer);
 	}
 
 	Application::~Application() {
@@ -53,6 +57,12 @@ namespace Neko {
 				layer->OnUpdate();
 			}
 
+			m_imguiLayer->Begin();
+			for (Layer* layer : m_layerStack) {
+				layer->OnImGuiRender();
+			}
+			m_imguiLayer->End();
+
 			// auto [x, y] = Input::GetMousePosition();
 			// NEKO_CORE_TRACE("{0}, {1}", x, y);
 
@@ -63,12 +73,10 @@ namespace Neko {
 
 	void Application::PushLayer(Layer* layer) {
 		m_layerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay) {
 		m_layerStack.PushOverlay(overlay);
-		overlay->OnAttach();
 	}
 
 }

@@ -20,7 +20,7 @@ namespace Neko {
 
 	private:
 		std::vector<Layer*> m_layers;
-		std::vector<Layer*>::iterator m_layerInsert; // overlay should behind odinary layers
+		int m_layerInsertIndex = 0; // overlay should behind odinary layers
 	};
 
 

@@ -2,10 +2,11 @@
 
 class ExampleLayer : public Neko::Layer {
 public:
-	ExampleLayer() : Layer("Example") {}
+	ExampleLayer() : Layer("Example") {
+	}
 
 	void OnUpdate() override {
-		NEKO_INFO("ExampleLayer::Update");
+		// NEKO_INFO("ExampleLayer::Update");
 
 		if (Neko::Input::IsKeyPressed(NEKO_KEY_TAB)) {
 			NEKO_TRACE("Tab key is pressed!");
@@ -21,7 +22,6 @@ class SandBox : public Neko::Application {
 public:
 	SandBox() {
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Neko::ImGuiLayer());
 	}
 	~SandBox() {}
 };

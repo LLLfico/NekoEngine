@@ -7,6 +7,8 @@ workspace "Neko"
 		"Distribution"
 	}
 
+	startproject "SandBox"
+
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -15,6 +17,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Neko/vendor/GLFW/include"
 IncludeDir["Glad"] = "Neko/vendor/Glad/include"
 IncludeDir["ImGui"] = "Neko/vendor/imgui"
+IncludeDir["glm"] = "Neko/vendor/glm"
 
 
 -- include premake file like c++ include (copy text here)
@@ -22,7 +25,7 @@ include "Neko/vendor/GLFW"
 include "Neko/vendor/Glad"
 include "Neko/vendor/imgui"
 
-startproject "SandBox"
+
 
 project "Neko"
 	location "Neko"
@@ -38,6 +41,9 @@ project "Neko"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/glm/glm/**.cpp",
 
 	}
 
@@ -47,6 +53,7 @@ project "Neko"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}",
 	}
 
 	links{
@@ -97,12 +104,12 @@ project "SandBox"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-
 	}
 
 	includedirs{
 		"Neko/vendor/spdlog/include",
 		"Neko/src",
+		"%{IncludeDir.glm}",
 	}
 
 	links{

@@ -7,3 +7,6 @@
 [submodule "Neko/vendor/imgui"]
 	path = Neko/vendor/imgui
 	url = https://github.com/TheCherno/imgui.git
+[submodule "Neko/vendor/glm"]
+	path = Neko/vendor/glm
+	url = https://github.com/g-truc/glm.git
