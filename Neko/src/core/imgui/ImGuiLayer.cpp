@@ -2,8 +2,8 @@
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "examples/imgui_impl_glfw.h"
+#include "examples/imgui_impl_opengl3.h"
 
 #include "core/Application.h"
 
@@ -29,8 +29,8 @@ namespace Neko {
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();

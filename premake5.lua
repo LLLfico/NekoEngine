@@ -29,8 +29,10 @@ include "Neko/vendor/imgui"
 
 project "Neko"
 	location "Neko"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir("bin/" ..outputdir.. "/%{prj.name}")
 	objdir("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -45,6 +47,11 @@ project "Neko"
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/glm/glm/**.cpp",
 
+	}
+
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	includedirs{
@@ -64,8 +71,6 @@ project "Neko"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines{
@@ -74,29 +79,27 @@ project "Neko"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir.. "/SandBox")
-		}
-
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "NEKO_RELEASE"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
 	filter "configurations:Distribution"
 		defines "NEKO_DIST"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 		
 project "SandBox"
 	location "SandBox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir("bin/" ..outputdir.. "/%{prj.name}")
 	objdir("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -109,6 +112,7 @@ project "SandBox"
 	includedirs{
 		"Neko/vendor/spdlog/include",
 		"Neko/src",
+		"Neko/vendor",
 		"%{IncludeDir.glm}",
 	}
 
@@ -117,26 +121,24 @@ project "SandBox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
-
+		runtime "Debug"
 		defines{
 			"NEKO_PLATFORM_WINDOWS",
 		}
 
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "NEKO_RELEASE"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
 	filter "configurations:Distribution"
 		defines "NEKO_DIST"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
