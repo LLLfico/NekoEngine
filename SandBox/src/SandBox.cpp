@@ -1,5 +1,7 @@
 #include <Neko.h>
 
+#include "imgui/imgui.h"
+
 class ExampleLayer : public Neko::Layer {
 public:
 	ExampleLayer() : Layer("Example") {
@@ -11,6 +13,12 @@ public:
 		if (Neko::Input::IsKeyPressed(NEKO_KEY_TAB)) {
 			NEKO_TRACE("Tab key is pressed!");
 		}
+	}
+
+	void OnImGuiRender() override {
+		ImGui::Begin("Test");
+		ImGui::Text("Hello world");
+		ImGui::End();
 	}
 
 	void OnEvent(Neko::Event& event) override {

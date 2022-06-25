@@ -140,6 +140,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Renderer\Shader.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLContext.h" />
+    <ClInclude Include="src\core\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\Core.h" />
@@ -576,6 +579,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Renderer\Shader.cpp" />
+    <ClCompile Include="src\platform\opengl\OpenGLContext.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
     <ClCompile Include="src\core\Layer.cpp" />
     <ClCompile Include="src\core\LayerStack.cpp" />

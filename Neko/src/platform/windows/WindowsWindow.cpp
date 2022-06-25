@@ -5,7 +5,7 @@
 #include "core/events/MouseEvent.h"
 #include "core/events/KeyEvent.h"
 
-#include <glad/glad.h>
+#include "platform/opengl/OpenGLContext.h"
 
 namespace Neko {
 
@@ -43,9 +43,10 @@ namespace Neko {
 		}
 
 		m_window = glfwCreateWindow((int)infos.width, (int)infos.height, infos.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		NEKO_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		m_context = new OpenGLContext(m_window);
+		m_context->Init();
+
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
 
@@ -134,7 +135,7 @@ namespace Neko {
 
 	void WindowsWindow::OnUpdate() {
 		glfwPollEvents();
-		glfwSwapBuffers(m_window);
+		m_context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled) {

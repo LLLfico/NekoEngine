@@ -4,6 +4,9 @@
 #include <GLFW/glfw3.h>
 
 namespace Neko {
+
+	class GraphicsContext;
+
 	class WindowsWindow : public Window {
 	public:
 		WindowsWindow(const WindowInfos& infos);
@@ -25,6 +28,7 @@ namespace Neko {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_window;
+		GraphicsContext* m_context;
 
 		// convinent to pass data, just cluster specific data
 		struct WindowData {

@@ -8,6 +8,7 @@ namespace Neko {
 
 	class WindowCloseEvent;
 	class ImGuiLayer;
+	class Shader;
 
 	class NEKO_API Application {
 	public:
@@ -24,6 +25,9 @@ namespace Neko {
 		inline Window& GetWindow() { return *m_window; }
 
 		inline static Application& GetCurrent() { return *s_instance; }
+
+		unsigned int m_vao, m_vbo, m_ibo;
+		std::unique_ptr<Shader> m_shader;
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
