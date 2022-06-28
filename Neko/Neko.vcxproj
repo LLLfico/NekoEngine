@@ -140,7 +140,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Renderer\Buffer.h" />
+    <ClInclude Include="src\core\Renderer\Renderer.h" />
     <ClInclude Include="src\core\Renderer\Shader.h" />
+    <ClInclude Include="src\core\Renderer\VertexArray.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\platform\opengl\OpenGLContext.h" />
     <ClInclude Include="src\core\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Neko.h" />
@@ -160,6 +164,7 @@
     <ClInclude Include="src\core\events\MouseEvent.h" />
     <ClInclude Include="src\core\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLVertexArray.h" />
     <ClInclude Include="src\platform\windows\WindowsInput.h" />
     <ClInclude Include="src\platform\windows\WindowsWindow.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -579,7 +584,11 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\core\Renderer\Renderer.cpp" />
     <ClCompile Include="src\core\Renderer\Shader.cpp" />
+    <ClCompile Include="src\core\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\platform\opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLContext.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
     <ClCompile Include="src\core\Layer.cpp" />
@@ -590,6 +599,7 @@
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\platform\opengl\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\platform\windows\WindowsInput.cpp" />
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />

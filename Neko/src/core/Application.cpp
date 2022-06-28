@@ -6,6 +6,8 @@
 #include "imgui/ImGuiLayer.h"
 #include "Input.h"
 #include "Renderer/Shader.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/VertexArray.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -27,32 +29,84 @@ namespace Neko {
 		m_imguiLayer = new ImGuiLayer();
 		PushOverlay(m_imguiLayer);
 
-		glGenVertexArrays(1, &m_vao);
-		glGenBuffers(1, &m_vbo);
-		glGenBuffers(1, &m_ibo);
+		m_vao.reset(VertexArray::Create());
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f,
+			-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f, 1.0f,
+			0.0f, 0.5f, 0.0f,	   0.0f, 0.0f, 1.0f, 1.0f,
 		};
 
 		unsigned int indices[] = {
 			0, 1, 2,
 		};
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 		
-		glBindVertexArray(m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		BufferLayout layout = {
+				{"a_position", ShaderDataType::Float3},
+				{"a_color", ShaderDataType::Float4},
+		};
+		vertexBuffer->SetLayout(layout);
+		m_vao->AddVertexBuffer(vertexBuffer);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices)));
+		m_vao->SetIndexBuffer(indexBuffer);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		float squareVertices[] = {
+			-0.75f, -0.75f, 0.0f,
+			 0.75f, -0.75f, 0.0f,
+			 0.75f,  0.75f, 0.0f,
+			-0.75f,  0.75f, 0.0f
+		};
+		m_squareVAO.reset(VertexArray::Create());
+		m_squareVAO->Bind();
+		std::shared_ptr<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVB->SetLayout({
+			{ "a_Position", ShaderDataType::Float3,  }
+			});
+		m_squareVAO->AddVertexBuffer(squareVB);
+
+		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices)));
+		m_squareVAO->SetIndexBuffer(squareIB);
+
 
 		std::string vertexSrc = R"(
-			#version 330 core
+			#version 460 core
+			
+			layout(location = 0) in vec3 a_position;
+			layout(location = 1) in vec4 a_color;
+			out vec3 v_position;
+			out vec4 v_color;
+			void main()
+			{
+				v_position = a_position;
+				v_color = a_color;
+				gl_Position = vec4(a_position, 1.0);	
+			}
+		)";
+
+		std::string fragmentSrc = R"(
+			#version 460 core
+			
+			layout(location = 0) out vec4 color;
+			in vec3 v_position;
+			in vec4 v_color;
+			void main()
+			{
+				color = vec4(v_position * 0.5 + 0.5, 1.0);
+				color = v_color;
+			}
+		)";
+
+		m_shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+		std::string blueShaderVertexSrc = R"(
+			#version 460 core
 			
 			layout(location = 0) in vec3 a_Position;
 			out vec3 v_Position;
@@ -63,18 +117,20 @@ namespace Neko {
 			}
 		)";
 
-		std::string fragmentSrc = R"(
-			#version 330 core
+		std::string blueShaderFragmentSrc = R"(
+			#version 460 core
 			
 			layout(location = 0) out vec4 color;
 			in vec3 v_Position;
 			void main()
 			{
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
+				color = vec4(0.1, 0.3, 0.8, 1.0);
 			}
 		)";
 
-		m_shader.reset(new Shader(vertexSrc, fragmentSrc));
+		m_blueShader = std::make_shared<Shader>(blueShaderVertexSrc, blueShaderFragmentSrc);
+
+
 	}
 
 	Application::~Application() {
@@ -103,10 +159,15 @@ namespace Neko {
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_blueShader->Bind();
+			m_squareVAO->Bind();
+			glDrawElements(GL_TRIANGLES, m_squareVAO->GetIndexBuffer()->Count(), GL_UNSIGNED_INT, nullptr);
+			m_squareVAO->Unbind();
+			m_blueShader->Unbind();
+
 			m_shader->Bind();
-			glBindVertexArray(m_vao);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-			m_shader->Unbind();
+			m_vao->Bind();
+			glDrawElements(GL_TRIANGLES, m_vao->GetIndexBuffer()->Count(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_layerStack) {
 				layer->OnUpdate();
@@ -117,9 +178,6 @@ namespace Neko {
 				layer->OnImGuiRender();
 			}
 			m_imguiLayer->End();
-
-			// auto [x, y] = Input::GetMousePosition();
-			// NEKO_CORE_TRACE("{0}, {1}", x, y);
 
 			m_window->OnUpdate();
 			
