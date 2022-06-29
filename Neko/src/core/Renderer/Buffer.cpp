@@ -6,30 +6,30 @@
 
 namespace Neko {
 
-	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
+	std::shared_ptr<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
 		auto api = Renderer::GetAPI();
 		switch (api) {
-			case RendererAPI::None: {
+			case RendererAPI::API::None: {
 				NEKO_ASSERT(false, "RenderAPI::None is currently not supported!");
 				return nullptr;
 			}
-			case RendererAPI::OpenGL: {
-				return new OpenGLVertexBuffer(vertices, size);
+			case RendererAPI::API::OpenGL: {
+				return std::make_shared<OpenGLVertexBuffer>(vertices, size);
 			}
 		}
 		NEKO_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
-	IndexBuffer* IndexBuffer::Create(unsigned int* indices, uint32_t size) {
+	std::shared_ptr<IndexBuffer> IndexBuffer::Create(unsigned int* indices, uint32_t size) {
 		auto api = Renderer::GetAPI();
 		switch (api) {
-			case RendererAPI::None: {
+			case RendererAPI::API::None: {
 				NEKO_ASSERT(false, "RenderAPI::None is currently not supported!");
 				return nullptr;
 			}
-			case RendererAPI::OpenGL: {
-				return new OpenGLIndexBuffer(indices, size);
+			case RendererAPI::API::OpenGL: {
+				return std::make_shared<OpenGLIndexBuffer>(indices, size);
 			}
 		}
 		NEKO_ASSERT(false, "Unknown RendererAPI!");

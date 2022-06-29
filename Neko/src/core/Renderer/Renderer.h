@@ -1,19 +1,29 @@
 #pragma once
 
 #include "core/Core.h"
+#include "RendererAPI.h"
 
 namespace Neko {
 
-	enum class RendererAPI {
-		None = 0,
-		OpenGL = 1,
-	};
+	class RendererAPI;
+	class Camera;
+	class Shader;
 
 	class Renderer {
 	public:
-		inline static RendererAPI GetAPI() { return s_api; }
-	private:
-		static RendererAPI s_api;
+
+		struct SceneData {
+			glm::mat4 cameraMatrix;
+		};
+
+		static void BeginScene(const std::shared_ptr<Camera>& camera);
+		static void EndScene();
+
+		static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray);
+
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+
+		static SceneData* s_sceneData;
 	};
 
 }

@@ -1352,6 +1352,10 @@
     <ClInclude Include="src\platform\opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\core\Renderer\VertexArray.h" />
     <ClInclude Include="src\platform\opengl\OpenGLVertexArray.h" />
+    <ClInclude Include="src\core\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\core\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\core\Renderer\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1391,5 +1395,9 @@
     <ClCompile Include="src\platform\opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\core\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\core\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\core\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="src\platform\opengl\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\core\Renderer\Camera.cpp" />
   </ItemGroup>
 </Project>

@@ -8,9 +8,9 @@
 namespace Neko {
 
 	struct WindowInfos {
-		std::string title;
-		unsigned int width;
-		unsigned int height;
+		std::string title = "Neko Engine";
+		unsigned int width = 1280;
+		unsigned int height = 720;
 
 		WindowInfos(const std::string& _title = "Neko Engine", unsigned int _width = 1280, unsigned int _height = 720) : title(_title), width(_width), height(_height) {}
 	};

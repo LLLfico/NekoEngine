@@ -106,7 +106,7 @@ namespace Neko {
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static std::shared_ptr<VertexBuffer> Create(float* vertices, uint32_t size);
 	};
 
 	class NEKO_API IndexBuffer {
@@ -118,7 +118,7 @@ namespace Neko {
 
 		virtual uint32_t Count() const = 0;
 
-		static IndexBuffer* Create(unsigned int* indices, uint32_t size);
+		static std::shared_ptr<IndexBuffer> Create(unsigned int* indices, uint32_t size);
 	};
 
 }

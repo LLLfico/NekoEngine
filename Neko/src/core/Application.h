@@ -12,6 +12,7 @@ namespace Neko {
 	class VertexBuffer;
 	class IndexBuffer;
 	class VertexArray;
+	class Camera;
 
 	class NEKO_API Application {
 	public:
@@ -37,6 +38,8 @@ namespace Neko {
 
 		std::shared_ptr<Shader> m_blueShader;
 		std::shared_ptr<VertexArray> m_squareVAO;
+
+		std::shared_ptr<Camera> m_camera;
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
