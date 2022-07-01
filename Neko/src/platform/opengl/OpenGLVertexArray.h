@@ -19,6 +19,7 @@ namespace Neko {
 		virtual const std::shared_ptr<IndexBuffer>& GetIndexBuffer() const override { return m_indexBuffer; }
 	private:
 		uint32_t m_id;
+		uint32_t m_vertexArrayIndex = 0;
 		std::vector<std::shared_ptr<VertexBuffer>> m_vertexBuffers;
 		std::shared_ptr<IndexBuffer> m_indexBuffer;
 	};

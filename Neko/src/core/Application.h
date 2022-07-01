@@ -7,6 +7,7 @@
 namespace Neko {
 
 	class WindowCloseEvent;
+	class WindowResizeEvent;
 	class ImGuiLayer;
 	class Shader;
 	class VertexBuffer;
@@ -29,24 +30,16 @@ namespace Neko {
 		inline Window& GetWindow() { return *m_window; }
 
 		inline static Application& GetCurrent() { return *s_instance; }
-
-
-		uint32_t t_vao, t_vbo, t_ibo;
-		std::shared_ptr<Shader> m_shader;
-		std::shared_ptr<VertexArray> m_vao;
-		std::shared_ptr<VertexBuffer> m_vertexBuffer;
-
-		std::shared_ptr<Shader> m_blueShader;
-		std::shared_ptr<VertexArray> m_squareVAO;
-
-		std::shared_ptr<Camera> m_camera;
+		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_imguiLayer;
 		bool m_running = true;
 		LayerStack m_layerStack;
+		float m_lastFrameTime = 0.0f;
 
 		static Application* s_instance;
 	};

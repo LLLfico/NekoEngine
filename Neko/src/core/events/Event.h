@@ -49,10 +49,10 @@ namespace Neko {
 	public:
 		EventDispatcher(Event& event) : m_event(event) {}
 
-		template <typename T>
-		bool Dispatch(EventFunction<T> func) {
+		template <typename T, typename F>
+		bool Dispatch(const F& func) {
 			if (m_event.GetEventType() == T::GetStaticType()) {
-				m_event.handled = func(*(T*)&m_event);
+				m_event.handled = func(static_cast<T&>(m_event));
 				return true;
 			}
 			return false;

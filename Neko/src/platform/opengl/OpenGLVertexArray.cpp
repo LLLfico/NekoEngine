@@ -42,14 +42,14 @@ namespace Neko {
 		vertexBuffer->Bind();
 
 		auto& layout = vertexBuffer->GetLayout();
-		auto& elements = layout.GetElements();
-		for (uint32_t i = 0; i < elements.size(); i++) {
-			auto& element = elements[i];
-			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, element.Count(), OpenGLShaderDataBaseType(element.type),
+		for (auto& element : layout) {
+			glEnableVertexAttribArray(m_vertexArrayIndex);
+			glVertexAttribPointer(m_vertexArrayIndex, element.Count(), OpenGLShaderDataBaseType(element.type),
 				element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.offset);
-		}
 
+			m_vertexArrayIndex++;
+		}
+		
 		m_vertexBuffers.push_back(vertexBuffer);
 	}
 

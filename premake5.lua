@@ -18,13 +18,13 @@ IncludeDir["GLFW"] = "Neko/vendor/GLFW/include"
 IncludeDir["Glad"] = "Neko/vendor/Glad/include"
 IncludeDir["ImGui"] = "Neko/vendor/imgui"
 IncludeDir["glm"] = "Neko/vendor/glm"
+IncludeDir["stb_image"] = "Neko/vendor/stb_image"
 
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
 include "Neko/vendor/Glad"
 include "Neko/vendor/imgui"
-
 
 
 project "Neko"
@@ -46,7 +46,8 @@ project "Neko"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/glm/glm/**.cpp",
-
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 	}
 
 	defines
@@ -61,6 +62,7 @@ project "Neko"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
 	}
 
 	links{

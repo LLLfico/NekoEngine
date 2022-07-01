@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "events/Event.h"
+#include "Time.h"
 
 namespace Neko {
 
@@ -12,7 +13,7 @@ namespace Neko {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Time t) {}
 		virtual void OnImGuiRender() {} // iiyari, is needed to add an specific function to base class ?
 		virtual void OnEvent(Event& event) {}
 
