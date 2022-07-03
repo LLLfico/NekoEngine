@@ -6,77 +6,129 @@
 
 namespace Neko {
 
-	OpenGLShader::OpenGLShader(const std::string& vertexDesc, const std::string& fragDesc) {
-		// Create an empty vertex shader handle
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-		// Send the vertex shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		const GLchar* source = vertexDesc.c_str();
-		glShaderSource(vertexShader, 1, &source, 0);
-
-		// Compile the vertex shader
-		glCompileShader(vertexShader);
-
-		GLint isCompiled = 0;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE) {
-			GLint maxLength = 0;
-			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &infoLog[0]);
-
-			// We don't need the shader anymore.
-			glDeleteShader(vertexShader);
-
-			NEKO_CORE_ERROR("{0}", infoLog.data());
-			NEKO_CORE_ASSERT(false, "Vertex shader compilation failure!");
-			return;
+	// local static 
+	std::string ReadFile(const std::string& filePath) {
+		std::string result;
+		std::ifstream in(filePath, std::ios::in | std::ios::binary);
+		if (in) {
+			in.seekg(0, std::ios::end); // get file string size
+			result.resize(in.tellg());
+			in.seekg(0, std::ios::beg);
+			in.read(result.data(), result.size());
+			in.close();
+		}
+		else {
+			NEKO_CORE_ERROR("Cannot Open File {0}!", filePath);
 		}
 
-		// Create an empty fragment shader handle
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		return result;
+	}
 
-		// Send the fragment shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		source = fragDesc.c_str();
-		glShaderSource(fragmentShader, 1, &source, 0);
+	std::unordered_map<GLenum, std::string> PreProcess(const std::string& source) {
+		static std::unordered_map<std::string, GLenum> shaderTypeFromString = {
+			{ "vertex", GL_VERTEX_SHADER },
+			{ "fragment", GL_FRAGMENT_SHADER },
+			{ "pixel", GL_FRAGMENT_SHADER },
+		};
 
-		// Compile the fragment shader
-		glCompileShader(fragmentShader);
+		std::unordered_map<GLenum, std::string> shaderSources;
 
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE) {
-			GLint maxLength = 0;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
+		const char* typeToken = "#type";
+		size_t tokenLength = strlen(typeToken);
+		size_t pos = source.find(typeToken, 0);
 
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
+		while (pos != std::string::npos) {
+			std::cout << source << std::endl;
+			// get type substr
+			size_t eol = source.find_first_of("\n\r", pos);
+			NEKO_CORE_ASSERT(eol != std::string::npos, "Syntax error!");
+			size_t begin = pos + tokenLength + 1;
+			std::string type = source.substr(begin, eol - begin);
+			NEKO_CORE_ASSERT(shaderTypeFromString.count(type), "Unknoen shader type!");
 
-			// We don't need the shader anymore.
-			glDeleteShader(fragmentShader);
-			// Either of them. Don't leak shaders.
-			glDeleteShader(vertexShader);
+			size_t textStart = source.find_first_not_of("\r\n", eol);
+			pos = source.find(typeToken, textStart);
 
-			NEKO_CORE_ERROR("{0}", infoLog.data());
-			NEKO_CORE_ASSERT(false, "Fragment shader compilation failure!");
-			return;
+			size_t textLen = textStart == std::string::npos ? pos - (source.size() - 1) : pos - textStart;
+			shaderSources[shaderTypeFromString[type]] = source.substr(textStart, textLen);
 		}
 
-		// Vertex and fragment shaders are successfully compiled.
-		// Now time to link them together into a program.
-		// Get a program object.
-		m_id = glCreateProgram();
-		GLuint program = m_id;
+		return shaderSources;
+	}
 
-		// Attach our shaders to our program
-		glAttachShader(program, vertexShader);
-		glAttachShader(program, fragmentShader);
+	// member 
+	OpenGLShader::OpenGLShader(const std::string& filePath) {
+		auto source = ReadFile(filePath);
+		auto shaderSources = PreProcess(source);
+		Compile(shaderSources);
 
-		// Link our program
+		auto lastSlash = filePath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filePath.rfind('.');
+		lastDot = lastDot == std::string::npos ? filePath.size() : lastDot;
+		auto len = lastDot - lastSlash;
+		m_name = filePath.substr(lastSlash, len);
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexDesc, const std::string& fragDesc) : m_name(name) {
+
+		std::unordered_map<GLenum, std::string> sources;
+		sources[GL_VERTEX_SHADER] = vertexDesc;
+		sources[GL_FRAGMENT_SHADER] = fragDesc;
+		Compile(sources);
+	}
+
+	OpenGLShader::~OpenGLShader() {
+		glDeleteProgram(m_id);
+	}
+
+	void OpenGLShader::Bind() const {
+		glUseProgram(m_id);
+	}
+
+	void OpenGLShader::Unbind() const {
+		glUseProgram(m_id);
+	}
+
+	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources) {
+
+		static std::unordered_map<GLenum, std::string> shaderTypeToString = {
+			{ GL_VERTEX_SHADER, "Vertex" },
+			{ GL_FRAGMENT_SHADER , "Fragment" },
+		};
+
+		GLuint program = glCreateProgram();
+		std::vector<GLenum> glShaderIds(shaderSources.size());
+
+		for (auto& [type, source] : shaderSources) {
+			GLuint shader = glCreateShader(type);
+
+			const GLchar* sourceCstr = source.c_str();
+			glShaderSource(shader, 1, &sourceCstr, 0);
+			glCompileShader(shader);
+
+			GLint isCompiled = 0;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+			if (isCompiled == GL_FALSE) {
+				GLint maxLength = 0;
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+				// The maxLength includes the NULL character
+				std::vector<GLchar> infoLog(maxLength);
+				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+
+				// We don't need the shader anymore.
+				glDeleteShader(shader);
+
+				NEKO_CORE_ERROR("{0}", infoLog.data());
+				NEKO_CORE_ASSERT(false, "{0} shader compilation failure!", shaderTypeToString[type]);
+				break;
+			}
+			glAttachShader(program, shader);
+			glShaderIds.push_back(shader);
+		}
+
+		m_id = program;
 		glLinkProgram(program);
 
 		// Note the different functions here: glGetProgram* instead of glGetShader*.
@@ -93,29 +145,17 @@ namespace Neko {
 			// We don't need the program anymore.
 			glDeleteProgram(program);
 			// Don't leak shaders either.
-			glDeleteShader(vertexShader);
-			glDeleteShader(fragmentShader);
+			for (auto id : glShaderIds) {
+				glDeleteShader(id);
+			}
 
 			NEKO_CORE_ERROR("{0}", infoLog.data());
 			NEKO_CORE_ASSERT(false, "Shader link failure!");
 			return;
 		}
-
-		// Always detach shaders after a successful link.
-		glDetachShader(program, vertexShader);
-		glDetachShader(program, fragmentShader);
-	}
-
-	OpenGLShader::~OpenGLShader() {
-		glDeleteProgram(m_id);
-	}
-
-	void OpenGLShader::Bind() const {
-		glUseProgram(m_id);
-	}
-
-	void OpenGLShader::Unbind() const {
-		glUseProgram(m_id);
+		for (auto id : glShaderIds) {
+			glDeleteShader(id);
+		}
 	}
 
 	void OpenGLShader::SetBool(const std::string& name, bool value) const {
@@ -136,5 +176,4 @@ namespace Neko {
 	void OpenGLShader::SetVec2(const std::string& name, glm::vec2 value) const {
 		glUniform2fv(glGetUniformLocation(m_id, name.c_str()), 1, glm::value_ptr(value));
 	}
-
 }

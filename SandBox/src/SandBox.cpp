@@ -40,7 +40,7 @@ public:
 		std::shared_ptr<Neko::VertexBuffer> squareVB = Neko::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVB->SetLayout({
 			{ "a_Position", Neko::ShaderDataType::Float3, },
-			{ "a_texCoord", Neko::ShaderDataType::Float2, },
+			{ "a_TexCoord", Neko::ShaderDataType::Float2, },
 			});
 		m_squareVAO->AddVertexBuffer(squareVB);
 
@@ -78,39 +78,12 @@ public:
 			}
 		)";
 
-		m_shader = Neko::Shader::Create(vertexSrc, fragmentSrc);
+		m_shader = Neko::Shader::Create("vertexArrayTest", vertexSrc, fragmentSrc);
 
-		std::string blueShaderVertexSrc = R"(
-			#version 460 core
-			
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec2 a_texCoord;
-			uniform mat4 u_viewProjection;
-			uniform mat4 u_transform;
-			out vec2 v_texCoord;
-			void main()
-			{
-				v_texCoord = a_texCoord;
-				gl_Position = u_viewProjection * u_transform * vec4(a_Position, 1.0);	
-			}
-		)";
-
-		std::string blueShaderFragmentSrc = R"(
-			#version 460 core
-			
-			layout(location = 0) out vec4 color;
-			in vec2 v_texCoord;
-			
-			uniform sampler2D u_texture;
-			void main()
-			{
-				color = texture(u_texture, v_texCoord);
-			}
-		)";
-
-		m_blueShader = Neko::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc);
+		auto textureShader = m_shaderManager.Load("assets/shaders/texture.glsl");
+		// m_blueShader = Neko::Shader::Create("assets/shaders/texture.glsl");
 		m_texture = Neko::Texture2D::Create("assets/textures/testpic.png");
-		m_blueShader->SetInt("u_texture", 0);
+		textureShader->SetInt("u_Texture", 0);
 
 		m_transparentTexture = Neko::Texture2D::Create("assets/textures/blending_transparent_window.png");
 	}
@@ -143,21 +116,22 @@ public:
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-		m_blueShader->Bind();
+		auto textureShader = m_shaderManager.GetShader("texture");
+		textureShader->Bind();
 		// m_blueShader->SetVec3("u_color", m_squareColor);
 		m_texture->Bind();
 		for (int i = -10; i < 10; i++) {
 			for (int j = -10; j < 10; j++) {
 				glm::vec3 pos(i * 0.11f, j * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				Neko::Renderer::Submit(m_blueShader, m_squareVAO, transform);
+				Neko::Renderer::Submit(textureShader, m_squareVAO, transform);
 			}
 		}
 
-		Neko::Renderer::Submit(m_blueShader, m_squareVAO, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Neko::Renderer::Submit(textureShader, m_squareVAO, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		m_transparentTexture->Bind();
-		Neko::Renderer::Submit(m_blueShader, m_squareVAO, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Neko::Renderer::Submit(textureShader, m_squareVAO, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		Neko::Renderer::EndScene();
 	}
@@ -174,11 +148,12 @@ public:
 	}
 
 private:
+	Neko::ShaderManager m_shaderManager;
+
 	std::shared_ptr<Neko::Shader> m_shader;
 	std::shared_ptr<Neko::VertexArray> m_vao;
 	std::shared_ptr<Neko::VertexBuffer> m_vertexBuffer;
 
-	std::shared_ptr<Neko::Shader> m_blueShader;
 	std::shared_ptr<Neko::VertexArray> m_squareVAO;
 
 	std::shared_ptr<Neko::Camera> m_camera;
