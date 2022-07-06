@@ -1,10 +1,8 @@
 #pragma once
-
 #include "core/Core.h"
 
 #include "RendererAPI.h"
 
-#include <glm/glm.hpp>
 
 namespace Neko {
 
@@ -13,6 +11,11 @@ namespace Neko {
 	public:
 		inline static void Init() {
 			s_api->Init();
+		}
+
+		inline static void SetViewPort(uint32_t width, uint32_t height) {
+			// glViewport(0, 0, width, height);
+			s_api->SetViewPort(0, 0, width, height);
 		}
 
 		inline static void SetClearColor(const glm::vec4& color) {

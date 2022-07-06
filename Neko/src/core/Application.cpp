@@ -59,7 +59,15 @@ namespace Neko {
 	}
 
 	bool Application::OnWindowResize(WindowResizeEvent& e) {
-		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+		if (e.GetWidth() == 0 || e.GetHeight() == 0) {
+			//√‘ªÛ
+			m_minimized = true;
+			return false;
+		}
+
+		m_minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
 		return true;
 	}
 

@@ -15,8 +15,12 @@ namespace Neko {
 		RenderCommand::Init();
 	}
 
-	void Renderer::BeginScene(const std::shared_ptr<Camera>& camera) {
-		s_sceneData->cameraMatrix = camera->GetMatrix();
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height) {
+		RenderCommand::SetViewPort(width, height);
+	}
+
+	void Renderer::BeginScene(const OrthographicCamera& camera) {
+		s_sceneData->cameraMatrix = camera.GetMatrix();
 	}
 
 	void Renderer::EndScene() {

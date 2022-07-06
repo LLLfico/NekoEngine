@@ -20,6 +20,8 @@
 
 #include "core/Log.h"
 
+#include "debug/Instrumentor.h"
+
 #ifdef NEKO_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

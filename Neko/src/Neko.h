@@ -21,6 +21,7 @@
 #include "core/Renderer/Texture.h"
 
 #include "core/Renderer/Camera.h"
+#include "core/CameraController.h"
 
 // glm
 #include <glm/glm.hpp>

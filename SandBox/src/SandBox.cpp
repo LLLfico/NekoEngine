@@ -4,7 +4,7 @@
 
 class ExampleLayer : public Neko::Layer {
 public:
-	ExampleLayer() : Layer("Example"), m_camera(Neko::Camera::Create(Neko::CameraInfo({ -1.6f, 1.6f, -0.9f, 0.9f }))), m_cameraPosition({ 0.0f, 0.0f, 0.0f }) {
+	ExampleLayer() : Layer("Example"), m_cameraController(1280.f / 720.f) {
 
 		m_vao = Neko::VertexArray::Create();
 
@@ -88,31 +88,15 @@ public:
 		m_transparentTexture = Neko::Texture2D::Create("assets/textures/blending_transparent_window.png");
 	}
 
-	void OnUpdate(Neko::Time t) override {
+	void OnUpdate(Neko::Time dt) override {
 		// NEKO_INFO("delta time is {}", t.GetSeconds());
-
-		if (Neko::Input::IsKeyPressed(NEKO_KEY_LEFT))
-			m_cameraPosition.x -= m_cameraMoveSpeed * t;
-		else if (Neko::Input::IsKeyPressed(NEKO_KEY_RIGHT))
-			m_cameraPosition.x += m_cameraMoveSpeed * t;
-
-		if (Neko::Input::IsKeyPressed(NEKO_KEY_UP))
-			m_cameraPosition.y += m_cameraMoveSpeed * t;
-		else if (Neko::Input::IsKeyPressed(NEKO_KEY_DOWN))
-			m_cameraPosition.y -= m_cameraMoveSpeed * t;
-
-		if (Neko::Input::IsKeyPressed(NEKO_KEY_A))
-			m_cameraRotation.z += m_cameraRotateSpeed * t;
-		else if (Neko::Input::IsKeyPressed(NEKO_KEY_D))
-			m_cameraRotation.z -= m_cameraRotateSpeed * t;
+		m_cameraController.OnUpdate(dt);
+		
 
 		Neko::RenderCommand::SetClearColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 		Neko::RenderCommand::Clear();
 
-		m_camera->SetPosition(m_cameraPosition);
-		m_camera->SetRotation(m_cameraRotation);
-
-		Neko::Renderer::BeginScene(m_camera);
+		Neko::Renderer::BeginScene(m_cameraController.GetCamera());
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -144,7 +128,7 @@ public:
 
 	void OnEvent(Neko::Event& event) override {
 		// NEKO_TRACE("{0}", event);
-
+		m_cameraController.OnEvent(event);
 	}
 
 private:
@@ -156,15 +140,10 @@ private:
 
 	std::shared_ptr<Neko::VertexArray> m_squareVAO;
 
-	std::shared_ptr<Neko::Camera> m_camera;
+	Neko::OrthographicCameraController m_cameraController;
 	
 	std::shared_ptr<Neko::Texture2D> m_texture;
 	std::shared_ptr<Neko::Texture2D> m_transparentTexture;
-
-	glm::vec3 m_cameraPosition = glm::vec3(0.0f);
-	glm::vec3 m_cameraRotation = glm::vec3(0.0f);
-	float m_cameraMoveSpeed = 5.0f;
-	float m_cameraRotateSpeed = 180.0f;
 
 	glm::vec3 m_squareColor = { 0.2f, 0.3f, 0.8f };
 
