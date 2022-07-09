@@ -16,6 +16,9 @@
     <Filter Include="src\core\imgui">
       <UniqueIdentifier>{EF6C1688-DB3A-0A8E-C4CE-7AB4B03BE6F2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\debug">
+      <UniqueIdentifier>{83B306B5-EF1D-BB2B-385C-6CD1A4059980}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\platform">
       <UniqueIdentifier>{41663D6D-2DC9-CC11-D64E-05C8C2909894}</UniqueIdentifier>
     </Filter>
@@ -24,6 +27,9 @@
     </Filter>
     <Filter Include="src\platform\windows">
       <UniqueIdentifier>{9B5931A8-87E8-BA71-3007-CF6C1C75CB17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\world">
+      <UniqueIdentifier>{C44364B6-30AE-182D-79EC-C9D2E595F681}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -57,10 +63,13 @@
     <ClInclude Include="src\core\Application.h">
       <Filter>src\core</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\CameraController.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Core.h">
       <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\EntryPoint.h">
+    <ClInclude Include="src\core\Launcher.h">
       <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Input.h">
@@ -108,7 +117,7 @@
     <ClInclude Include="src\core\Renderer\VertexArray.h">
       <Filter>src\core\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Time.h">
+    <ClInclude Include="src\core\TimeStep.h">
       <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Window.h">
@@ -128,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="src\core\imgui\ImGuiLayer.h">
       <Filter>src\core\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug\Instrumentor.h">
+      <Filter>src\debug</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
@@ -155,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="src\platform\windows\WindowsWindow.h">
       <Filter>src\platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Scene.h">
+      <Filter>src\world</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1404,11 +1419,13 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\CameraController.h" />
-    <ClInclude Include="src\debug\Instrumentor.h" />
+    <ClInclude Include="src\core\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\CameraController.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Layer.cpp">
@@ -1477,12 +1494,15 @@
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp">
       <Filter>src\platform\windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Scene.cpp">
+      <Filter>src\world</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
       <Filter>vendor\glm\glm\detail</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\CameraController.cpp" />
+    <ClCompile Include="src\core\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

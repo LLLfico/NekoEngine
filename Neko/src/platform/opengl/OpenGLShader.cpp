@@ -38,7 +38,7 @@ namespace Neko {
 		size_t pos = source.find(typeToken, 0);
 
 		while (pos != std::string::npos) {
-			std::cout << source << std::endl;
+			// std::cout << source << std::endl;
 			// get type substr
 			size_t eol = source.find_first_of("\n\r", pos);
 			NEKO_CORE_ASSERT(eol != std::string::npos, "Syntax error!");
@@ -175,5 +175,8 @@ namespace Neko {
 	}
 	void OpenGLShader::SetVec2(const std::string& name, glm::vec2 value) const {
 		glUniform2fv(glGetUniformLocation(m_id, name.c_str()), 1, glm::value_ptr(value));
+	}
+	void OpenGLShader::SetVec4(const std::string& name, glm::vec4 value) const {
+		glUniform4fv(glGetUniformLocation(m_id, name.c_str()), 1, glm::value_ptr(value));
 	}
 }

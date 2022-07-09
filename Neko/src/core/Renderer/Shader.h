@@ -22,6 +22,7 @@ namespace Neko {
 		virtual void SetMat4(const std::string& name, glm::mat4 value) const = 0;
 		virtual void SetVec3(const std::string& name, glm::vec3 value) const = 0;
 		virtual void SetVec2(const std::string& name, glm::vec2 value) const = 0;
+		virtual void SetVec4(const std::string& name, glm::vec4 value) const = 0;
 
 		static std::shared_ptr<Shader> Create(const std::string& filePath);
 		static std::shared_ptr<Shader> Create(const std::string& name, const std::string& vertexDesc, const std::string& fragDesc);

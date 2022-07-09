@@ -3,9 +3,9 @@
 
 namespace Neko {
 
-	class NEKO_API Time {
+	class NEKO_API TimeStep {
 	public:
-		Time(float time = 0.0f) : m_time(time) {}
+		TimeStep(float time = 0.0f) : m_time(time) {}
 
 		operator float() const { return m_time; }
 

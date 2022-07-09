@@ -21,6 +21,7 @@ namespace Neko {
 		virtual void Clear() = 0;
 
 		virtual void DrawElement(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void DrawArrays(uint32_t size) = 0;
 
 		inline static API GetAPI() { return s_api; }
 	private:

@@ -7,37 +7,39 @@
 namespace Neko {
 
 	class OrthographicCamera;
-	class Time;
+	class TimeStep;
 	class Event;
 	class MouseScrolledEvent;
 	class WindowResizeEvent;
+	class MouseMovedEvent;
 
-	class NEKO_API OrthographicCameraController {
+	class NEKO_API CameraController {
 	public:
-		OrthographicCameraController(float aspect, bool rotationOn = false);
+		CameraController() {} // m_camera.SetOrthographic(m_aspect); }
 
-		void OnUpdate(Time dt);
+		void OnUpdate(TimeStep dt);
 		void OnEvent(Event& e);
 
-		const OrthographicCamera& GetCamera() const { return m_camera; }
-		float GetZoomLevel() const { return m_zoom; }
-		void SetZoomLevel(float zoom) { m_zoom = zoom; }
+		const Camera& GetCamera() const { return m_camera; }
+
+		void SetOrthographicCamera() { m_camera.SetOrthographic(m_aspect); }
+		void SetPerspectiveCamera()  { m_camera.SetPerspective(45.0f, m_aspect, 0.1f, 1000.0f); }
+
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnMouseMoved(MouseMovedEvent& e);
 	private:
 		float m_aspect = (float)1280 / (float)720;
-		float m_zoom = 1.0f;
 
-		OrthographicCamera m_camera;
+		Camera m_camera;
 
-		bool m_rotationOn;
+		float lastScreenX = 0.0f, lastScreenY = 0.0f;
+		bool m_firstMouseMove = true;
+		float m_moveSensitivity = 0.2f;
+		float m_scrollSensitivity = 0.1f;
 
-		glm::vec3 m_position = { 0.0f, 0.0f, 0.0f };
-		float m_rotation = 0.0f;
-
-		float m_translationSpeed = 1.0f;
-		float m_rotationSpeed = 180.0f;
+		float m_translationSpeed = 3.0f;
 	};
 
 }

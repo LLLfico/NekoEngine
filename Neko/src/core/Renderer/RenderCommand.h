@@ -30,6 +30,10 @@ namespace Neko {
 			s_api->DrawElement(vertexArray);
 		}
 
+		inline static void DrawArrays(uint32_t size) {
+			s_api->DrawArrays(size);
+		}
+
 	private:
 		static RendererAPI* s_api;
 	};

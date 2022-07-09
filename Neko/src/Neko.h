@@ -4,7 +4,7 @@
 #include "core/Application.h"
 #include "core/Layer.h"
 #include "core/Log.h"
-#include "core/Time.h"
+#include "core/TimeStep.h"
 #include "core/imgui/ImGuiLayer.h"
 
 #include "core/Input.h"
@@ -13,6 +13,7 @@
 
 // render
 #include "core/Renderer/Renderer.h"
+#include "core/Renderer/Renderer2D.h"
 #include "core/Renderer/RenderCommand.h"
 
 #include "core/Renderer/Buffer.h"
@@ -29,4 +30,3 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Entry point
-#include "core/EntryPoint.h"

@@ -74,7 +74,7 @@ namespace Neko {
 	void Application::Run() {
 		while (m_running){
 			float curTime = (float)glfwGetTime();
-			Time timeStep = curTime - m_lastFrameTime;
+			TimeStep timeStep = curTime - m_lastFrameTime;
 			m_lastFrameTime = curTime;
 			
 

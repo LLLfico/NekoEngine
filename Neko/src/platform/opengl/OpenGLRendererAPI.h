@@ -13,6 +13,7 @@ namespace Neko {
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 		virtual void DrawElement(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void DrawArrays(uint32_t size) override;
 	};
 
 }
