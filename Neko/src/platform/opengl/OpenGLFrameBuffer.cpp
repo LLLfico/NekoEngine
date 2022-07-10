@@ -11,9 +11,17 @@ namespace Neko {
 
 	OpenGLFrameBuffer::~OpenGLFrameBuffer() {
 		glDeleteFramebuffers(1, &m_id);
+		glDeleteTextures(1, &m_colorAttachment);
+		glDeleteTextures(1, &m_depthAttachment);
 	}
 
 	void OpenGLFrameBuffer::Invalidate() {
+		if (m_id) {
+			glDeleteFramebuffers(1, &m_id);
+			glDeleteTextures(1, &m_colorAttachment);
+			glDeleteTextures(1, &m_depthAttachment);
+		}
+
 		glCreateFramebuffers(1, &m_id);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
 
@@ -38,10 +46,18 @@ namespace Neko {
 
 	void OpenGLFrameBuffer::Bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		glViewport(0, 0, m_desc.width, m_desc.height);
 	}
 
 	void OpenGLFrameBuffer::Unbind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void OpenGLFrameBuffer::Resize(uint32_t width, uint32_t height) {
+		m_desc.width = width;
+		m_desc.height = height;
+
+		Invalidate();
 	}
 
 }

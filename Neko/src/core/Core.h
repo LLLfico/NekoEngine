@@ -11,7 +11,7 @@
 		#define NEKO_API 
 	#endif
 #else	
-	#error neko only support windows now
+	#define NEKO_API 
 #endif
 
 #ifdef NEKO_DEBUG

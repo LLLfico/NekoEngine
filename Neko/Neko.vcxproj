@@ -140,24 +140,24 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\Renderer\FrameBuffer.h" />
-    <ClInclude Include="src\core\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\CameraController.h" />
     <ClInclude Include="src\core\Core.h" />
-    <ClInclude Include="src\core\Launcher.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\core\KeyCodes.h" />
+    <ClInclude Include="src\core\Launcher.h" />
     <ClInclude Include="src\core\Layer.h" />
     <ClInclude Include="src\core\LayerStack.h" />
     <ClInclude Include="src\core\Log.h" />
     <ClInclude Include="src\core\MouseButtonCodes.h" />
     <ClInclude Include="src\core\Renderer\Buffer.h" />
     <ClInclude Include="src\core\Renderer\Camera.h" />
+    <ClInclude Include="src\core\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\core\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\core\Renderer\RenderCommand.h" />
     <ClInclude Include="src\core\Renderer\Renderer.h" />
+    <ClInclude Include="src\core\Renderer\Renderer2D.h" />
     <ClInclude Include="src\core\Renderer\RendererAPI.h" />
     <ClInclude Include="src\core\Renderer\Shader.h" />
     <ClInclude Include="src\core\Renderer\Texture.h" />

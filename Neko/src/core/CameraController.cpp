@@ -42,6 +42,11 @@ namespace Neko {
 		}
 	}
 
+	void CameraController::OnResize(uint32_t width, uint32_t height) {
+		m_aspect = width / height;
+		m_camera.SetAspectRatio(m_aspect);
+	}
+
 	bool CameraController::OnMouseScrolled(MouseScrolledEvent& e) {
 		float yoffset = e.GetYOffset();
 		float fov = m_camera.GetFov();
@@ -51,8 +56,7 @@ namespace Neko {
 	}
 
 	bool CameraController::OnWindowResized(WindowResizeEvent& e) {
-		m_aspect = (float)e.GetWidth() / (float)e.GetHeight();
-		m_camera.SetAspectRatio(m_aspect);
+		OnResize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 

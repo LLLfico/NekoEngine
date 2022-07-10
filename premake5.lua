@@ -7,7 +7,7 @@ workspace "Neko"
 		"Distribution"
 	}
 
-	startproject "SandBox"
+	startproject "Editor"
 
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -146,3 +146,52 @@ project "SandBox"
 		runtime "Release"
 		optimize "on"
 
+
+project "Editor"
+	location "Editor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+	targetdir("bin/" ..outputdir.. "/%{prj.name}")
+	objdir("bin-int/" ..outputdir.. "/%{prj.name}")
+
+	files{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
+	}
+
+	includedirs{
+		"Neko/vendor/spdlog/include",
+		"Neko/src",
+		"Neko/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
+	}
+
+	links{
+		"Neko"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+		runtime "Debug"
+		defines{
+			"NEKO_PLATFORM_WINDOWS",
+		}
+
+	filter "configurations:Debug"
+		defines "NEKO_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "NEKO_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Distribution"
+		defines "NEKO_DIST"
+		runtime "Release"
+		optimize "on"

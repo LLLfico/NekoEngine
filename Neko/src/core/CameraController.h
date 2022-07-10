@@ -20,6 +20,8 @@ namespace Neko {
 		void OnUpdate(TimeStep dt);
 		void OnEvent(Event& e);
 
+		void OnResize(uint32_t width, uint32_t height);
+
 		const Camera& GetCamera() const { return m_camera; }
 
 		void SetOrthographicCamera() { m_camera.SetOrthographic(m_aspect); }
