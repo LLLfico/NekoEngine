@@ -27,6 +27,7 @@ namespace Neko {
 
 		const glm::vec3& GetForward() { return m_forward; }
 		const glm::vec3& GetRight() { return m_right; }
+		const glm::vec3& GetUp() { return m_up; }
 		float GetFov() { return m_fov; }
 		float GetYaw() { return m_yaw; }
 		float GetPitch() { return m_pitch; }

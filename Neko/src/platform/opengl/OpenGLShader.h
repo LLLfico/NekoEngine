@@ -18,13 +18,14 @@ namespace Neko {
 		virtual const std::string GetName() const { return m_name; }
 		virtual void SetName(const std::string& name) { m_name = name; }
 
-		void SetBool(const std::string& name, bool value) const override;
-		void SetInt(const std::string& name, int value) const override;
-		void SetFloat(const std::string& name, float value) const override;
-		void SetMat4(const std::string& name, glm::mat4 value) const override;
-		void SetVec3(const std::string& name, glm::vec3 value) const override;
-		void SetVec2(const std::string& name, glm::vec2 value) const override;
-		void SetVec4(const std::string& name, glm::vec4 value) const override;
+		virtual void SetBool(const std::string& name, bool value) const override;
+		virtual void SetInt(const std::string& name, int value) const override;
+		virtual void SetFloat(const std::string& name, float value) const override;
+		virtual void SetMat4(const std::string& name, glm::mat4 value) const override;
+		virtual void SetVec3(const std::string& name, glm::vec3 value) const override;
+		virtual void SetVec2(const std::string& name, glm::vec2 value) const override;
+		virtual void SetVec4(const std::string& name, glm::vec4 value) const override;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
 	private:
 		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
 	private:

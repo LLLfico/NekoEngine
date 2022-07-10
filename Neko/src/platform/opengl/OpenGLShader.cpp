@@ -179,4 +179,7 @@ namespace Neko {
 	void OpenGLShader::SetVec4(const std::string& name, glm::vec4 value) const {
 		glUniform4fv(glGetUniformLocation(m_id, name.c_str()), 1, glm::value_ptr(value));
 	}
+	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count) {
+		glUniform1iv(glGetUniformLocation(m_id, name.c_str()), count, values);
+	}
 }

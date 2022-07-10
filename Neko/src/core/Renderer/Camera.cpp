@@ -15,6 +15,7 @@ namespace Neko {
 		m_zNear = -1.0f;
 		m_zFar = 1.0f;
 		m_position = glm::vec3(0.0f);
+		m_fov = 1.0f;
 		CaculateMatrix();
 	}
 
@@ -74,10 +75,10 @@ namespace Neko {
 
 		if (m_type == CameraType::Orthographic) {
 			m_view = glm::inverse(glm::translate(glm::mat4(1.0f), m_position));
-			float left = -m_aspect;
-			float right = -left;
-			float bottom = -m_aspect;
-			float top = -bottom;
+			float left = -m_aspect * m_fov;
+			float right = -left * m_fov;
+			float bottom = -m_aspect * m_fov;
+			float top = -bottom * m_fov;
 			m_projection = glm::ortho(left, right, bottom, top, m_zNear, m_zFar);
 		}
 		else {

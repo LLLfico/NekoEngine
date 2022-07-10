@@ -26,8 +26,8 @@ namespace Neko {
 			s_api->Clear();
 		}
 
-		inline static void DrawElement(const std::shared_ptr<VertexArray>& vertexArray) {
-			s_api->DrawElement(vertexArray);
+		inline static void DrawElement(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) {
+			s_api->DrawElement(vertexArray, count);
 		}
 
 		inline static void DrawArrays(uint32_t size) {

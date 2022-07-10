@@ -22,8 +22,10 @@ namespace Neko {
 	void OpenGLRendererAPI::Clear() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-	void OpenGLRendererAPI::DrawElement(const std::shared_ptr<VertexArray>& vertexArray) {
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->Count(), GL_UNSIGNED_INT, nullptr);
+	void OpenGLRendererAPI::DrawElement(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count) {
+		uint32_t cnt = count <= 0 ? vertexArray->GetIndexBuffer()->Count() : count;
+		glDrawElements(GL_TRIANGLES, cnt, GL_UNSIGNED_INT, nullptr);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void OpenGLRendererAPI::DrawArrays(uint32_t size) {

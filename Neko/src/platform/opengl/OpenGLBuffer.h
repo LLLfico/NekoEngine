@@ -6,11 +6,14 @@ namespace Neko {
 
 	class OpenGLVertexBuffer : public VertexBuffer {
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer() override;
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+
+		virtual void SetData(void* data, uint32_t size) override;
 
 		virtual const BufferLayout& GetLayout() const override { return m_layout; }
 		virtual void SetLayout(const BufferLayout& layout) { m_layout = layout; }

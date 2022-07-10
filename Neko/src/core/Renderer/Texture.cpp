@@ -18,7 +18,22 @@ namespace Neko {
 		}
 
 		NEKO_CORE_ASSERT(false, "Unknown RendererAPI!");
-		return std::shared_ptr<Texture2D>();
+		return nullptr;
+	}
+
+	std::shared_ptr<Texture2D> Texture2D::Create(uint32_t width, uint32_t height) {
+		switch (Renderer::GetAPI()) {
+			case RendererAPI::API::None: {
+				NEKO_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+				return nullptr;
+			}
+			case RendererAPI::API::OpenGL: {
+				return std::make_shared<OpenGLTexture2D>(width, height);
+			}
+		}
+
+		NEKO_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
 	}
 
 }
