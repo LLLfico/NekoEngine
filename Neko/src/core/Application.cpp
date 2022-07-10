@@ -101,4 +101,8 @@ namespace Neko {
 		m_layerStack.PushOverlay(overlay);
 	}
 
+	void Application::Close() {
+		m_running = false;
+	}
+
 }

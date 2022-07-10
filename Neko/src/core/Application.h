@@ -28,6 +28,8 @@ namespace Neko {
 
 		inline Window& GetWindow() { return *m_window; }
 
+		void Close();
+
 		inline static Application& GetCurrent() { return *s_instance; }
 		
 	private:
