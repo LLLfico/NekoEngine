@@ -1420,6 +1420,8 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\core\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\core\Renderer\FrameBuffer.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLFrameBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1504,5 +1506,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\core\Renderer\FrameBuffer.cpp" />
+    <ClCompile Include="src\platform\opengl\OpenGLFrameBuffer.cpp" />
   </ItemGroup>
 </Project>

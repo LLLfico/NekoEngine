@@ -8,6 +8,9 @@ void SandBox2D::OnAttach() {
 	m_cameraController.SetOrthographicCamera();
 
 	m_texture = Neko::Texture2D::Create("assets/textures/testpic.png");
+
+	Neko::FrameBufferDesc desc = { 1280, 720 };
+	m_framebuffer = Neko::FrameBuffer::Create(desc);
 }
 
 void SandBox2D::OnDetach() {
@@ -17,7 +20,7 @@ void SandBox2D::OnUpdate(Neko::TimeStep dt) {
 	m_cameraController.OnUpdate(dt);
 
 	Neko::Renderer2D::ResetStatistics();
-
+	m_framebuffer->Bind();
 	Neko::RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1.0f });
 	Neko::RenderCommand::Clear();
 
@@ -35,11 +38,12 @@ void SandBox2D::OnUpdate(Neko::TimeStep dt) {
 		}
 	}
 	Neko::Renderer2D::EndScene();
+	m_framebuffer->Unbind();
 }
 
 void SandBox2D::OnImGuiRender() {
 	// Note: Switch this to true to enable dockspace
-	static bool dockingEnabled = false;
+	static bool dockingEnabled = true;;
 	if (dockingEnabled) {
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
@@ -107,8 +111,8 @@ void SandBox2D::OnImGuiRender() {
 
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_squareColor));
 
-		uint32_t textureID = m_texture->GetId();
-		ImGui::Image((void*)textureID, ImVec2{ 256.0f, 256.0f }, ImVec2{ 0, 1 }, ImVec2{1, 0});
+		uint32_t textureID = m_framebuffer->GetColorAttachmentId();
+		ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{1, 0});
 		ImGui::End();
 
 		ImGui::End();
@@ -126,7 +130,7 @@ void SandBox2D::OnImGuiRender() {
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_squareColor));
 
 		uint32_t textureID = m_texture->GetId();
-		ImGui::Image((void*)textureID, ImVec2{ 256.0f, 256.0f });
+		ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
 		ImGui::End();
 	}
 }

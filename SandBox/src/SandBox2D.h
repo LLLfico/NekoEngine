@@ -22,5 +22,7 @@ private:
 	std::shared_ptr<Neko::Shader> m_cubeShader;
 	std::shared_ptr<Neko::Texture2D> m_texture;
 
+	std::shared_ptr<Neko::FrameBuffer> m_framebuffer;
+
 	glm::vec4 m_squareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

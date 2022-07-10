@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\core\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\platform\opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\platform\opengl\OpenGLContext.h" />
+    <ClInclude Include="src\platform\opengl\OpenGLFrameBuffer.h" />
     <ClInclude Include="src\platform\opengl\OpenGLRendererAPI.h" />
     <ClInclude Include="src\platform\opengl\OpenGLShader.h" />
     <ClInclude Include="src\platform\opengl\OpenGLTexture.h" />
@@ -604,6 +606,7 @@
     <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\core\Renderer\Buffer.cpp" />
     <ClCompile Include="src\core\Renderer\Camera.cpp" />
+    <ClCompile Include="src\core\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\core\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\core\Renderer\Renderer.cpp" />
     <ClCompile Include="src\core\Renderer\Renderer2D.cpp" />
@@ -618,6 +621,7 @@
     </ClCompile>
     <ClCompile Include="src\platform\opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLContext.cpp" />
+    <ClCompile Include="src\platform\opengl\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLShader.cpp" />
     <ClCompile Include="src\platform\opengl\OpenGLTexture.cpp" />

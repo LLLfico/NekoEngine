@@ -17,6 +17,7 @@
 #include "core/Renderer/RenderCommand.h"
 
 #include "core/Renderer/Buffer.h"
+#include "core/Renderer/FrameBuffer.h"
 #include "core/Renderer/VertexArray.h"
 #include "core/Renderer/Shader.h"
 #include "core/Renderer/Texture.h"
