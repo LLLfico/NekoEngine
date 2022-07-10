@@ -25,6 +25,7 @@ namespace Neko {
 
 		std::shared_ptr<Neko::FrameBuffer> m_framebuffer;
 
+		bool m_viewportFocused = false, m_viewportHovered = false;
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 m_squareColor = { 0.2f, 0.3f, 0.8f, 1.0f };

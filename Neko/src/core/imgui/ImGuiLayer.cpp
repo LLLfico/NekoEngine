@@ -85,15 +85,18 @@ namespace Neko {
 
 	// if we use update, only imgui layer can control the imgui render pass
 	// but if we split the update process to begin->costum content->end, we can share middle costum content to client
+	void ImGuiLayer::OnEvent(Event& e) {
+		if (m_blocked) {
+			ImGuiIO& io = ImGui::GetIO();
+			e.handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			e.handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
+	}
+
 	void ImGuiLayer::Begin() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-	}
-
-	void ImGuiLayer::OnImGuiRender() {
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 
 	void ImGuiLayer::End() {

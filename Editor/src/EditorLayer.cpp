@@ -21,7 +21,8 @@ namespace Neko {
 	}
 
 	void EditorLayer::OnUpdate(TimeStep dt) {
-		m_cameraController.OnUpdate(dt);
+		if (m_viewportFocused)
+			m_cameraController.OnUpdate(dt);
 
 		Neko::Renderer2D::ResetStatistics();
 		m_framebuffer->Bind();
@@ -121,6 +122,10 @@ namespace Neko {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+
+		m_viewportFocused = ImGui::IsWindowFocused();
+		m_viewportHovered = ImGui::IsWindowHovered();
+		Application::GetCurrent().GetImGuiLayer()->BlockEvent(!m_viewportFocused || !m_viewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_viewportSize != *((glm::vec2*)&viewportPanelSize))
 		{
