@@ -25,6 +25,11 @@
 #include "core/Renderer/Camera.h"
 #include "core/CameraController.h"
 
+// ecs
+#include "world/Scene.h"
+#include "world/Entity.h"
+#include "world/Component.h"
+
 // glm
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -25,6 +25,9 @@ namespace Neko {
 
 		std::shared_ptr<Neko::FrameBuffer> m_framebuffer;
 
+		std::shared_ptr<Scene> m_scene;
+		Entity m_squareEntity;
+
 		bool m_viewportFocused = false, m_viewportHovered = false;
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 

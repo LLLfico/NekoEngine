@@ -6,17 +6,17 @@
 
 namespace Neko {
 
+	class Entity;
 	class NEKO_API Scene {
 	public:
 		Scene();
 		~Scene();
 
-		entt::entity CreateEntity();
-
-		entt::registry& GetRegistry() { return m_registry; }
+		Entity CreateEntity(const std::string& name = "");
 
 		void OnUpdate(TimeStep dt);
 	private:
+		friend class Entity;
 		entt::registry m_registry;
 	};
 

@@ -180,6 +180,8 @@
     <ClInclude Include="src\platform\opengl\OpenGLVertexArray.h" />
     <ClInclude Include="src\platform\windows\WindowsInput.h" />
     <ClInclude Include="src\platform\windows\WindowsWindow.h" />
+    <ClInclude Include="src\world\Component.h" />
+    <ClInclude Include="src\world\Entity.h" />
     <ClInclude Include="src\world\Scene.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -628,6 +630,7 @@
     <ClCompile Include="src\platform\opengl\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\platform\windows\WindowsInput.cpp" />
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\world\Entity.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />

@@ -15,6 +15,13 @@ namespace Neko {
 
 		Neko::FrameBufferDesc desc = { 1280, 720 };
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
+
+		m_scene = std::make_shared<Scene>();
+
+		auto square = m_scene->CreateEntity("Green Square");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		m_squareEntity = square;
 	}
 
 	void EditorLayer::OnDetach() {
@@ -30,9 +37,12 @@ namespace Neko {
 		Neko::RenderCommand::Clear();
 
 		Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
-		Neko::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+		/*Neko::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
 		Neko::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);
+		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);*/
+
+		m_scene->OnUpdate(dt);
+
 		Neko::Renderer2D::EndScene();
 
 		Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
@@ -116,7 +126,15 @@ namespace Neko {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_squareColor));
+		if (m_squareEntity) {
+			ImGui::Separator();
+			auto& tag = m_squareEntity.GetComponent<TagComponent>().tag;
+			ImGui::Text("%s", tag.c_str());
+
+			auto& squareColor = m_squareEntity.GetComponent<SpriteRendererComponent>().color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+			ImGui::Separator();
+		}
 
 		ImGui::End();
 
@@ -127,13 +145,9 @@ namespace Neko {
 		m_viewportHovered = ImGui::IsWindowHovered();
 		Application::GetCurrent().GetImGuiLayer()->BlockEvent(!m_viewportFocused || !m_viewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_viewportSize != *((glm::vec2*)&viewportPanelSize))
-		{
-			m_framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-			m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-			m_cameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-		}
+		m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
 		uint32_t textureID = m_framebuffer->GetColorAttachmentId();
 		ImGui::Image((void*)textureID, ImVec2{ m_viewportSize.x, m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();
