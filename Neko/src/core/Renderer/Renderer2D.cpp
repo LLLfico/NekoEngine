@@ -121,6 +121,19 @@ namespace Neko {
 		s_data.textureSlotIndex = 1;
 	}
 
+	void Renderer2D::BeginScene(const Projection& projection, const glm::mat4& transform) {
+		glm::mat4 viewProjection = projection.GetProjection() * glm::inverse(transform);
+
+		s_data.shader->Bind();
+		s_data.shader->SetMat4("u_viewProjection", viewProjection);
+
+		s_data.quadIndexCount = 0;
+		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
+
+		s_data.textureSlotIndex = 1;
+
+	}
+
 	void Renderer2D::EndScene() {
 		uint32_t dataSize = (uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead;
 		s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);

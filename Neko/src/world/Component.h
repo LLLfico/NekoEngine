@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SceneCamera.h"
+
 #include <glm/glm.hpp>
 
 namespace Neko {
@@ -31,4 +33,14 @@ namespace Neko {
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& _color) : color(_color) {}
 	};
+
+	struct CameraComponent {
+		SceneCamera camera;
+		bool primary = true;
+		bool fixedAspectRatio = false;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+	};
+
 }

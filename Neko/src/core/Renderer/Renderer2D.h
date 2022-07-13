@@ -2,6 +2,8 @@
 
 #include "Camera.h"
 
+#include "Projection.h"
+
 namespace Neko {
 
 	class Texture2D;
@@ -11,6 +13,7 @@ namespace Neko {
 		static void Shutdown();
 		
 		static void BeginScene(const Camera& camera);
+		static void BeginScene(const Projection& projection, const glm::mat4& transform);
 		static void EndScene();
 		static void Flush();
 

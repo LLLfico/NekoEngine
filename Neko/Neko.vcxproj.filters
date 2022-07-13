@@ -1430,6 +1430,8 @@
     </ClInclude>
     <ClInclude Include="src\world\Component.h" />
     <ClInclude Include="src\world\Entity.h" />
+    <ClInclude Include="src\core\Renderer\Projection.h" />
+    <ClInclude Include="src\world\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1523,5 +1525,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\world\Entity.cpp" />
+    <ClCompile Include="src\world\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

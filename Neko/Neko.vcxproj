@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\Renderer\Projection.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\CameraController.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\world\Component.h" />
     <ClInclude Include="src\world\Entity.h" />
     <ClInclude Include="src\world\Scene.h" />
+    <ClInclude Include="src\world\SceneCamera.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -632,6 +634,7 @@
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp" />
     <ClCompile Include="src\world\Entity.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />
+    <ClCompile Include="src\world\SceneCamera.cpp" />
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>

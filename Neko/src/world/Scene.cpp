@@ -43,14 +43,48 @@ namespace Neko {
 		return entity;
 	}
 
-	
-
 	void Scene::OnUpdate(TimeStep dt) {
-		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group) {
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer2D::DrawQuad(transform, sprite.color);
+		Projection* mainCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
+		{
+			// find main camera
+			auto view = m_registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view) {
+				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+				if (camera.primary) {
+					mainCamera = &camera.camera;
+					cameraTransform = &transform.transform;
+					break;
+				}
+			}
+		}
+
+		if (mainCamera) {
+			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+
+			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group) {
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawQuad(transform, sprite.color);
+			}
+
+			Renderer2D::EndScene();
+		}
+	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height) {
+		m_viewportWidth = width;
+		m_viewportHeight = height;
+
+		auto view = m_registry.view<CameraComponent>();
+		for (auto entity : view) {
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.fixedAspectRatio) {
+				cameraComponent.camera.SetViewportSize(width, height);
+			}
 		}
 	}
 

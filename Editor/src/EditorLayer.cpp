@@ -22,12 +22,28 @@ namespace Neko {
 		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		m_squareEntity = square;
+
+		m_cametaEntity = m_scene->CreateEntity("Main Camera");
+		m_cametaEntity.AddComponent<CameraComponent>();
+
+		m_secondCamera = m_scene->CreateEntity("Clip-space Camera");
+		auto& cc = m_secondCamera.AddComponent<CameraComponent>();
+		cc.primary = false;
 	}
 
 	void EditorLayer::OnDetach() {
 	}
 
 	void EditorLayer::OnUpdate(TimeStep dt) {
+
+		if (FrameBufferDesc desc = m_framebuffer->GetDesc();
+			m_viewportSize.x > 0.0f && m_viewportSize.y > 0.0f &&
+			(desc.width != m_viewportSize.x || desc.height != m_viewportSize.y)) {
+			m_framebuffer->Resize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+			m_cameraController.OnResize(m_viewportSize.x, m_viewportSize.y);
+			m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+		}
+
 		if (m_viewportFocused)
 			m_cameraController.OnUpdate(dt);
 
@@ -49,7 +65,7 @@ namespace Neko {
 		for (float y = -5.0f; y < 5.0f; y += 0.5f) {
 			for (float x = -5.0f; x < 5.0f; x += 0.5f) {
 				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Neko::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+				Neko::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);\
 			}
 		}
 		Neko::Renderer2D::EndScene();
@@ -134,6 +150,20 @@ namespace Neko {
 			auto& squareColor = m_squareEntity.GetComponent<SpriteRendererComponent>().color;
 			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 			ImGui::Separator();
+		}
+
+		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_cametaEntity.GetComponent<TransformComponent>().transform[3]));
+		if (ImGui::Checkbox("Camera A", &m_primaryCamera)) {
+			m_cametaEntity.GetComponent<CameraComponent>().primary = m_primaryCamera;
+			m_secondCamera.GetComponent<CameraComponent>().primary = !m_primaryCamera;
+		}
+
+		{
+			auto& camera = m_secondCamera.GetComponent<CameraComponent>().camera;
+			float orthoSize = camera.GetOrthographicSize();
+			if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize)) {
+				camera.SetOrthographicSize(orthoSize);
+			}
 		}
 
 		ImGui::End();

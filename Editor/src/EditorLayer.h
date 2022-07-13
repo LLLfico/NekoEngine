@@ -27,6 +27,10 @@ namespace Neko {
 
 		std::shared_ptr<Scene> m_scene;
 		Entity m_squareEntity;
+		Entity m_cametaEntity;
+		Entity m_secondCamera;
+
+		bool m_primaryCamera = true;
 
 		bool m_viewportFocused = false, m_viewportHovered = false;
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
