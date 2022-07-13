@@ -29,6 +29,7 @@
 #include "world/Scene.h"
 #include "world/Entity.h"
 #include "world/Component.h"
+#include "world/ScriptableEntity.h"
 
 // glm
 #include <glm/glm.hpp>

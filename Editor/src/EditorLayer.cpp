@@ -29,6 +29,31 @@ namespace Neko {
 		m_secondCamera = m_scene->CreateEntity("Clip-space Camera");
 		auto& cc = m_secondCamera.AddComponent<CameraComponent>();
 		cc.primary = false;
+
+		class CameraCtrler : public ScriptableEntity {
+		public:
+			void OnCreate() {
+				auto& transform = GetComponent<TransformComponent>().transform;
+				transform[3][0] = rand() % 10 - 5.0f;
+			}
+			void OnDestroy() {}
+			void OnUpdate(TimeStep dt) {
+				auto& transform = GetComponent<TransformComponent>().transform;
+				float speed = 0.5f;
+
+				if (Input::IsKeyPressed(NEKO_KEY_A))
+					transform[3][0] -= speed * dt;
+				if (Input::IsKeyPressed(NEKO_KEY_D))
+					transform[3][0] += speed * dt;
+				if (Input::IsKeyPressed(NEKO_KEY_W))
+					transform[3][1] += speed * dt;
+				if (Input::IsKeyPressed(NEKO_KEY_S))
+					transform[3][1] -= speed * dt;
+			}
+		};
+
+		m_cametaEntity.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
+		m_secondCamera.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
 	}
 
 	void EditorLayer::OnDetach() {
@@ -52,14 +77,14 @@ namespace Neko {
 		Neko::RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1.0f });
 		Neko::RenderCommand::Clear();
 
-		Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
+		// Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
 		/*Neko::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
 		Neko::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
 		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);*/
 
 		m_scene->OnUpdate(dt);
 
-		Neko::Renderer2D::EndScene();
+		// Neko::Renderer2D::EndScene();
 
 		Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
 		for (float y = -5.0f; y < 5.0f; y += 0.5f) {

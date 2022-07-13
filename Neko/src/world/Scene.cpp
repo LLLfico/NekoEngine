@@ -7,29 +7,7 @@
 
 namespace Neko {
 
-	static void DoMath(const glm::mat4& transform) {
-
-	}
-
-	static void OnTransformConstruct(entt::registry& registry, entt::entity entity) {
-
-	}
-
 	Scene::Scene() {
-		struct MeshComponent;
-
-		entt::entity entity = m_registry.create();
-		m_registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
-		m_registry.on_construct<TransformComponent>().connect<&OnTransformConstruct>();
-
-		if (m_registry.any_of<TransformComponent>(entity)) {
-			auto& transform = m_registry.get<TransformComponent>(entity);
-		}
-
-		auto view = m_registry.view<TransformComponent>();
-		for (auto entity : view) {
-			auto& transform = view.get<TransformComponent>(entity);
-		}
 	}
 
 	Scene::~Scene() {
@@ -44,14 +22,27 @@ namespace Neko {
 	}
 
 	void Scene::OnUpdate(TimeStep dt) {
+		// scripts
+		{
+			m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc) {
+				if (!nsc.instance) {
+					nsc.instance = nsc.InstantiateScript();
+					nsc.instance->m_entity = Entity{ entity, this };
+					nsc.instance->OnCreate();
+				}
 
+				nsc.instance->OnUpdate(dt);
+			});
+		}
+
+		// render 2d
 		Projection* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
 		{
 			// find main camera
 			auto view = m_registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view) {
-				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.primary) {
 					mainCamera = &camera.camera;
@@ -66,7 +57,7 @@ namespace Neko {
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group) {
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
 				Renderer2D::DrawQuad(transform, sprite.color);
 			}

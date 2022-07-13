@@ -1432,6 +1432,7 @@
     <ClInclude Include="src\world\Entity.h" />
     <ClInclude Include="src\core\Renderer\Projection.h" />
     <ClInclude Include="src\world\SceneCamera.h" />
+    <ClInclude Include="src\world\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">

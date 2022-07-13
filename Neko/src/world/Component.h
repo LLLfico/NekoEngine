@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneCamera.h"
+#include "ScriptableEntity.h"
 
 #include <glm/glm.hpp>
 
@@ -41,6 +42,21 @@ namespace Neko {
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent {
+		ScriptableEntity* instance = nullptr;
+
+		std::function<ScriptableEntity*()> InstantiateScript;
+		std::function<void(NativeScriptComponent*)> DestroyScript;
+
+		template<typename T>
+		void Bind() {
+
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
+		}
 	};
 
 }
