@@ -54,6 +54,8 @@ namespace Neko {
 
 		m_cametaEntity.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
 		m_secondCamera.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
+
+		m_sceneHierarchyPanel.SetContext(m_scene);
 	}
 
 	void EditorLayer::OnDetach() {
@@ -157,6 +159,8 @@ namespace Neko {
 
 			ImGui::EndMenuBar();
 		}
+
+		m_sceneHierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Settings");
 

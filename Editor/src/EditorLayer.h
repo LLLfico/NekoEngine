@@ -1,6 +1,8 @@
 #pragma once
 #include <Neko.h>
 
+#include "panels/SceneHierarchyPanel.h"
+
 namespace Neko {
 
 	class EditorLayer : public Layer {
@@ -36,6 +38,8 @@ namespace Neko {
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 m_squareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+		SceneHierarchyPanel m_sceneHierarchyPanel;
 	};
 
 }

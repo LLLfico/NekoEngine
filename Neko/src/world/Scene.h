@@ -9,6 +9,7 @@ namespace Neko {
 	class Entity;
 	class NEKO_API Scene {
 		friend class Entity;
+		friend class SceneHierarchyPanel;
 	public:
 		Scene();
 		~Scene();
