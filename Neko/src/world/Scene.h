@@ -10,6 +10,7 @@ namespace Neko {
 	class NEKO_API Scene {
 		friend class Entity;
 		friend class SceneHierarchyPanel;
+		friend class SceneSerializer;
 	public:
 		Scene();
 		~Scene();

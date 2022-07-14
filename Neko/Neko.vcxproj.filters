@@ -102,6 +102,9 @@
     <ClInclude Include="src\core\Renderer\GraphicsContext.h">
       <Filter>src\core\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\Renderer\Projection.h">
+      <Filter>src\core\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\Renderer\RenderCommand.h">
       <Filter>src\core\Renderer</Filter>
     </ClInclude>
@@ -177,7 +180,19 @@
     <ClInclude Include="src\platform\windows\WindowsWindow.h">
       <Filter>src\platform\windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\Component.h">
+      <Filter>src\world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Entity.h">
+      <Filter>src\world</Filter>
+    </ClInclude>
     <ClInclude Include="src\world\Scene.h">
+      <Filter>src\world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\SceneCamera.h">
+      <Filter>src\world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\ScriptableEntity.h">
       <Filter>src\world</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -1428,11 +1443,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\world\Component.h" />
-    <ClInclude Include="src\world\Entity.h" />
-    <ClInclude Include="src\core\Renderer\Projection.h" />
-    <ClInclude Include="src\world\SceneCamera.h" />
-    <ClInclude Include="src\world\ScriptableEntity.h" />
+    <ClInclude Include="src\world\SceneSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1516,7 +1527,13 @@
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp">
       <Filter>src\platform\windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Entity.cpp">
+      <Filter>src\world</Filter>
+    </ClCompile>
     <ClCompile Include="src\world\Scene.cpp">
+      <Filter>src\world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\SceneCamera.cpp">
       <Filter>src\world</Filter>
     </ClCompile>
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
@@ -1525,7 +1542,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\world\Entity.cpp" />
-    <ClCompile Include="src\world\SceneCamera.cpp" />
+    <ClCompile Include="src\world\SceneSerializer.cpp" />
   </ItemGroup>
 </Project>

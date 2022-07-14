@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EditorLayer.h"
 
+#include "world/SceneSerializer.h"
+
 #include <imgui/imgui.h>
 
 namespace Neko {
@@ -159,6 +161,14 @@ namespace Neko {
 				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
 				// which we can't undo at the moment without finer window depth/z control.
 				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+				if (ImGui::MenuItem("Serialize")) {
+					SceneSerializer serializer(m_scene);
+					serializer.Serialize("assets/scenes/example.neko");
+				}
+				if (ImGui::MenuItem("Deserialize")) {
+					SceneSerializer serializer(m_scene);
+					serializer.Deserialize("assets/scenes/example.neko");
+				}
 
 				if (ImGui::MenuItem("Exit")) Neko::Application::GetCurrent().Close();
 				ImGui::EndMenu();

@@ -20,11 +20,13 @@ IncludeDir["ImGui"] = "Neko/vendor/imgui"
 IncludeDir["glm"] = "Neko/vendor/glm"
 IncludeDir["stb_image"] = "Neko/vendor/stb_image"
 IncludeDir["entt"] = "Neko/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Neko/vendor/yaml-cpp/include"
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
 include "Neko/vendor/Glad"
 include "Neko/vendor/imgui"
+include "Neko/vendor/yaml-cpp"
 
 
 project "Neko"
@@ -64,12 +66,14 @@ project "Neko"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links{
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib",
 	}
 

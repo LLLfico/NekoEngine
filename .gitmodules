@@ -10,3 +10,6 @@
 [submodule "Neko/vendor/glm"]
 	path = Neko/vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Neko/vendor/yaml-cpp"]
+	path = Neko/vendor/yaml-cpp
+	url = https://github.com/TheCherno/yaml-cpp.git
