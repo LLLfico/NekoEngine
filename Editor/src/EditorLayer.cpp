@@ -21,6 +21,9 @@ namespace Neko {
 		auto square = m_scene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
+		auto redSquare = m_scene->CreateEntity("Red Square");
+		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
 		m_squareEntity = square;
 
 		m_cametaEntity = m_scene->CreateEntity("Main Camera");
