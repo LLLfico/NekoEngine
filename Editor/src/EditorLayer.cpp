@@ -32,12 +32,12 @@ namespace Neko {
 
 		class CameraCtrler : public ScriptableEntity {
 		public:
-			void OnCreate() {
+			virtual void OnCreate() override {
 				auto& transform = GetComponent<TransformComponent>().transform;
 				transform[3][0] = rand() % 10 - 5.0f;
 			}
-			void OnDestroy() {}
-			void OnUpdate(TimeStep dt) {
+			virtual void OnDestroy() override {}
+			virtual void OnUpdate(TimeStep dt) override {
 				auto& transform = GetComponent<TransformComponent>().transform;
 				float speed = 0.5f;
 
