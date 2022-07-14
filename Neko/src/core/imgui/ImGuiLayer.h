@@ -22,6 +22,8 @@ namespace Neko {
 		void End();
 
 		void BlockEvent(bool block) { m_blocked = block; }
+
+		void SetDarkThemeColors();
 	private:
 
 	private:

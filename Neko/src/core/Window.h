@@ -9,10 +9,10 @@ namespace Neko {
 
 	struct WindowInfos {
 		std::string title = "Neko Engine";
-		unsigned int width = 1280;
-		unsigned int height = 720;
+		unsigned int width = 1600;
+		unsigned int height = 900;
 
-		WindowInfos(const std::string& _title = "Neko Engine", unsigned int _width = 1280, unsigned int _height = 720) : title(_title), width(_width), height(_height) {}
+		WindowInfos(const std::string& _title = "Neko Engine", unsigned int _width = 1600, unsigned int _height = 900) : title(_title), width(_width), height(_height) {}
 	};
 
 	class NEKO_API Window {
