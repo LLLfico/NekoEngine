@@ -26,10 +26,10 @@ namespace Neko {
 
 		m_squareEntity = square;
 
-		m_cametaEntity = m_scene->CreateEntity("Main Camera");
+		m_cametaEntity = m_scene->CreateEntity("Camera A");
 		m_cametaEntity.AddComponent<CameraComponent>();
 
-		m_secondCamera = m_scene->CreateEntity("Clip-space Camera");
+		m_secondCamera = m_scene->CreateEntity("Camera B");
 		auto& cc = m_secondCamera.AddComponent<CameraComponent>();
 		cc.primary = false;
 
@@ -165,7 +165,7 @@ namespace Neko {
 
 		m_sceneHierarchyPanel.OnImGuiRender();
 
-		ImGui::Begin("Settings");
+		ImGui::Begin("Status");
 
 		auto stats = Neko::Renderer2D::GetStatistics();
 		ImGui::Text("Renderer2D Stats:");
@@ -173,30 +173,6 @@ namespace Neko {
 		ImGui::Text("Quads: %d", stats.quadCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-		if (m_squareEntity) {
-			ImGui::Separator();
-			auto& tag = m_squareEntity.GetComponent<TagComponent>().tag;
-			ImGui::Text("%s", tag.c_str());
-
-			auto& squareColor = m_squareEntity.GetComponent<SpriteRendererComponent>().color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-			ImGui::Separator();
-		}
-
-		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_cametaEntity.GetComponent<TransformComponent>().transform[3]));
-		if (ImGui::Checkbox("Camera A", &m_primaryCamera)) {
-			m_cametaEntity.GetComponent<CameraComponent>().primary = m_primaryCamera;
-			m_secondCamera.GetComponent<CameraComponent>().primary = !m_primaryCamera;
-		}
-
-		{
-			auto& camera = m_secondCamera.GetComponent<CameraComponent>().camera;
-			float orthoSize = camera.GetOrthographicSize();
-			if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize)) {
-				camera.SetOrthographicSize(orthoSize);
-			}
-		}
 
 		ImGui::End();
 
