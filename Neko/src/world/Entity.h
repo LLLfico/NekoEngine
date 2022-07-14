@@ -14,7 +14,9 @@ namespace Neko {
 		template<typename T, typename ...Args>
 		T& AddComponent(Args&&... args) {
 			NEKO_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-			return m_scene->m_registry.emplace<T>(m_handle, std::forward<Args>(args)...);
+			T& component =  m_scene->m_registry.emplace<T>(m_handle, std::forward<Args>(args)...);
+			m_scene->OnComponentAdded<T>(*this, component);
+			return component;
 		}
 
 		template<typename T>
@@ -36,6 +38,7 @@ namespace Neko {
 
 		operator bool() const { return m_handle != entt::entity{0}; }
 		operator uint32_t() const { return (uint32_t)m_handle; };
+		operator entt::entity() const { return m_handle; }
 
 		bool operator==(const Entity& other) const {
 			return m_handle == other.m_handle && m_scene == other.m_scene;

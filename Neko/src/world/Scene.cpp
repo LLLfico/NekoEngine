@@ -21,6 +21,10 @@ namespace Neko {
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity entity) {
+		m_registry.destroy(entity);
+	}
+
 	void Scene::OnUpdate(TimeStep dt) {
 		// scripts
 		{
@@ -79,4 +83,31 @@ namespace Neko {
 		}
 	}
 
+	template<typename T>
+	void Scene::OnComponentAdded(Entity entity, T& component) {
+		static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component) {
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component) {
+		component.camera.SetViewportSize(m_viewportWidth, m_viewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component) {
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component) {
+	}
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component) {
+	}
 }
