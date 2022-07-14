@@ -37,7 +37,7 @@ namespace Neko {
 
 		// render 2d
 		Projection* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 			// find main camera
 			auto view = m_registry.view<TransformComponent, CameraComponent>();
@@ -46,20 +46,20 @@ namespace Neko {
 
 				if (camera.primary) {
 					mainCamera = &camera.camera;
-					cameraTransform = &transform.transform;
+					cameraTransform = transform.GetTransformMatrix();
 					break;
 				}
 			}
 		}
 
 		if (mainCamera) {
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group) {
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawQuad(transform, sprite.color);
+				Renderer2D::DrawQuad(transform.GetTransformMatrix(), sprite.color);
 			}
 
 			Renderer2D::EndScene();

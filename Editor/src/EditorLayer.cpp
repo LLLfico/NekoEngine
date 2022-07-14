@@ -36,22 +36,22 @@ namespace Neko {
 		class CameraCtrler : public ScriptableEntity {
 		public:
 			virtual void OnCreate() override {
-				auto& transform = GetComponent<TransformComponent>().transform;
-				transform[3][0] = rand() % 10 - 5.0f;
+				auto& translation = GetComponent<TransformComponent>().translation;
+				translation.x = rand() % 10 - 5.0f;
 			}
 			virtual void OnDestroy() override {}
 			virtual void OnUpdate(TimeStep dt) override {
-				auto& transform = GetComponent<TransformComponent>().transform;
+				auto& translation = GetComponent<TransformComponent>().translation;
 				float speed = 0.5f;
 
 				if (Input::IsKeyPressed(NEKO_KEY_A))
-					transform[3][0] -= speed * dt;
+					translation.x -= speed * dt;
 				if (Input::IsKeyPressed(NEKO_KEY_D))
-					transform[3][0] += speed * dt;
+					translation.x += speed * dt;
 				if (Input::IsKeyPressed(NEKO_KEY_W))
-					transform[3][1] += speed * dt;
+					translation.y += speed * dt;
 				if (Input::IsKeyPressed(NEKO_KEY_S))
-					transform[3][1] -= speed * dt;
+					translation.y -= speed * dt;
 			}
 		};
 
