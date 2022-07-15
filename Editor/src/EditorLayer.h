@@ -16,6 +16,12 @@ namespace Neko {
 		virtual void OnUpdate(TimeStep dt) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveScene();
 
 	private:
 		CameraController m_cameraController;
@@ -38,6 +44,8 @@ namespace Neko {
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 
 		glm::vec4 m_squareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+		int m_gizmoType = -1;
 
 		SceneHierarchyPanel m_sceneHierarchyPanel;
 	};

@@ -18,6 +18,7 @@ namespace Neko {
 
 	void SceneHierarchyPanel::SetContext(const std::shared_ptr<Scene>& scene) {
 		m_context = scene;
+		m_selectionContext = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender() {

@@ -16,6 +16,12 @@
     <Filter Include="src\core\imgui">
       <UniqueIdentifier>{EF6C1688-DB3A-0A8E-C4CE-7AB4B03BE6F2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core\math">
+      <UniqueIdentifier>{DEF319E5-4AB4-951B-13EF-DE987F6EDAF7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\utils">
+      <UniqueIdentifier>{0571F388-F13E-E78E-DAD2-57B5C63FC3F3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\debug">
       <UniqueIdentifier>{83B306B5-EF1D-BB2B-385C-6CD1A4059980}</UniqueIdentifier>
     </Filter>
@@ -33,6 +39,9 @@
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo">
+      <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -147,6 +156,12 @@
     <ClInclude Include="src\core\imgui\ImGuiLayer.h">
       <Filter>src\core\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\math\Math.h">
+      <Filter>src\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\utils\PlatformUtils.h">
+      <Filter>src\core\utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\debug\Instrumentor.h">
       <Filter>src\debug</Filter>
     </ClInclude>
@@ -192,8 +207,14 @@
     <ClInclude Include="src\world\SceneCamera.h">
       <Filter>src\world</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\SceneSerializer.h">
+      <Filter>src\world</Filter>
+    </ClInclude>
     <ClInclude Include="src\world\ScriptableEntity.h">
       <Filter>src\world</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1443,7 +1464,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\world\SceneSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1497,6 +1517,9 @@
     <ClCompile Include="src\core\imgui\ImGuiLayer.cpp">
       <Filter>src\core\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\math\Math.cpp">
+      <Filter>src\core\math</Filter>
+    </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -1524,6 +1547,9 @@
     <ClCompile Include="src\platform\windows\WindowsInput.cpp">
       <Filter>src\platform\windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\platform\windows\WindowsPlatformUtils.cpp">
+      <Filter>src\platform\windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp">
       <Filter>src\platform\windows</Filter>
     </ClCompile>
@@ -1536,12 +1562,17 @@
     <ClCompile Include="src\world\SceneCamera.cpp">
       <Filter>src\world</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\SceneSerializer.cpp">
+      <Filter>src\world</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
       <Filter>vendor\glm\glm\detail</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\world\SceneSerializer.cpp" />
   </ItemGroup>
 </Project>

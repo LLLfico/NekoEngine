@@ -3,8 +3,10 @@
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace Neko {
 
@@ -27,9 +29,7 @@ namespace Neko {
 		TransformComponent(const glm::vec3& _translation) : translation(_translation) {}
 
 		glm::mat4 GetTransformMatrix() const {
-			auto rotationMatrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1, 0, 0)) *
-								glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0)) *
-								glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0, 0, 1));
+			auto rotationMatrix = glm::toMat4(glm::quat(rotation));
 			return glm::translate(glm::mat4(1.0f), translation) * rotationMatrix * glm::scale(glm::mat4(1.0f), scale);
 		}
 	};

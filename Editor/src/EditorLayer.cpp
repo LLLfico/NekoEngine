@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "EditorLayer.h"
 
+#include "core/utils/PlatformUtils.h"
+#include "core/math/Math.h"
 #include "world/SceneSerializer.h"
 
 #include <imgui/imgui.h>
+#include <ImGuizmo/ImGuizmo.h>
 
 namespace Neko {
 
@@ -93,14 +96,14 @@ namespace Neko {
 
 		// Neko::Renderer2D::EndScene();
 
-		Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
+		/*Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
 		for (float y = -5.0f; y < 5.0f; y += 0.5f) {
 			for (float x = -5.0f; x < 5.0f; x += 0.5f) {
 				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
 				Neko::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);\
 			}
 		}
-		Neko::Renderer2D::EndScene();
+		Neko::Renderer2D::EndScene();*/
 		m_framebuffer->Unbind();
 	}
 
@@ -161,13 +164,14 @@ namespace Neko {
 				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
 				// which we can't undo at the moment without finer window depth/z control.
 				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-				if (ImGui::MenuItem("Serialize")) {
-					SceneSerializer serializer(m_scene);
-					serializer.Serialize("assets/scenes/example.neko");
+				if (ImGui::MenuItem("New", "Ctrl+N")) {
+					NewScene();
 				}
-				if (ImGui::MenuItem("Deserialize")) {
-					SceneSerializer serializer(m_scene);
-					serializer.Deserialize("assets/scenes/example.neko");
+				if (ImGui::MenuItem("Open", "Ctrl+O")) {
+					OpenScene();
+				}
+				if (ImGui::MenuItem("Save As...", "Ctrl+SHift+S")) {
+					SaveScene();
 				}
 
 				if (ImGui::MenuItem("Exit")) Neko::Application::GetCurrent().Close();
@@ -195,13 +199,54 @@ namespace Neko {
 
 		m_viewportFocused = ImGui::IsWindowFocused();
 		m_viewportHovered = ImGui::IsWindowHovered();
-		Application::GetCurrent().GetImGuiLayer()->BlockEvent(!m_viewportFocused || !m_viewportHovered);
+		Application::GetCurrent().GetImGuiLayer()->BlockEvent(!m_viewportFocused && !m_viewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
 		m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		uint32_t textureID = m_framebuffer->GetColorAttachmentId();
 		ImGui::Image((void*)textureID, ImVec2{ m_viewportSize.x, m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		// gizmos
+		Entity selectEntity = m_sceneHierarchyPanel.GetSelectedEntity();
+		if (selectEntity && m_gizmoType != -1) {
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			// camera
+			auto cameraEntity = m_scene->GetPrimaryCameraEntity();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>().camera;
+			const glm::mat4& cameraProjection = camera.GetProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransformMatrix());
+
+			// entity transform
+			auto& tc = selectEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransformMatrix();
+
+			// snapping
+			bool snap = Input::IsKeyPressed(NEKO_KEY_LEFT_CONTROL);
+			float snapValue = 0.5f;
+			if (m_gizmoType == ImGuizmo::OPERATION::ROTATE)
+				snapValue = 45.0f;
+			float snapValues[3] = { snapValue , snapValue , snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_gizmoType,
+								ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+			if (ImGuizmo::IsUsing()) {
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.rotation;
+				tc.translation = translation;
+				tc.rotation += deltaRotation;
+				tc.scale = scale;
+			}
+		}
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 
@@ -210,6 +255,77 @@ namespace Neko {
 
 	void EditorLayer::OnEvent(Event& e) {
 		m_cameraController.OnEvent(e);
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<KeyPressedEvent>(NEKO_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e) {
+		if (e.GetRepeatCount() > 0)
+			return false;
+
+		bool control = Input::IsKeyPressed(NEKO_KEY_LEFT_CONTROL) || Input::IsKeyPressed(NEKO_KEY_RIGHT_CONTROL);
+		bool shift = Input::IsKeyPressed(NEKO_KEY_LEFT_SHIFT) || Input::IsKeyPressed(NEKO_KEY_RIGHT_SHIFT);
+		switch (e.GetKeyCode()) {
+			case NEKO_KEY_N: {
+				if (control)
+					NewScene();
+				break;
+			}
+			case NEKO_KEY_O: {
+				if (control)
+					OpenScene();
+				break;
+			}
+			case NEKO_KEY_S: {
+				if (control && shift)
+					SaveScene();
+				break;
+			}
+			case NEKO_KEY_Q: {
+				m_gizmoType = -1;
+				break;
+			}
+			case NEKO_KEY_W: {
+				m_gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			}
+			case NEKO_KEY_E: {
+				m_gizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			}
+			case NEKO_KEY_R: {
+				m_gizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			}
+		}
+		return true;
+	}
+
+	void EditorLayer::NewScene() {
+		m_scene = std::make_shared<Scene>();
+		m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+		m_sceneHierarchyPanel.SetContext(m_scene);
+	}
+
+	void EditorLayer::OpenScene() {
+		auto filepath = FileDialogs::OpenFile("Neko Scene (*.neko)\0*.neko\0");
+		if (filepath.empty())
+			return;
+		m_scene = std::make_shared<Scene>();
+		m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+		m_sceneHierarchyPanel.SetContext(m_scene);
+
+		SceneSerializer serializer(m_scene);
+		serializer.Deserialize(filepath);
+	}
+
+	void EditorLayer::SaveScene() {
+		auto filepath = FileDialogs::SaveFile("Neko Scene (*.neko)\0*.neko\0");
+		if (filepath.empty())
+			return;
+		SceneSerializer serializer(m_scene);
+		serializer.Serialize(filepath);
 	}
 
 }

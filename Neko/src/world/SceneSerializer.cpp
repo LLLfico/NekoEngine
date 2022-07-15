@@ -179,15 +179,15 @@ namespace Neko {
 			auto transformComponent = entity["TransformComponent"];
 			if (transformComponent) {
 				auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-				tc.translation = entity["Translation"].as<glm::vec3>();
-				tc.rotation = entity["Rotation"].as<glm::vec3>();
-				tc.scale = entity["Scale"].as<glm::vec3>();
+				tc.translation = transformComponent["Translation"].as<glm::vec3>();
+				tc.rotation = transformComponent["Rotation"].as<glm::vec3>();
+				tc.scale = transformComponent["Scale"].as<glm::vec3>();
 			}
 
 			auto cameraComponent = entity["CameraComponent"];
 			if (cameraComponent) {
 				auto& cc = deserializedEntity.AddComponent<CameraComponent>();
-				auto& camera = entity["Camera"];
+				auto& camera = cameraComponent["Camera"];
 
 				cc.camera.SetProjectionType(SceneCamera::ProjectionType(camera["ProjectionType"].as<int>()));
 				cc.camera.SetPerspectiveFov(camera["PerspectiveFov"].as<float>());
@@ -198,13 +198,13 @@ namespace Neko {
 				cc.camera.SetOrthographicNearClip(camera["OrthographicNear"].as<float>());
 				cc.camera.SetOrthographicFarClip(camera["OrthographicFar"].as<float>());
 
-				cc.primary = camera["Primary"].as<bool>();
+				cc.primary = cameraComponent["Primary"].as<bool>();
 				cc.fixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
 			}
 
 			auto spriteRendererComponent = entity["SpriteRendererComponent"];
 			if (spriteRendererComponent) {
-				auto& src = deserializedEntity.GetComponent<SpriteRendererComponent>();
+				auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 				src.color = spriteRendererComponent["Color"].as<glm::vec4>();
 			}
 		}

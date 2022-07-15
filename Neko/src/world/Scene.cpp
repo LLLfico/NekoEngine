@@ -83,6 +83,16 @@ namespace Neko {
 		}
 	}
 
+	Entity Scene::GetPrimaryCameraEntity() {
+		auto view = m_registry.view<CameraComponent>();
+		for (auto entity : view) {
+			if (view.get<CameraComponent>(entity).primary) {
+				return Entity{ entity, this };
+			}
+		}
+		return {};
+	}
+
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component) {
 		static_assert(false);

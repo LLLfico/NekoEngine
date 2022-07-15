@@ -21,6 +21,7 @@ IncludeDir["glm"] = "Neko/vendor/glm"
 IncludeDir["stb_image"] = "Neko/vendor/stb_image"
 IncludeDir["entt"] = "Neko/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Neko/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Neko/vendor/ImGuizmo"
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
@@ -50,6 +51,8 @@ project "Neko"
 		"%{prj.name}/vendor/glm/glm/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
 	defines
@@ -67,6 +70,7 @@ project "Neko"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links{
@@ -76,6 +80,8 @@ project "Neko"
 		"yaml-cpp",
 		"opengl32.lib",
 	}
+	filter "files:Neko/vendor/ImGuizmo/**.cpp"
+	flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -122,6 +128,7 @@ project "SandBox"
 		"Neko/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links{

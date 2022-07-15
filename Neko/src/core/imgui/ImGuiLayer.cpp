@@ -7,6 +7,7 @@
 
 #include "core/Application.h"
 
+#include <ImGuizmo.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 namespace Neko {
@@ -76,6 +77,7 @@ namespace Neko {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End() {

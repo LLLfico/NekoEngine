@@ -12,6 +12,8 @@ namespace Neko {
 		void SetContext(const std::shared_ptr<Scene>& scene);
 
 		void OnImGuiRender();
+
+		Entity GetSelectedEntity() const { return m_selectionContext; }
 	private:
 		void DrawEntityMode(Entity entity);
 		void DrawComponents(Entity entity);

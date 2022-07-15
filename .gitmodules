@@ -13,3 +13,6 @@
 [submodule "Neko/vendor/yaml-cpp"]
 	path = Neko/vendor/yaml-cpp
 	url = https://github.com/TheCherno/yaml-cpp.git
+[submodule "Neko/vendor/ImGuizmo"]
+	path = Neko/vendor/ImGuizmo
+	url = https://github.com/TheCherno/ImGuizmo.git
