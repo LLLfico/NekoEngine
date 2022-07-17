@@ -60,6 +60,15 @@ namespace Neko {
 			}
 			return false;
 		}
+
+		static GLenum SwitchToGLTextureFormat(FrameBufferTextureFormat format) {
+			switch (format) {
+				case FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
+				case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			}
+			NEKO_CORE_ASSERT(false, "");
+			return 0;
+		}
 	}
 
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferDesc& desc) : m_desc(desc) {
@@ -158,6 +167,14 @@ namespace Neko {
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
+	}
+
+	void OpenGLFrameBuffer::ClearAttachment(uint32_t index, int value) {
+		NEKO_CORE_ASSERT(index < m_colorAttachments.size(), "");
+
+		auto& desc = m_colorAttachmentsDesc[index];
+		glClearTexImage(m_colorAttachments[index], 0, Utils::SwitchToGLTextureFormat(desc.format), GL_INT, &value);
+
 	}
 
 }

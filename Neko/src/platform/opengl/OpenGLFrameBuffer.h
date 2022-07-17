@@ -17,6 +17,8 @@ namespace Neko {
 		virtual void Resize(uint32_t width, uint32_t height) override;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
+		virtual void ClearAttachment(uint32_t index, int value) override;
+
 		virtual uint32_t GetColorAttachmentId(uint32_t index) const override { NEKO_CORE_ASSERT(index < m_colorAttachments.size(), "");  return m_colorAttachments[index]; }
 
 		virtual const FrameBufferDesc& GetDesc() const override { return m_desc; }
