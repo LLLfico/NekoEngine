@@ -6,6 +6,8 @@
 #include "RenderCommand.h"
 #include "Texture.h"
 
+#include "world/Component.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Neko {
@@ -16,6 +18,8 @@ namespace Neko {
 		glm::vec2 texcoord;
 		float texIndex;
 		float tilingFactor;
+
+		int entityId;
 	};
 
 	struct Renderer2DData {
@@ -64,6 +68,7 @@ namespace Neko {
 			{"a_texcoord", ShaderDataType::Float2},
 			{"a_texIndex", ShaderDataType::Float},
 			{"a_tilingFactor", ShaderDataType::Float},
+			{"a_entityId", ShaderDataType::Int},
 		});
 		s_data.quadVertexArray->AddVertexBuffer(s_data.quadVertexBuffer);
 		s_data.quadVertexBufferHead = new QuadVertex[s_data.maxVertices];
@@ -184,10 +189,9 @@ namespace Neko {
 		DrawQuad(transform, color);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityId) {
 		if (s_data.quadIndexCount >= s_data.maxIndices)
 			FlushAndReset();
-
 		constexpr size_t quadVertexCount = 4;
 		constexpr float whiteTextureIndex = 0;
 		constexpr glm::vec2 texcoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
@@ -199,6 +203,7 @@ namespace Neko {
 			s_data.quadVertexBufferPtr->texcoord = texcoords[i];
 			s_data.quadVertexBufferPtr->texIndex = whiteTextureIndex;
 			s_data.quadVertexBufferPtr->tilingFactor = tilingFactor;
+			s_data.quadVertexBufferPtr->entityId = entityId;
 			s_data.quadVertexBufferPtr++;
 		}
 
@@ -227,7 +232,7 @@ namespace Neko {
 		//RenderCommand::DrawElement(s_data.quadVertexArray);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityId) {
 		if (s_data.quadIndexCount >= s_data.maxIndices)
 			FlushAndReset();
 
@@ -254,12 +259,17 @@ namespace Neko {
 			s_data.quadVertexBufferPtr->texcoord = texcoords[i];
 			s_data.quadVertexBufferPtr->texIndex = textureIndex;
 			s_data.quadVertexBufferPtr->tilingFactor = tilingFactor;
+			s_data.quadVertexBufferPtr->entityId = entityId;
 			s_data.quadVertexBufferPtr++;
 		}
 
 		s_data.quadIndexCount += 6;
 
 		s_data.statistics.quadCount++;
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId) {
+		DrawQuad(transform, src.color, entityId);
 	}
 
 	void Renderer2D::ResetStatistics() {

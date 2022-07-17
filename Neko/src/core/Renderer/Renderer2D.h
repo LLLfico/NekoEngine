@@ -8,6 +8,7 @@
 namespace Neko {
 
 	class Texture2D;
+	struct SpriteRendererComponent;
 	class NEKO_API Renderer2D {
 	public:
 		static void Init();
@@ -21,11 +22,13 @@ namespace Neko {
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color);
-		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityId = -1);
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
-		static void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f), int entityId = -1);
+
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId);
 
 		struct Statistics {
 			uint32_t drawCalls = 0;

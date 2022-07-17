@@ -103,14 +103,15 @@ namespace Neko {
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_viewportBounds[0].x;
 		my -= m_viewportBounds[0].y;
-		glm::vec2 viewportSize = m_viewportSize[1] - m_viewportBounds[0];
+		glm::vec2 viewportSize = m_viewportBounds[1] - m_viewportBounds[0];
 		my = viewportSize.y - my;
 		int mouseX = (int)mx;
 		int mouseY = (int)my;
 
 		if (mouseX >= 0 && mouseX < (int)viewportSize.x && mouseY >= 0 && mouseY < (int)viewportSize.y) {
 			int pixelData = m_framebuffer->ReadPixel(1, mouseX, mouseY);
-			NEKO_WARN("Pixel data = {0}", pixelData);
+			// NEKO_CORE_WARN("Pixel data = {0}", pixelData);
+			m_hoveredEntity = (pixelData == -1) ? Entity() : Entity((entt::entity)pixelData, m_scene.get());
 		}
 
 		// Neko::Renderer2D::EndScene();
@@ -203,6 +204,11 @@ namespace Neko {
 		m_sceneHierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Status");
+
+		std::string name = "None";
+		if (m_hoveredEntity)
+			name = m_hoveredEntity.GetComponent<TagComponent>().tag;
+		ImGui::Text("Hovered Entity : %s", name.c_str());
 
 		auto stats = Neko::Renderer2D::GetStatistics();
 		ImGui::Text("Renderer2D Stats:");

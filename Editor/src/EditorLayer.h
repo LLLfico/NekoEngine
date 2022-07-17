@@ -38,6 +38,8 @@ namespace Neko {
 		Entity m_cametaEntity;
 		Entity m_secondCamera;
 
+		Entity m_hoveredEntity = {entt::null, nullptr};
+
 		bool m_primaryCamera = true;
 
 		EditorCamera m_editorCamera;

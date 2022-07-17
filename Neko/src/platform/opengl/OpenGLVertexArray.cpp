@@ -43,11 +43,46 @@ namespace Neko {
 
 		auto& layout = vertexBuffer->GetLayout();
 		for (auto& element : layout) {
-			glEnableVertexAttribArray(m_vertexArrayIndex);
-			glVertexAttribPointer(m_vertexArrayIndex, element.Count(), OpenGLShaderDataBaseType(element.type),
-				element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.offset);
+			switch (element.type) {
+				case ShaderDataType::Float:
+				case ShaderDataType::Float2:
+				case ShaderDataType::Float3:
+				case ShaderDataType::Float4: {
+					glEnableVertexAttribArray(m_vertexArrayIndex);
+					glVertexAttribPointer(m_vertexArrayIndex, element.Count(), OpenGLShaderDataBaseType(element.type),
+						element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.offset);
+					m_vertexArrayIndex++;
+					break;
+				}
+				case ShaderDataType::Int:
+				case ShaderDataType::Int2:
+				case ShaderDataType::Int3:
+				case ShaderDataType::Int4:
+				case ShaderDataType::Bool: {
+					glEnableVertexAttribArray(m_vertexArrayIndex);
+					glVertexAttribIPointer(m_vertexArrayIndex, element.Count(), OpenGLShaderDataBaseType(element.type),
+						layout.GetStride(), (const void*)element.offset);
+					m_vertexArrayIndex++;
+					break;
+				}
+				case ShaderDataType::Mat3:
+				case ShaderDataType::Mat4: {
+					uint8_t count = element.Count();
+					for (uint8_t i = 0; i < count; i++) {
+						glEnableVertexAttribArray(m_vertexArrayIndex);
+						glVertexAttribPointer(m_vertexArrayIndex,
+							count,
+							OpenGLShaderDataBaseType(element.type),
+							element.normalized ? GL_TRUE : GL_FALSE,
+							layout.GetStride(),
+							(const void*)(element.offset + sizeof(float) * count * i));
+						glVertexAttribDivisor(m_vertexArrayIndex, 1);
+						m_vertexArrayIndex++;
+					}
+					break;
+				}
 
-			m_vertexArrayIndex++;
+			}
 		}
 		
 		m_vertexBuffers.push_back(vertexBuffer);
