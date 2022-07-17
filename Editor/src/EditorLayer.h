@@ -40,6 +40,8 @@ namespace Neko {
 
 		bool m_primaryCamera = true;
 
+		EditorCamera m_editorCamera;
+
 		bool m_viewportFocused = false, m_viewportHovered = false;
 		glm::vec2 m_viewportSize = { 0.0f, 0.0f };
 

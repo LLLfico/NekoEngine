@@ -27,7 +27,7 @@ namespace Neko {
 
 		template<typename T>
 		bool HasComponent() {
-			return m_scene->m_registry.any_of<T>(m_handle);
+			return m_scene->m_registry.all_of<T>(m_handle);
 		}
 
 		template<typename T>
@@ -36,7 +36,7 @@ namespace Neko {
 			m_scene->m_registry.remove<T>(m_handle);
 		}
 
-		operator bool() const { return m_handle != entt::entity{0}; }
+		operator bool() const { return m_handle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_handle; };
 		operator entt::entity() const { return m_handle; }
 
@@ -47,7 +47,7 @@ namespace Neko {
 			return !(*this == other);
 		}
 	private:
-		entt::entity m_handle{ 0 };
+		entt::entity m_handle{ entt::null };
 		Scene* m_scene = nullptr;
 
 	};

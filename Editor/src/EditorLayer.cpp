@@ -22,7 +22,8 @@ namespace Neko {
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
 
 		m_scene = std::make_shared<Scene>();
-
+		m_editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+		#if 0
 		auto square = m_scene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
@@ -62,7 +63,7 @@ namespace Neko {
 
 		m_cametaEntity.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
 		m_secondCamera.AddComponent<NativeScriptComponent>().Bind<CameraCtrler>();
-
+		#endif
 		m_sceneHierarchyPanel.SetContext(m_scene);
 	}
 
@@ -76,11 +77,14 @@ namespace Neko {
 			(desc.width != m_viewportSize.x || desc.height != m_viewportSize.y)) {
 			m_framebuffer->Resize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 			m_cameraController.OnResize(m_viewportSize.x, m_viewportSize.y);
+			m_editorCamera.SetViewportSize(m_viewportSize.x, m_viewportSize.y);
 			m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 		}
 
 		if (m_viewportFocused)
 			m_cameraController.OnUpdate(dt);
+
+		m_editorCamera.OnUpdate(dt);
 
 		Neko::Renderer2D::ResetStatistics();
 		m_framebuffer->Bind();
@@ -92,7 +96,7 @@ namespace Neko {
 		Neko::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
 		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);*/
 
-		m_scene->OnUpdate(dt);
+		m_scene->OnUpdateEditor(dt, m_editorCamera);
 
 		// Neko::Renderer2D::EndScene();
 
@@ -218,10 +222,9 @@ namespace Neko {
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
 			// camera
-			auto cameraEntity = m_scene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>().camera;
-			const glm::mat4& cameraProjection = camera.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransformMatrix());
+			const glm::mat4& cameraProjection = m_editorCamera.GetProjection();
+			glm::mat4 cameraView = m_editorCamera.GetViewMatrix();
+			
 
 			// entity transform
 			auto& tc = selectEntity.GetComponent<TransformComponent>();
@@ -255,6 +258,7 @@ namespace Neko {
 
 	void EditorLayer::OnEvent(Event& e) {
 		m_cameraController.OnEvent(e);
+		m_editorCamera.OnEvent(e);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(NEKO_BIND_EVENT_FN(EditorLayer::OnKeyPressed));

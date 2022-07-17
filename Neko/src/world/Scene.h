@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/TimeStep.h"
+#include "core/Renderer/EditorCamera.h"
 
 #include <entt.hpp>
 
@@ -18,7 +19,8 @@ namespace Neko {
 		Entity CreateEntity(const std::string& name = "");
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(TimeStep dt);
+		void OnUpdateRuntime(TimeStep dt);
+		void OnUpdateEditor(TimeStep dt, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

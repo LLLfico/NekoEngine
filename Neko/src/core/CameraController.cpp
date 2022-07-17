@@ -37,9 +37,6 @@ namespace Neko {
 		// NEKO_CORE_TRACE("{0}", e);
 		dispatcher.Dispatch<MouseScrolledEvent>(NEKO_BIND_EVENT_FN(CameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(NEKO_BIND_EVENT_FN(CameraController::OnWindowResized));
-		if (m_camera.GetType() == CameraType::Perspective) {
-			dispatcher.Dispatch<MouseMovedEvent>(NEKO_BIND_EVENT_FN(CameraController::OnMouseMoved));
-		}
 	}
 
 	void CameraController::OnResize(uint32_t width, uint32_t height) {

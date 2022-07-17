@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "core/Renderer/Renderer2D.h"
 
+
 namespace Neko {
 
 	Scene::Scene() {
@@ -25,7 +26,7 @@ namespace Neko {
 		m_registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(TimeStep dt) {
+	void Scene::OnUpdateRuntime(TimeStep dt) {
 		// scripts
 		{
 			m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc) {
@@ -68,6 +69,19 @@ namespace Neko {
 
 			Renderer2D::EndScene();
 		}
+	}
+
+	void Scene::OnUpdateEditor(TimeStep dt, EditorCamera& camera) {
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group) {
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			Renderer2D::DrawQuad(transform.GetTransformMatrix(), sprite.color);
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height) {

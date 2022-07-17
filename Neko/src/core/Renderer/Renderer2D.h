@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include "Projection.h"
+#include "EditorCamera.h"
 
 namespace Neko {
 
@@ -14,6 +15,7 @@ namespace Neko {
 		
 		static void BeginScene(const Camera& camera);
 		static void BeginScene(const Projection& projection, const glm::mat4& transform);
+		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
 		static void Flush();
 

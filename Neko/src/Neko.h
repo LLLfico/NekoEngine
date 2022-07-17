@@ -23,6 +23,7 @@
 #include "core/Renderer/Texture.h"
 
 #include "core/Renderer/Camera.h"
+#include "core/Renderer/EditorCamera.h"
 #include "core/CameraController.h"
 
 // ecs
