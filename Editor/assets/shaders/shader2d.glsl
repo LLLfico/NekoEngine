@@ -26,6 +26,7 @@ void main()
 #type fragment
 #version 460 core
 layout(location = 0) out vec4 color;
+layout(location = 1) out int color2;
 
 in vec4 v_color;
 in vec2 v_texCoord;
@@ -38,4 +39,5 @@ void main()
 {
 	// color = texture(u_texture, v_texCoord);
 	color = texture(u_texture[int(v_texIndex)], v_texCoord * v_tilingFactor) * v_color;
+	color2 = 50;
 } 

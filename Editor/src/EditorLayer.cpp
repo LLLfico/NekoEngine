@@ -18,7 +18,7 @@ namespace Neko {
 
 		m_texture = Texture2D::Create("assets/textures/testpic.png");
 
-		Neko::FrameBufferDesc desc = { 1280, 720 };
+		Neko::FrameBufferDesc desc = { 1280, 720, {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::DEPTH24STENCIL8} };
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
 
 		m_scene = std::make_shared<Scene>();
@@ -97,6 +97,19 @@ namespace Neko {
 		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);*/
 
 		m_scene->OnUpdateEditor(dt, m_editorCamera);
+
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_viewportBounds[0].x;
+		my -= m_viewportBounds[0].y;
+		glm::vec2 viewportSize = m_viewportSize[1] - m_viewportBounds[0];
+		my = viewportSize.y - my;
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
+
+		if (mouseX >= 0 && mouseX < (int)viewportSize.x && mouseY >= 0 && mouseY < (int)viewportSize.y) {
+			int pixelData = m_framebuffer->ReadPixel(1, mouseX, mouseY);
+			NEKO_WARN("Pixel data = {0}", pixelData);
+		}
 
 		// Neko::Renderer2D::EndScene();
 
@@ -200,6 +213,7 @@ namespace Neko {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+		auto viewportOffset = ImGui::GetCursorPos();
 
 		m_viewportFocused = ImGui::IsWindowFocused();
 		m_viewportHovered = ImGui::IsWindowHovered();
@@ -208,8 +222,17 @@ namespace Neko {
 
 		m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-		uint32_t textureID = m_framebuffer->GetColorAttachmentId();
+		uint32_t textureID = m_framebuffer->GetColorAttachmentId(0);
 		ImGui::Image((void*)textureID, ImVec2{ m_viewportSize.x, m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_viewportBounds[0] = { minBound.x, minBound.y };
+		m_viewportBounds[1] = { maxBound.x, maxBound.y };
 
 		// gizmos
 		Entity selectEntity = m_sceneHierarchyPanel.GetSelectedEntity();
