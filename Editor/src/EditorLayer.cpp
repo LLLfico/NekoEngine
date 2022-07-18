@@ -19,6 +19,8 @@ namespace Neko {
 		m_cameraController.SetOrthographicCamera();
 
 		m_texture = Texture2D::Create("assets/textures/testpic.png");
+		m_playIcon = Texture2D::Create("resources/icon/PlayButton.png");
+		m_stopIcon = Texture2D::Create("resources/icon/StopButton.png");
 
 		Neko::FrameBufferDesc desc = { 1280, 720, {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::DEPTH24STENCIL8} };
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
@@ -94,6 +96,22 @@ namespace Neko {
 		Neko::RenderCommand::Clear();
 
 		m_framebuffer->ClearAttachment(1, -1);
+
+		switch (m_sceneState) {
+			case SceneState::Edit: {
+				if (m_viewportFocused) {
+					m_cameraController.OnUpdate(dt);
+				}
+				m_editorCamera.OnUpdate(dt);
+
+				m_scene->OnUpdateEditor(dt, m_editorCamera);
+				break;
+			}
+			case SceneState::Play: {
+				m_scene->OnUpdateRuntime(dt);
+				break;
+			}
+		}
 
 		// Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
 		/*Neko::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
@@ -290,6 +308,8 @@ namespace Neko {
 		ImGui::End();
 		ImGui::PopStyleVar();
 
+		UI_Toolbar();
+
 		ImGui::End();
 	}
 
@@ -380,6 +400,40 @@ namespace Neko {
 			return;
 		SceneSerializer serializer(m_scene);
 		serializer.Serialize(filepath);
+	}
+
+	void EditorLayer::OnScenePlay() {
+		m_sceneState = SceneState::Play;
+	}
+
+	void EditorLayer::OnSceneStop() {
+		m_sceneState = SceneState::Edit;
+	}
+
+	void EditorLayer::UI_Toolbar() {
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		auto& colors = ImGui::GetStyle().Colors;
+		const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		float size = ImGui::GetWindowHeight() - 4.0f;
+		std::shared_ptr<Texture2D> icon = m_sceneState == SceneState::Edit ? m_playIcon : m_stopIcon;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		if (ImGui::ImageButton((ImTextureID)icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0)) {
+			if (m_sceneState == SceneState::Edit)
+				OnScenePlay();
+			else if (m_sceneState == SceneState::Play)
+				OnSceneStop();
+		}
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
 	}
 
 }

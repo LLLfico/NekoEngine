@@ -26,6 +26,11 @@ namespace Neko {
 		void OpenScene(const std::filesystem::path& path);
 		void SaveScene();
 
+		void OnScenePlay();
+		void OnSceneStop();
+
+		void UI_Toolbar();
+
 	private:
 		CameraController m_cameraController;
 
@@ -55,8 +60,17 @@ namespace Neko {
 
 		int m_gizmoType = -1;
 
+		enum class SceneState {
+			Edit = 0, 
+			Play = 1,
+		};
+		SceneState m_sceneState = SceneState::Edit;
+
 		SceneHierarchyPanel m_sceneHierarchyPanel;
 		ContentBrowserPanel m_contentBrowserPanel;
+
+		std::shared_ptr<Texture2D> m_playIcon;
+		std::shared_ptr<Texture2D> m_stopIcon;
 	};
 
 }
