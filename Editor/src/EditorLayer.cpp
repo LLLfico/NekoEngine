@@ -202,6 +202,7 @@ namespace Neko {
 		}
 
 		m_sceneHierarchyPanel.OnImGuiRender();
+		m_contentBrowserPanel.OnImGuiRender();
 
 		ImGui::Begin("Status");
 

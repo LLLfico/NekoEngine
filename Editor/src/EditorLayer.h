@@ -2,6 +2,7 @@
 #include <Neko.h>
 
 #include "panels/SceneHierarchyPanel.h"
+#include "panels/ContentBrowserPanel.h"
 
 namespace Neko {
 
@@ -54,6 +55,7 @@ namespace Neko {
 		int m_gizmoType = -1;
 
 		SceneHierarchyPanel m_sceneHierarchyPanel;
+		ContentBrowserPanel m_contentBrowserPanel;
 	};
 
 }
