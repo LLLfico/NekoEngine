@@ -269,7 +269,12 @@ namespace Neko {
 	}
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId) {
-		DrawQuad(transform, src.color, entityId);
+		if (src.texture) {
+			DrawQuad(transform, src.texture, src.tilingFactor, src.color, entityId);
+		}
+		else {
+			DrawQuad(transform, src.color, entityId);
+		}
 	}
 
 	void Renderer2D::ResetStatistics() {

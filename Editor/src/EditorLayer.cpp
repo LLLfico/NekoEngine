@@ -10,6 +10,8 @@
 
 namespace Neko {
 
+	extern const std::filesystem::path g_assetPath;
+
 	EditorLayer::EditorLayer() : Layer("EditorLayer") {
 	}
 
@@ -237,6 +239,13 @@ namespace Neko {
 
 		uint32_t textureID = m_framebuffer->GetColorAttachmentId(0);
 		ImGui::Image((void*)textureID, ImVec2{ m_viewportSize.x, m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				OpenScene(g_assetPath / path);
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		// gizmos
 		Entity selectEntity = m_sceneHierarchyPanel.GetSelectedEntity();
@@ -285,7 +294,7 @@ namespace Neko {
 	}
 
 	void EditorLayer::OnEvent(Event& e) {
-		m_cameraController.OnEvent(e);
+		// m_cameraController.OnEvent(e);
 		m_editorCamera.OnEvent(e);
 
 		EventDispatcher dispatcher(e);
@@ -353,13 +362,16 @@ namespace Neko {
 	void EditorLayer::OpenScene() {
 		auto filepath = FileDialogs::OpenFile("Neko Scene (*.neko)\0*.neko\0");
 		if (filepath.empty())
-			return;
+			OpenScene(filepath);
+	}
+
+	void EditorLayer::OpenScene(const std::filesystem::path& path) {
 		m_scene = std::make_shared<Scene>();
 		m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 		m_sceneHierarchyPanel.SetContext(m_scene);
 
 		SceneSerializer serializer(m_scene);
-		serializer.Deserialize(filepath);
+		serializer.Deserialize(path.string());
 	}
 
 	void EditorLayer::SaveScene() {

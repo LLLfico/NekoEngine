@@ -12,6 +12,8 @@
 
 namespace Neko {
 
+	extern const std::filesystem::path g_assetPath;
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const std::shared_ptr<Scene>& scene) {
 		SetContext(scene);
 	}
@@ -289,6 +291,17 @@ namespace Neko {
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component) {
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+
+			ImGui::Button("Texture", ImVec2{ 100.0f, 0.0f });
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					auto texturePath = g_assetPath / path;
+					component.texture = Texture2D::Create(texturePath.string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 	}
 

@@ -3,6 +3,8 @@
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
+#include "core/Renderer/Texture.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,6 +39,8 @@ namespace Neko {
 
 	struct SpriteRendererComponent {
 		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		std::shared_ptr<Texture2D> texture;
+		float tilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;

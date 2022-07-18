@@ -23,6 +23,7 @@ namespace Neko {
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveScene();
 
 	private:
