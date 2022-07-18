@@ -289,6 +289,7 @@ namespace Neko {
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(NEKO_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(NEKO_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e) {
@@ -331,6 +332,15 @@ namespace Neko {
 			}
 		}
 		return true;
+	}
+
+	bool EditorLayer::OnMouseButtonPressed(MouseButtonEvent& e) {
+		if (e.GetMouseButton() == NEKO_MOUSE_BUTTON_LEFT) {
+			if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(NEKO_KEY_LEFT_ALT)) {
+				m_sceneHierarchyPanel.SetSelectedEntity(m_hoveredEntity);
+			}
+		}
+		return false;
 	}
 
 	void EditorLayer::NewScene() {

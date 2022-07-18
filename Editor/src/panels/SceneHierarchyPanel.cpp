@@ -21,6 +21,10 @@ namespace Neko {
 		m_selectionContext = {};
 	}
 
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity) {
+		m_selectionContext = entity;
+	}
+
 	void SceneHierarchyPanel::OnImGuiRender() {
 		ImGui::Begin("Scene Hierarchy");
 
