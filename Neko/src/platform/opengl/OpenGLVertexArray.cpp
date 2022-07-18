@@ -59,6 +59,7 @@ namespace Neko {
 				case ShaderDataType::Int3:
 				case ShaderDataType::Int4:
 				case ShaderDataType::Bool: {
+					// glVertexAttrib I Pointer用的接口和上面的不一样，上面的输入的int型会被转为浮点型
 					glEnableVertexAttribArray(m_vertexArrayIndex);
 					glVertexAttribIPointer(m_vertexArrayIndex, element.Count(), OpenGLShaderDataBaseType(element.type),
 						layout.GetStride(), (const void*)element.offset);
