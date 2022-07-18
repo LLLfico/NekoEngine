@@ -4,6 +4,7 @@
 
 namespace Neko {
 
+	class Texture2D;
 	class ContentBrowserPanel {
 	public:
 		ContentBrowserPanel();
@@ -11,6 +12,9 @@ namespace Neko {
 		void OnImGuiRender();
 	private:
 		std::filesystem::path m_currentDirectory;
+
+		std::shared_ptr<Texture2D> m_directoryIcon;
+		std::shared_ptr<Texture2D> m_fileIcon;
 	};
 
 }
