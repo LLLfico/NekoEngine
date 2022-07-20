@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/Core.h"
-#include "core/Renderer/Buffer.h"
+#include "core/renderer/Buffer.h"
 
 namespace Neko {
 

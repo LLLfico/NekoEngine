@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/TimeStep.h"
-#include "core/Renderer/EditorCamera.h"
+#include "core/renderer/EditorCamera.h"
 
 #include <entt.hpp>
 
+class b2World;
 namespace Neko {
 
 	class Entity;
@@ -19,6 +20,9 @@ namespace Neko {
 		Entity CreateEntity(const std::string& name = "");
 		void DestroyEntity(Entity entity);
 
+		void OnRuntimeStart();
+		void OnRuntimeStop();
+
 		void OnUpdateRuntime(TimeStep dt);
 		void OnUpdateEditor(TimeStep dt, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
@@ -30,6 +34,8 @@ namespace Neko {
 	private:
 		entt::registry m_registry;
 		uint32_t m_viewportWidth = 0, m_viewportHeight = 0;
+
+		std::shared_ptr<b2World> m_physicsWorld = nullptr;
 	};
 
 }

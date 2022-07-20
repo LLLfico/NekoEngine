@@ -26,12 +26,14 @@ IncludeDir["stb_image"] = "Neko/vendor/stb_image"
 IncludeDir["entt"] = "Neko/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Neko/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Neko/vendor/ImGuizmo"
+IncludeDir["Box2D"] = "Neko/vendor/Box2D/include"
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
 include "Neko/vendor/Glad"
 include "Neko/vendor/imgui"
 include "Neko/vendor/yaml-cpp"
+include "Neko/vendor/Box2D"
 
 
 project "Neko"
@@ -39,7 +41,7 @@ project "Neko"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir("bin/" ..outputdir.. "/%{prj.name}")
 	objdir("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -76,6 +78,7 @@ project "Neko"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.Box2D}",
 	}
 
 	links{
@@ -83,6 +86,7 @@ project "Neko"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
+		"Box2D",
 		"opengl32.lib",
 	}
 	filter "files:Neko/vendor/ImGuizmo/**.cpp"
@@ -162,7 +166,7 @@ project "Editor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir("bin/" ..outputdir.. "/%{prj.name}")
 	objdir("bin-int/" ..outputdir.. "/%{prj.name}")

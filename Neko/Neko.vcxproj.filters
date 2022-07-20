@@ -7,9 +7,6 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{C55F2ECF-B12C-89DA-DA45-7782C671BE68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\core\Renderer">
-      <UniqueIdentifier>{0B317641-7747-74D7-C0BE-FFF82C14455F}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\core\events">
       <UniqueIdentifier>{29103182-959B-9E46-9EAC-213B0AB7FA46}</UniqueIdentifier>
     </Filter>
@@ -18,6 +15,9 @@
     </Filter>
     <Filter Include="src\core\math">
       <UniqueIdentifier>{DEF319E5-4AB4-951B-13EF-DE987F6EDAF7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\renderer">
+      <UniqueIdentifier>{2BCDB0C9-97E3-AE5F-E05A-3A814CB07FE7}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\core\utils">
       <UniqueIdentifier>{0571F388-F13E-E78E-DAD2-57B5C63FC3F3}</UniqueIdentifier>
@@ -72,6 +72,9 @@
     <ClInclude Include="src\core\Application.h">
       <Filter>src\core</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\Assert.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\CameraController.h">
       <Filter>src\core</Filter>
     </ClInclude>
@@ -99,45 +102,6 @@
     <ClInclude Include="src\core\MouseCodes.h">
       <Filter>src\core</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Renderer\Buffer.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Camera.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\EditorCamera.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\FrameBuffer.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\GraphicsContext.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Projection.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\RenderCommand.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Renderer.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Renderer2D.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\RendererAPI.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Shader.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\Texture.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\Renderer\VertexArray.h">
-      <Filter>src\core\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\TimeStep.h">
       <Filter>src\core</Filter>
     </ClInclude>
@@ -161,6 +125,45 @@
     </ClInclude>
     <ClInclude Include="src\core\math\Math.h">
       <Filter>src\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Buffer.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Camera.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\EditorCamera.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\FrameBuffer.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\GraphicsContext.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Projection.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\RenderCommand.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Renderer.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Renderer2D.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\RendererAPI.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Shader.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\Texture.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\VertexArray.h">
+      <Filter>src\core\renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\core\utils\PlatformUtils.h">
       <Filter>src\core\utils</Filter>
@@ -1467,7 +1470,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\Assert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1488,39 +1490,6 @@
     <ClCompile Include="src\core\Log.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\Renderer\Buffer.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\Camera.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\EditorCamera.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\FrameBuffer.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\RenderCommand.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\Renderer.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\Renderer2D.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\RendererAPI.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\Shader.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\Texture.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\Renderer\VertexArray.cpp">
-      <Filter>src\core\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\Window.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
@@ -1532,6 +1501,39 @@
     </ClCompile>
     <ClCompile Include="src\core\math\Math.cpp">
       <Filter>src\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Buffer.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Camera.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\EditorCamera.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\FrameBuffer.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\RenderCommand.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Renderer.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Renderer2D.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\RendererAPI.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Shader.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Texture.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\VertexArray.cpp">
+      <Filter>src\core\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>

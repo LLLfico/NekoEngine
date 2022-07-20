@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "OpenGLRendererAPI.h"
 
-#include "core/Renderer/VertexArray.h"
-#include "core/Renderer/Buffer.h"
+#include "core/renderer/VertexArray.h"
+#include "core/renderer/Buffer.h"
 
 #include <glad/glad.h>
 

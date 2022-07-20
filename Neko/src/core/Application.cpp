@@ -7,12 +7,12 @@
 #include "Input.h"
 #include "Time.h"
 
-#include "Renderer/Shader.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/RenderCommand.h"
-#include "Renderer/Camera.h"
+#include "renderer/Shader.h"
+#include "renderer/Buffer.h"
+#include "renderer/VertexArray.h"
+#include "renderer/Renderer.h"
+#include "renderer/RenderCommand.h"
+#include "renderer/Camera.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

@@ -4,7 +4,7 @@
 #include "TimeStep.h"
 #include "Input.h"
 #include "KeyCodes.h"
-#include "Renderer/Camera.h"
+#include "renderer/Camera.h"
 #include "events/MouseEvent.h"
 #include "events/ApplicationEvent.h"
 

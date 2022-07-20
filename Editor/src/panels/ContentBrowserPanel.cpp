@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ContentBrowserPanel.h"
 
-#include "core/Renderer/Texture.h"
+#include "core/renderer/Texture.h"
 #include <imgui/imgui.h>
 
 namespace Neko {

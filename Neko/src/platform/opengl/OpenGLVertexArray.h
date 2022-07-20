@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Renderer/VertexArray.h"
+#include "core/renderer/VertexArray.h"
 
 namespace Neko {
 

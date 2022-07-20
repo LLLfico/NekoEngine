@@ -1,7 +1,7 @@
 #pragma once
 #include "core/Core.h"
 
-#include "Renderer/Camera.h"
+#include "renderer/Camera.h"
 #include <glm/glm.hpp>
 
 namespace Neko {

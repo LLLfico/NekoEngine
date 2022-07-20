@@ -1,5 +1,5 @@
 #pragma once
-#include "core/Renderer/Texture.h"
+#include "core/renderer/Texture.h"
 #include <glad/glad.h>
 
 namespace Neko {

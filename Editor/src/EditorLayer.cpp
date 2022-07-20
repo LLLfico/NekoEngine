@@ -395,10 +395,10 @@ namespace Neko {
 			return;
 		}
 		auto newScene = std::make_shared<Scene>();
+		newScene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string())) {
 			m_scene = newScene;
-			m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 			m_sceneHierarchyPanel.SetContext(m_scene);
 		}
 	}
@@ -413,10 +413,12 @@ namespace Neko {
 
 	void EditorLayer::OnScenePlay() {
 		m_sceneState = SceneState::Play;
+		m_scene->OnRuntimeStart();
 	}
 
 	void EditorLayer::OnSceneStop() {
 		m_sceneState = SceneState::Edit;
+		m_scene->OnRuntimeStop();
 	}
 
 	void EditorLayer::UI_Toolbar() {

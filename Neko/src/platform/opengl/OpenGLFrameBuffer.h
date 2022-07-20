@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Renderer/FrameBuffer.h"
+#include "core/renderer/FrameBuffer.h"
 
 namespace Neko {
 

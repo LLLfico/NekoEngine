@@ -14,18 +14,17 @@
 #include "core/MouseCodes.h"
 
 // render
-#include "core/Renderer/Renderer.h"
-#include "core/Renderer/Renderer2D.h"
-#include "core/Renderer/RenderCommand.h"
+#include "core/renderer/Renderer.h"
+#include "core/renderer/Renderer2D.h"
+#include "core/renderer/RenderCommand.h"
+#include "core/renderer/Buffer.h"
+#include "core/renderer/FrameBuffer.h"
+#include "core/renderer/VertexArray.h"
+#include "core/renderer/Shader.h"
+#include "core/renderer/Texture.h"
+#include "core/renderer/Camera.h"
+#include "core/renderer/EditorCamera.h"
 
-#include "core/Renderer/Buffer.h"
-#include "core/Renderer/FrameBuffer.h"
-#include "core/Renderer/VertexArray.h"
-#include "core/Renderer/Shader.h"
-#include "core/Renderer/Texture.h"
-
-#include "core/Renderer/Camera.h"
-#include "core/Renderer/EditorCamera.h"
 #include "core/CameraController.h"
 
 // ecs

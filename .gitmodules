@@ -16,3 +16,6 @@
 [submodule "Neko/vendor/ImGuizmo"]
 	path = Neko/vendor/ImGuizmo
 	url = https://github.com/TheCherno/ImGuizmo.git
+[submodule "Neko/vendor/Box2D"]
+	path = Neko/vendor/Box2D
+	url = https://github.com/TheCherno/box2d.git

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Renderer/RendererAPI.h"
+#include "core/renderer/RendererAPI.h"
 
 #include <glm/glm.hpp>
 
