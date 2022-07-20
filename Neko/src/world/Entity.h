@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Scene.h"
+#include "Component.h"
+#include "core/UUID.h"
+
 #include <entt.hpp>
 
 namespace Neko {
@@ -39,6 +42,8 @@ namespace Neko {
 		operator bool() const { return m_handle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_handle; };
 		operator entt::entity() const { return m_handle; }
+
+		UUID GetUUID() { return GetComponent<IDComponent>().id; }
 
 		bool operator==(const Entity& other) const {
 			return m_handle == other.m_handle && m_scene == other.m_scene;

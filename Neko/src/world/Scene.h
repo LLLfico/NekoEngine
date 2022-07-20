@@ -8,6 +8,7 @@
 class b2World;
 namespace Neko {
 
+	class UUID;
 	class Entity;
 	class NEKO_API Scene {
 		friend class Entity;
@@ -18,6 +19,7 @@ namespace Neko {
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = "");
+		Entity CreateEntityWithUUID(UUID id, const std::string& name = "");
 		void DestroyEntity(Entity entity);
 
 		void OnRuntimeStart();

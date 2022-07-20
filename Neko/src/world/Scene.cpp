@@ -3,6 +3,9 @@
 
 #include "Entity.h"
 #include "Component.h"
+#include "ScriptableEntity.h"
+
+#include "core/UUID.h"
 #include "core/renderer/Renderer2D.h"
 
 #include <box2d/b2_world.h>
@@ -25,11 +28,17 @@ namespace Neko {
 	}
 
 	Entity Scene::CreateEntity(const std::string& name) {
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID id, const std::string& name) {
 		Entity entity = { m_registry.create(), this };
+		entity.AddComponent<IDComponent>(id);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.tag = name.empty() ? "Entity" : name;
 		return entity;
+		return Entity();
 	}
 
 	void Scene::DestroyEntity(Entity entity) {
@@ -179,6 +188,10 @@ namespace Neko {
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component) {
 		static_assert(false);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component) {
 	}
 
 	template<>

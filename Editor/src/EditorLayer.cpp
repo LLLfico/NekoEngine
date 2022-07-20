@@ -118,8 +118,6 @@ namespace Neko {
 		Neko::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
 		Neko::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_texture, 10.0f);*/
 
-		m_scene->OnUpdateEditor(dt, m_editorCamera);
-
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_viewportBounds[0].x;
 		my -= m_viewportBounds[0].y;

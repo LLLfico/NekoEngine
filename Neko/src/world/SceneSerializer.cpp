@@ -108,8 +108,9 @@ namespace Neko {
 	}
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity) {
+		NEKO_CORE_ASSERT(entity.HasComponent<IDComponent>());
 		out << YAML::BeginMap;
-		out << YAML::Key << "Entity" << YAML::Value << "12837192831273";
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
 		if (entity.HasComponent<TagComponent>()) {
 			out << YAML::Key << "TagComponent";
@@ -239,7 +240,7 @@ namespace Neko {
 			}
 			NEKO_CORE_TRACE("Deserialize entity with Id = {0}, name = {1}", uuid, name);
 
-			Entity deserializedEntity = m_scene->CreateEntity(name);
+			Entity deserializedEntity = m_scene->CreateEntityWithUUID(uuid, name);
 
 			auto transformComponent = entity["TransformComponent"];
 			if (transformComponent) {

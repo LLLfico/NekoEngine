@@ -1,8 +1,7 @@
 #pragma once
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
-
+#include "core/UUID.h"
 #include "core/renderer/Texture.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -11,6 +10,13 @@
 #include <glm/gtx/quaternion.hpp>
 
 namespace Neko {
+
+	struct IDComponent {
+		UUID id;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+	};
 
 	struct TagComponent {
 		std::string tag;
@@ -56,6 +62,7 @@ namespace Neko {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	class ScriptableEntity;
 	struct NativeScriptComponent {
 		ScriptableEntity* instance = nullptr;
 
