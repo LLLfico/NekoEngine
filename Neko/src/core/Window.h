@@ -19,7 +19,7 @@ namespace Neko {
 	public:
 		using EventCallbackFunction = std::function<void(Event&)>;
 
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
 
@@ -33,7 +33,7 @@ namespace Neko {
 
 		virtual void* GetNativeWindow() const = 0;
 
-		static Window* Create(const WindowInfos& infos = WindowInfos());
+		static std::unique_ptr<Window> Create(const WindowInfos& infos = WindowInfos());
 	};
 
 }

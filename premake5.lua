@@ -1,10 +1,14 @@
 workspace "Neko"
-	architecture "x64"
+	architecture "x86_64"
 
 	configurations{
 		"Debug",
 		"Release",
 		"Distribution"
+	}
+	flags
+	{
+		"MultiProcessorCompile"
 	}
 
 	startproject "Editor"
@@ -57,7 +61,8 @@ project "Neko"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE",
 	}
 
 	includedirs{
@@ -85,12 +90,6 @@ project "Neko"
 
 	filter "system:windows"
 		systemversion "latest"
-
-		defines{
-			"NEKO_PLATFORM_WINDOWS",
-			"NEKO_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
-		}
 
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"
@@ -188,9 +187,6 @@ project "Editor"
 	filter "system:windows"
 		systemversion "latest"
 		runtime "Debug"
-		defines{
-			"NEKO_PLATFORM_WINDOWS",
-		}
 
 	filter "configurations:Debug"
 		defines "NEKO_DEBUG"

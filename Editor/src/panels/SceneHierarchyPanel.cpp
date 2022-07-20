@@ -2,7 +2,6 @@
 #include "SceneHierarchyPanel.h"
 
 #include "core/Core.h"
-#include "core/Log.h"
 #include "world/Scene.h"
 #include "world/Component.h"
 
@@ -196,7 +195,7 @@ namespace Neko {
 			auto& tag = entity.GetComponent<TagComponent>().tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) {
 				tag = std::string(buffer);
 			}
@@ -208,12 +207,22 @@ namespace Neko {
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent")) {
 			if (ImGui::MenuItem("Camera")) {
-				m_selectionContext.AddComponent<CameraComponent>();
+				if (m_selectionContext.HasComponent<CameraComponent>()) {
+					m_selectionContext.AddComponent<CameraComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has camera component!");
+				}
 				ImGui::CloseCurrentPopup();
 			}
 
 			if (ImGui::MenuItem("Sprit Renderer")) {
-				m_selectionContext.AddComponent<SpriteRendererComponent>();
+				if (m_selectionContext.HasComponent<SpriteRendererComponent>()) {
+					m_selectionContext.AddComponent<SpriteRendererComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has sprite renderer component!");
+				}
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -297,7 +306,11 @@ namespace Neko {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
 					const wchar_t* path = (const wchar_t*)payload->Data;
 					auto texturePath = g_assetPath / path;
-					component.texture = Texture2D::Create(texturePath.string());
+					auto texture = Texture2D::Create(texturePath.string());
+					if (texture->IsLoaded())
+						component.texture = texture;
+					else
+						NEKO_WARN("Could not load texture {0}", texturePath.filename().string());
 				}
 				ImGui::EndDragDropTarget();
 			}

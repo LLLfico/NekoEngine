@@ -16,6 +16,7 @@ namespace YAML {
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 		static bool decode(const Node& node, glm::vec3& rhs) {
@@ -37,6 +38,7 @@ namespace YAML {
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
 			node.push_back(rhs.w);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 		static bool decode(const Node& node, glm::vec4& rhs) {
@@ -149,11 +151,14 @@ namespace Neko {
 	}
 
 	bool SceneSerializer::Deserialize(const std::string& filePath) {
-		std::ifstream ifs(filePath);
-		std::stringstream ss;
-		ss << ifs.rdbuf();
+		YAML::Node data;
+		try {
+			data = YAML::LoadFile(filePath);
+		}
+		catch (YAML::ParserException e) {
+			return false;
+		}
 
-		YAML::Node data = YAML::Load(ss.str());
 		if (!data["Scene"])
 			return false;
 

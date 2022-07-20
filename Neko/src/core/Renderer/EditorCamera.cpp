@@ -3,7 +3,7 @@
 
 #include "core/Input.h"
 #include "core/KeyCodes.h"
-#include "core/MouseButtonCodes.h"
+#include "core/MouseCodes.h"
 
 #include <GLFW/glfw3.h>
 
@@ -17,15 +17,15 @@ namespace Neko {
 	}
 
 	void EditorCamera::OnUpdate(TimeStep dt) {
-		if (Input::IsKeyPressed(NEKO_KEY_LEFT_ALT)) {
+		if (Input::IsKeyPressed(Key::LeftAlt)) {
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_initialMousePosition) * 0.003f;
 			m_initialMousePosition = mouse;
-			if (Input::IsMouseButtonPressed(NEKO_MOUSE_BUTTON_MIDDLE))
+			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(NEKO_MOUSE_BUTTON_LEFT))
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
 				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(NEKO_MOUSE_BUTTON_RIGHT))
+			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
 				MouseZoom(delta.y);
 		}
 

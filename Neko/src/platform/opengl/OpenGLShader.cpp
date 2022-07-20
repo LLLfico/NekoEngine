@@ -12,10 +12,16 @@ namespace Neko {
 		std::ifstream in(filePath, std::ios::in | std::ios::binary);
 		if (in) {
 			in.seekg(0, std::ios::end); // get file string size
-			result.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(result.data(), result.size());
-			in.close();
+			size_t size = in.tellg();
+			if (size != -1) {
+				result.resize(in.tellg());
+				in.seekg(0, std::ios::beg);
+				in.read(result.data(), result.size());
+				in.close();
+			}
+			else {
+				NEKO_CORE_ERROR("Could not read from file {0}", filePath);
+			}
 		}
 		else {
 			NEKO_CORE_ERROR("Cannot Open File {0}!", filePath);
@@ -47,10 +53,11 @@ namespace Neko {
 			NEKO_CORE_ASSERT(shaderTypeFromString.count(type), "Unknoen shader type!");
 
 			size_t textStart = source.find_first_not_of("\r\n", eol);
+			NEKO_CORE_ASSERT(textStart != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, textStart);
 
 			size_t textLen = textStart == std::string::npos ? pos - (source.size() - 1) : pos - textStart;
-			shaderSources[shaderTypeFromString[type]] = source.substr(textStart, textLen);
+			shaderSources[shaderTypeFromString[type]] = (pos == std::string::npos) ? source.substr(textStart) : source.substr(textStart, textLen);
 		}
 
 		return shaderSources;
@@ -154,6 +161,7 @@ namespace Neko {
 			return;
 		}
 		for (auto id : glShaderIds) {
+			glDetachShader(program, id);
 			glDeleteShader(id);
 		}
 	}

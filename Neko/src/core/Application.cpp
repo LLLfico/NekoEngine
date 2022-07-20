@@ -18,7 +18,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-
 namespace Neko {
 
 
@@ -46,10 +45,10 @@ namespace Neko {
 		dispatcher.Dispatch<WindowResizeEvent>(NEKO_BIND_EVENT_FN(Application::OnWindowResize));
 		// NEKO_CORE_TRACE("{0}", e);
 
-		for (auto it = m_layerStack.end(); it != m_layerStack.begin(); ) {
-			(*--it)->OnEvent(e);
+		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it++) {
 			if (e.handled)
 				break;
+			(*it)->OnEvent(e);
 		}
 	}
 

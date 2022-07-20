@@ -40,7 +40,7 @@ namespace Neko {
 		std::string name;
 		ShaderDataType type;
 		uint32_t size;
-		uint32_t offset;
+		size_t offset;
 		bool normalized;
 
 		BufferElement() = default;
@@ -51,7 +51,7 @@ namespace Neko {
 
 			static std::map<ShaderDataType, int> m = {
 				{ShaderDataType::Float, 1}, {ShaderDataType::Float2, 2}, {ShaderDataType::Float3, 3}, {ShaderDataType::Float4, 4},
-				{ShaderDataType::Mat3, 3 * 3}, {ShaderDataType::Mat4, 4 * 4},
+				{ShaderDataType::Mat3, 3}, {ShaderDataType::Mat4, 4},
 				{ShaderDataType::Int, 1}, {ShaderDataType::Int2, 2}, {ShaderDataType::Int3, 3}, {ShaderDataType::Int4, 4},
 				{ShaderDataType::Bool, 1},
 			};
@@ -68,12 +68,12 @@ namespace Neko {
 	class BufferLayout {
 	public:
 		BufferLayout() = default;
-		BufferLayout(const std::initializer_list<BufferElement>& elements) : m_elements(elements) {
+		BufferLayout(std::initializer_list<BufferElement> elements) : m_elements(elements) {
 			CaculateOffsetAndStride();
 		}
 
-		inline uint32_t GetStride() const { return m_stride; }
-		inline const std::vector<BufferElement>& GetElements() const { return m_elements; }
+		uint32_t GetStride() const { return m_stride; }
+		const std::vector<BufferElement>& GetElements() const { return m_elements; }
 
 		// ranging
 		std::vector<BufferElement>::iterator begin() { return m_elements.begin(); }
@@ -83,7 +83,7 @@ namespace Neko {
 
 	private:
 		void CaculateOffsetAndStride() {
-			uint32_t offset = 0;
+			size_t offset = 0;
 			m_stride = 0;
 			for (auto& element : m_elements) {
 				element.offset = offset;

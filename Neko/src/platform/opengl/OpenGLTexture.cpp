@@ -22,11 +22,14 @@ namespace Neko {
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-		NEKO_CORE_ASSERT(data, "Failed to load image!");
+		// NEKO_CORE_ASSERT(data, "Failed to load image!");
+
+		if (!data) return;
+		m_isloaded = true;
 		m_width = width;
 		m_height = height;
 
-		GLenum internalFormat, format;
+		GLenum internalFormat = 0, format = 0;
 		if (channels == 4) {
 			internalFormat = GL_RGBA8;
 			format = GL_RGBA;

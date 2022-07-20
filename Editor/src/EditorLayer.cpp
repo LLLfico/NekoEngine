@@ -54,13 +54,13 @@ namespace Neko {
 				auto& translation = GetComponent<TransformComponent>().translation;
 				float speed = 0.5f;
 
-				if (Input::IsKeyPressed(NEKO_KEY_A))
+				if (Input::IsKeyPressed(Key::A))
 					translation.x -= speed * dt;
-				if (Input::IsKeyPressed(NEKO_KEY_D))
+				if (Input::IsKeyPressed(Key::D))
 					translation.x += speed * dt;
-				if (Input::IsKeyPressed(NEKO_KEY_W))
+				if (Input::IsKeyPressed(Key::W))
 					translation.y += speed * dt;
-				if (Input::IsKeyPressed(NEKO_KEY_S))
+				if (Input::IsKeyPressed(Key::S))
 					translation.y -= speed * dt;
 			}
 		};
@@ -286,7 +286,7 @@ namespace Neko {
 			glm::mat4 transform = tc.GetTransformMatrix();
 
 			// snapping
-			bool snap = Input::IsKeyPressed(NEKO_KEY_LEFT_CONTROL);
+			bool snap = Input::IsKeyPressed(Key::LeftControl);
 			float snapValue = 0.5f;
 			if (m_gizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
@@ -326,38 +326,42 @@ namespace Neko {
 		if (e.GetRepeatCount() > 0)
 			return false;
 
-		bool control = Input::IsKeyPressed(NEKO_KEY_LEFT_CONTROL) || Input::IsKeyPressed(NEKO_KEY_RIGHT_CONTROL);
-		bool shift = Input::IsKeyPressed(NEKO_KEY_LEFT_SHIFT) || Input::IsKeyPressed(NEKO_KEY_RIGHT_SHIFT);
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
 		switch (e.GetKeyCode()) {
-			case NEKO_KEY_N: {
+			case Key::N: {
 				if (control)
 					NewScene();
 				break;
 			}
-			case NEKO_KEY_O: {
+			case Key::O: {
 				if (control)
 					OpenScene();
 				break;
 			}
-			case NEKO_KEY_S: {
+			case Key::S: {
 				if (control && shift)
 					SaveScene();
 				break;
 			}
-			case NEKO_KEY_Q: {
-				m_gizmoType = -1;
+			case Key::Q: {
+				if (!ImGuizmo::IsUsing())
+					m_gizmoType = -1;
 				break;
 			}
-			case NEKO_KEY_W: {
-				m_gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			case Key::W: {
+				if (!ImGuizmo::IsUsing())
+					m_gizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
 			}
-			case NEKO_KEY_E: {
-				m_gizmoType = ImGuizmo::OPERATION::ROTATE;
+			case Key::E: {
+				if (!ImGuizmo::IsUsing())
+					m_gizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
 			}
-			case NEKO_KEY_R: {
-				m_gizmoType = ImGuizmo::OPERATION::SCALE;
+			case Key::R: {
+				if (!ImGuizmo::IsUsing())
+					m_gizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 			}
 		}
@@ -365,8 +369,8 @@ namespace Neko {
 	}
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonEvent& e) {
-		if (e.GetMouseButton() == NEKO_MOUSE_BUTTON_LEFT) {
-			if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(NEKO_KEY_LEFT_ALT)) {
+		if (e.GetMouseButton() == Mouse::ButtonLeft) {
+			if (m_viewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt)) {
 				m_sceneHierarchyPanel.SetSelectedEntity(m_hoveredEntity);
 			}
 		}
@@ -381,25 +385,30 @@ namespace Neko {
 
 	void EditorLayer::OpenScene() {
 		auto filepath = FileDialogs::OpenFile("Neko Scene (*.neko)\0*.neko\0");
-		if (filepath.empty())
-			OpenScene(filepath);
+		if (filepath)
+			OpenScene(*filepath);
 	}
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path) {
-		m_scene = std::make_shared<Scene>();
-		m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
-		m_sceneHierarchyPanel.SetContext(m_scene);
-
-		SceneSerializer serializer(m_scene);
-		serializer.Deserialize(path.string());
+		if (path.extension().string() != ".neko") {
+			NEKO_WARN("Not a neko scene file {0}", path.filename().string());
+			return;
+		}
+		auto newScene = std::make_shared<Scene>();
+		SceneSerializer serializer(newScene);
+		if (serializer.Deserialize(path.string())) {
+			m_scene = newScene;
+			m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+			m_sceneHierarchyPanel.SetContext(m_scene);
+		}
 	}
 
 	void EditorLayer::SaveScene() {
 		auto filepath = FileDialogs::SaveFile("Neko Scene (*.neko)\0*.neko\0");
-		if (filepath.empty())
+		if (filepath)
 			return;
 		SceneSerializer serializer(m_scene);
-		serializer.Serialize(filepath);
+		serializer.Serialize(*filepath);
 	}
 
 	void EditorLayer::OnScenePlay() {

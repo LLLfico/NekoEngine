@@ -20,14 +20,14 @@ namespace Neko {
 		auto pushRight = m_camera.GetType() == CameraType::Orthographic ? -right : right;
 
 		auto position = m_camera.GetPosition();
-		if (Neko::Input::IsKeyPressed(NEKO_KEY_A))
+		if (Neko::Input::IsKeyPressed(Key::A))
 			position -= m_translationSpeed * dt * pushRight;
-		else if (Neko::Input::IsKeyPressed(NEKO_KEY_D))
+		else if (Neko::Input::IsKeyPressed(Key::D))
 			position += m_translationSpeed * dt * pushRight;
 
-		if (Neko::Input::IsKeyPressed(NEKO_KEY_W))
+		if (Neko::Input::IsKeyPressed(Key::W))
 			position += m_translationSpeed * dt * pushForwad;
-		else if (Neko::Input::IsKeyPressed(NEKO_KEY_S))
+		else if (Neko::Input::IsKeyPressed(Key::S))
 			position -= m_translationSpeed * dt * pushForwad;
 		m_camera.SetPosition(position);
 	}

@@ -2,8 +2,10 @@
 
 #include "Core.h"
 
+#pragma warning(push, 0)
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
+#pragma warning(pop)
 
 namespace Neko {
 	class NEKO_API Log {
@@ -11,8 +13,8 @@ namespace Neko {
 		
 		static void Init();
 
-		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_coreLogger; }
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_clientLogger; }
+		static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_coreLogger; }
+		static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_clientLogger; }
 
 	private:
 		static std::shared_ptr<spdlog::logger> s_coreLogger;

@@ -76,11 +76,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NEKO_PLATFORM_WINDOWS;NEKO_BUILD_DLL;GLFW_INCLUDE_NONE;NEKO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;NEKO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -96,7 +98,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NEKO_PLATFORM_WINDOWS;NEKO_BUILD_DLL;GLFW_INCLUDE_NONE;NEKO_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;NEKO_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -104,6 +106,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -120,7 +123,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NEKO_PLATFORM_WINDOWS;NEKO_BUILD_DLL;GLFW_INCLUDE_NONE;NEKO_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;NEKO_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -128,6 +131,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -140,7 +144,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\Renderer\EditorCamera.h" />
+    <ClInclude Include="src\core\Assert.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\CameraController.h" />
@@ -151,9 +155,10 @@
     <ClInclude Include="src\core\Layer.h" />
     <ClInclude Include="src\core\LayerStack.h" />
     <ClInclude Include="src\core\Log.h" />
-    <ClInclude Include="src\core\MouseButtonCodes.h" />
+    <ClInclude Include="src\core\MouseCodes.h" />
     <ClInclude Include="src\core\Renderer\Buffer.h" />
     <ClInclude Include="src\core\Renderer\Camera.h" />
+    <ClInclude Include="src\core\Renderer\EditorCamera.h" />
     <ClInclude Include="src\core\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\core\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\core\Renderer\Projection.h" />
@@ -609,14 +614,15 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
     <ClCompile Include="src\core\CameraController.cpp" />
+    <ClCompile Include="src\core\Input.cpp" />
     <ClCompile Include="src\core\Layer.cpp" />
     <ClCompile Include="src\core\LayerStack.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\core\Renderer\Buffer.cpp" />
     <ClCompile Include="src\core\Renderer\Camera.cpp" />
+    <ClCompile Include="src\core\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\core\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\core\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\core\Renderer\Renderer.cpp" />
@@ -625,6 +631,7 @@
     <ClCompile Include="src\core\Renderer\Shader.cpp" />
     <ClCompile Include="src\core\Renderer\Texture.cpp" />
     <ClCompile Include="src\core\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\imgui\ImGuiBuild.cpp" />
     <ClCompile Include="src\core\imgui\ImGuiLayer.cpp" />
     <ClCompile Include="src\core\math\Math.cpp" />

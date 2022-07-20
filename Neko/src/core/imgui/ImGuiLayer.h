@@ -28,7 +28,6 @@ namespace Neko {
 
 	private:
 		bool m_blocked = true;
-		float m_time = 0.0f;
 
 	};
 

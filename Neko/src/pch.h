@@ -17,6 +17,7 @@
 #include <utility>
 #include <functional>
 #include <filesystem>
+#include <optional>
 
 #include <cstdint>
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "core/MouseCodes.h"
 
 namespace Neko {
 
@@ -8,8 +9,8 @@ namespace Neko {
 	public:
 		MouseMovedEvent(float x, float y) : m_mouseX(x), m_mouseY(y) {}
 
-		inline float GetX() const { return m_mouseX; }
-		inline float GetY() const { return m_mouseY; }
+		float GetX() const { return m_mouseX; }
+		float GetY() const { return m_mouseY; }
 
 		std::string ToString() const override {
 			std::stringstream ss;
@@ -29,8 +30,8 @@ namespace Neko {
 	public:
 		MouseScrolledEvent(float offsetX, float offsetY) : m_offsetX(offsetX), m_offsetY(offsetY) {}
 
-		inline float GetXOffset() const { return m_offsetX; }
-		inline float GetYOffset() const { return m_offsetY; }
+		float GetXOffset() const { return m_offsetX; }
+		float GetYOffset() const { return m_offsetY; }
 
 		std::string ToString() const override {
 			std::stringstream ss;
@@ -48,18 +49,18 @@ namespace Neko {
 
 	class NEKO_API MouseButtonEvent : public Event {
 	public:
-		inline int GetMouseButton() { return m_button; }
+		inline MouseCode GetMouseButton() { return m_button; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
 	protected:
-		MouseButtonEvent(int button) : m_button(button) {}
+		MouseButtonEvent(MouseCode button) : m_button(button) {}
 
-		int m_button;
+		MouseCode m_button;
 	};
 
 	class NEKO_API MouseButtonPressedEvent : public MouseButtonEvent {
 	public:
-		MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
+		MouseButtonPressedEvent(MouseCode button) : MouseButtonEvent(button) {}
 
 		std::string ToString() const override {
 			std::stringstream ss;
@@ -72,7 +73,7 @@ namespace Neko {
 
 	class NEKO_API MouseButtonReleasedEvent : public MouseButtonEvent {
 	public:
-		MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
+		MouseButtonReleasedEvent(MouseCode button) : MouseButtonEvent(button) {}
 
 		std::string ToString() const override {
 			std::stringstream ss;

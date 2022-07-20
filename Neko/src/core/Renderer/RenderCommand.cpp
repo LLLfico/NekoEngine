@@ -7,6 +7,6 @@
 
 namespace Neko {
 
-	RendererAPI* RenderCommand::s_api = new OpenGLRendererAPI();
+	std::unique_ptr<RendererAPI> RenderCommand::s_api = std::make_unique<OpenGLRendererAPI>();
 
 }

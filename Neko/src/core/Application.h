@@ -4,6 +4,8 @@
 #include "Window.h"
 #include "LayerStack.h"
 
+int main(int argc, char** argv);
+
 namespace Neko {
 
 	class WindowCloseEvent;
@@ -15,26 +17,26 @@ namespace Neko {
 	class VertexArray;
 
 	class NEKO_API Application {
+		friend int::main(int argc, char** argv);
 	public:
 		Application();
 		~Application();
-
-		void Run();
 
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
-		inline Window& GetWindow() { return *m_window; }
+		Window& GetWindow() { return *m_window; }
 
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_imguiLayer; }
 
-		inline static Application& GetCurrent() { return *s_instance; }
+		static Application& GetCurrent() { return *s_instance; }
 		
 	private:
+		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 

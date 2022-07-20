@@ -114,16 +114,14 @@ namespace Neko {
 	}
 
 	void Renderer2D::Shutdown() {
+		delete[] s_data.quadVertexBufferHead;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera) {
 		s_data.shader->Bind();
 		s_data.shader->SetMat4("u_viewProjection", camera.GetMatrix());
 
-		s_data.quadIndexCount = 0;
-		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
-
-		s_data.textureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const Projection& projection, const glm::mat4& transform) {
@@ -132,10 +130,7 @@ namespace Neko {
 		s_data.shader->Bind();
 		s_data.shader->SetMat4("u_viewProjection", viewProjection);
 
-		s_data.quadIndexCount = 0;
-		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
-
-		s_data.textureSlotIndex = 1;
+		StartBatch();
 
 	}
 
@@ -145,19 +140,20 @@ namespace Neko {
 		s_data.shader->Bind();
 		s_data.shader->SetMat4("u_viewProjection", viewProjection);
 
-		s_data.quadIndexCount = 0;
-		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
-
-		s_data.textureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene() {
-		uint32_t dataSize = (uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead;
-		s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);
 		Flush();
 	}
 
 	void Renderer2D::Flush() {
+		if (s_data.quadIndexCount == 0)
+			return;
+
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead);
+		s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);
+
 		for (uint32_t i = 0; i < s_data.textureSlotIndex; i++) {
 			s_data.textureSlots[i]->Bind(i);
 		}
@@ -166,12 +162,16 @@ namespace Neko {
 		s_data.statistics.drawCalls++;
 	}
 
-	void Renderer2D::FlushAndReset() {
-		EndScene();
+	void Renderer2D::StartBatch() {
 		s_data.quadIndexCount = 0;
 		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
 
 		s_data.textureSlotIndex = 1;
+	}
+
+	void Renderer2D::NextBatch() {
+		EndScene();
+		StartBatch();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color) {
@@ -181,7 +181,7 @@ namespace Neko {
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color) {
 
 		if (s_data.quadIndexCount >= s_data.maxIndices)
-			FlushAndReset();
+			NextBatch();
 
 		const float tilingFactor = 1.0f;
 		auto transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
@@ -191,7 +191,7 @@ namespace Neko {
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityId) {
 		if (s_data.quadIndexCount >= s_data.maxIndices)
-			FlushAndReset();
+			NextBatch();
 		constexpr size_t quadVertexCount = 4;
 		constexpr float whiteTextureIndex = 0;
 		constexpr glm::vec2 texcoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
@@ -234,10 +234,9 @@ namespace Neko {
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityId) {
 		if (s_data.quadIndexCount >= s_data.maxIndices)
-			FlushAndReset();
+			NextBatch();
 
 		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		constexpr glm::vec2 texcoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
 
 		float textureIndex = 0.0f;
@@ -255,7 +254,7 @@ namespace Neko {
 
 		for (size_t i = 0; i < quadVertexCount; i++) {
 			s_data.quadVertexBufferPtr->position = transform * s_data.quadPoints[i];
-			s_data.quadVertexBufferPtr->color = color;
+			s_data.quadVertexBufferPtr->color = tintColor;
 			s_data.quadVertexBufferPtr->texcoord = texcoords[i];
 			s_data.quadVertexBufferPtr->texIndex = textureIndex;
 			s_data.quadVertexBufferPtr->tilingFactor = tilingFactor;

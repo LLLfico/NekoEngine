@@ -9,14 +9,10 @@
 
 namespace Neko {
 
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* desc) {
 		NEKO_CORE_ERROR("GLFW Error {0} : {1}", error, desc);
-	}
-
-	Window* Window::Create(const WindowInfos& infos) {
-		return new WindowsWindow(infos);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowInfos& infos) {
@@ -34,17 +30,17 @@ namespace Neko {
 
 		NEKO_CORE_INFO("Create Window {0} {1},{2}", infos.title, infos.width, infos.height);
 
-		if (!s_GLFWInitialized) {
-			// todo : glfwterminate on system shutdown
+		if (s_GLFWWindowCount == 0) {
+			NEKO_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			NEKO_CORE_ASSERT(success, "Could not initialized GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 
 		m_window = glfwCreateWindow((int)infos.width, (int)infos.height, infos.title.c_str(), nullptr, nullptr);
+		++s_GLFWWindowCount;
 
-		m_context = new OpenGLContext(m_window);
+		m_context = std::make_unique<OpenGLContext>(m_window);
 		m_context->Init();
 
 		glfwSetWindowUserPointer(m_window, &m_data);
@@ -72,17 +68,17 @@ namespace Neko {
 			
 			switch (action) {
 				case GLFW_PRESS: {
-					KeyPressedEvent event(key, 0);
+					KeyPressedEvent event(static_cast<KeyCode>(key), 0);
 					data.callback(event);
 					break;
 				}
 				case GLFW_RELEASE: {
-					KeyReleasedEvent event(key);
+					KeyReleasedEvent event(static_cast<KeyCode>(key));
 					data.callback(event);
 					break;
 				}
 				case GLFW_REPEAT: {
-					KeyPressedEvent event(key, 1);
+					KeyPressedEvent event(static_cast<KeyCode>(key), 1);
 					data.callback(event);
 					break;
 				}
@@ -93,7 +89,7 @@ namespace Neko {
 			// codepoint is an unicode character
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			KeyTypedEvent event(codepoint);
+			KeyTypedEvent event(static_cast<KeyCode>(codepoint));
 			data.callback(event);
 		});
 
@@ -102,12 +98,12 @@ namespace Neko {
 			
 			switch (action) {
 				case GLFW_PRESS: {
-					MouseButtonPressedEvent event(button);
+					MouseButtonPressedEvent event(static_cast<MouseCode>(button));
 					data.callback(event);
 					break;
 				}
 				case GLFW_RELEASE: {
-					MouseButtonReleasedEvent event(button);
+					MouseButtonReleasedEvent event(static_cast<MouseCode>(button));
 					data.callback(event);
 					break;
 				}
@@ -131,6 +127,11 @@ namespace Neko {
 
 	void WindowsWindow::Shutdown() {
 		glfwDestroyWindow(m_window);
+		--s_GLFWWindowCount;
+		if (s_GLFWWindowCount == 0) {
+			NEKO_CORE_INFO("Terminating GLFW");
+			glfwTerminate();
+		}
 	}
 
 	void WindowsWindow::OnUpdate() {

@@ -1,6 +1,8 @@
 #pragma once
 
 // for use by neko applications
+#include "core/Core.h"
+#include "core/Assert.h"
 #include "core/Application.h"
 #include "core/Layer.h"
 #include "core/Log.h"
@@ -9,7 +11,7 @@
 
 #include "core/Input.h"
 #include "core/KeyCodes.h"
-#include "core/MouseButtonCodes.h"
+#include "core/MouseCodes.h"
 
 // render
 #include "core/Renderer/Renderer.h"

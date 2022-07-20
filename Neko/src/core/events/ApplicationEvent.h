@@ -8,8 +8,8 @@ namespace Neko {
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height) : m_width(width), m_height(height) {}
 
-		const unsigned int GetWidth() const { return m_width; }
-		const unsigned int GetHeight() const { return m_height; }
+		const uint32_t GetWidth() const { return m_width; }
+		const uint32_t GetHeight() const { return m_height; }
 
 		std::string ToString() const override {
 			std::stringstream ss;
@@ -20,7 +20,7 @@ namespace Neko {
 		EVENT_CLASS_TYPE(WindowResize)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	private:
-		unsigned int m_width, m_height;
+		uint32_t m_width, m_height;
 	};
 
 	class NEKO_API WindowCloseEvent : public Event {

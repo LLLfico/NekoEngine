@@ -14,21 +14,21 @@ namespace Neko {
 
 		void OnUpdate() override;
 
-		inline unsigned int GetWidth() const override { return m_data.width; }
-		inline unsigned int GetHeight() const override { return m_data.height; }
+		unsigned int GetWidth() const override { return m_data.width; }
+		unsigned int GetHeight() const override { return m_data.height; }
 
 		// window attributes
-		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_data.callback = callback; }
+		void SetEventCallback(const EventCallbackFunction& callback) override { m_data.callback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
-		inline virtual void* GetNativeWindow() const override { return m_window; }
+		virtual void* GetNativeWindow() const override { return m_window; }
 	private:
 		virtual void Init(const WindowInfos& infos);
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_window;
-		GraphicsContext* m_context;
+		std::unique_ptr<GraphicsContext> m_context;
 
 		// convinent to pass data, just cluster specific data
 		struct WindowData {
