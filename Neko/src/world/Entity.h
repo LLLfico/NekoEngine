@@ -22,6 +22,13 @@ namespace Neko {
 			return component;
 		}
 
+		template<typename T, typename ...Args>
+		T& AddorReplaceComponent(Args&&... args) {
+			T& component = m_scene->m_registry.emplace_or_replace<T>(m_handle, std::forward<Args>(args)...);
+			m_scene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
+
 		template<typename T>
 		T& GetComponent() {
 			NEKO_CORE_ASSERT(HasComponent<T>(), "Entity doesn't has component!");
@@ -44,6 +51,7 @@ namespace Neko {
 		operator entt::entity() const { return m_handle; }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().id; }
+		const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
 		bool operator==(const Entity& other) const {
 			return m_handle == other.m_handle && m_scene == other.m_scene;

@@ -338,10 +338,23 @@ namespace Neko {
 				break;
 			}
 			case Key::S: {
-				if (control && shift)
-					SaveScene();
+				if (control) {
+					if (shift) {
+						SaveSceneAs();
+					}
+					else {
+						SaveScene();
+					}
+				}
+					
 				break;
 			}
+			case Key::D: {
+				if (control)
+					OnDuplicateEntity();
+				break;
+			}
+			// gizmos
 			case Key::Q: {
 				if (!ImGuizmo::IsUsing())
 					m_gizmoType = -1;
@@ -379,6 +392,7 @@ namespace Neko {
 		m_scene = std::make_shared<Scene>();
 		m_scene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 		m_sceneHierarchyPanel.SetContext(m_scene);
+		m_editorScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene() {
@@ -388,6 +402,8 @@ namespace Neko {
 	}
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path) {
+		if (m_sceneState != SceneState::Edit)
+			OnSceneStop();
 		if (path.extension().string() != ".neko") {
 			NEKO_WARN("Not a neko scene file {0}", path.filename().string());
 			return;
@@ -396,27 +412,58 @@ namespace Neko {
 		newScene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string())) {
-			m_scene = newScene;
-			m_sceneHierarchyPanel.SetContext(m_scene);
+			m_editorScene = newScene;
+			m_editorScene->OnViewportResize((uint32_t)m_viewportSize.x, (uint32_t)m_viewportSize.y);
+			m_sceneHierarchyPanel.SetContext(m_editorScene);
+			m_scene = m_editorScene;
+			m_editorScenePath = path;
 		}
 	}
 
 	void EditorLayer::SaveScene() {
+		if (!m_editorScenePath.empty()) {
+			NEKO_CORE_INFO("Save scene");
+			SerializeScene(m_scene, m_editorScenePath);
+		}
+		else {
+			SaveSceneAs();
+		}
+	}
+
+	void EditorLayer::SaveSceneAs() {
 		auto filepath = FileDialogs::SaveFile("Neko Scene (*.neko)\0*.neko\0");
 		if (filepath)
 			return;
-		SceneSerializer serializer(m_scene);
-		serializer.Serialize(*filepath);
+		NEKO_CORE_INFO("Save scene as {0}", *filepath);
+		SerializeScene(m_scene, *filepath);
+		m_editorScenePath = *filepath;
+	}
+
+	void EditorLayer::SerializeScene(std::shared_ptr<Scene> scene, const std::filesystem::path& path) {
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
 	}
 
 	void EditorLayer::OnScenePlay() {
 		m_sceneState = SceneState::Play;
+		m_scene = Scene::CopyFrom(m_editorScene);
 		m_scene->OnRuntimeStart();
+		m_sceneHierarchyPanel.SetContext(m_scene);
 	}
 
 	void EditorLayer::OnSceneStop() {
 		m_sceneState = SceneState::Edit;
 		m_scene->OnRuntimeStop();
+		m_scene = m_editorScene;
+		m_sceneHierarchyPanel.SetContext(m_scene);
+	}
+
+	void EditorLayer::OnDuplicateEntity() {
+		if (m_sceneState != SceneState::Edit)
+			return;
+		Entity selectEntity = m_sceneHierarchyPanel.GetSelectedEntity();
+		if (selectEntity)
+			m_editorScene->DuplicateEntity(selectEntity);
 	}
 
 	void EditorLayer::UI_Toolbar() {

@@ -29,18 +29,20 @@ namespace Neko {
 	void SceneHierarchyPanel::OnImGuiRender() {
 		ImGui::Begin("Scene Hierarchy");
 
-		m_context->m_registry.each([&](auto entityId) {
-			Entity entity{ entityId, m_context.get() };
-			DrawEntityMode(entity);
-		});
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_selectionContext = {};
+		if (m_context) {
+			m_context->m_registry.each([&](auto entityId) {
+				Entity entity{ entityId, m_context.get() };
+				DrawEntityMode(entity);
+				});
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_selectionContext = {};
 
-		if (ImGui::BeginPopupContextWindow(0, 1, false)) {
-			if (ImGui::MenuItem("Create Empty Entity"))
-				m_context->CreateEntity("Empty Entity");
+			if (ImGui::BeginPopupContextWindow(0, 1, false)) {
+				if (ImGui::MenuItem("Create Empty Entity"))
+					m_context->CreateEntity("Empty Entity");
 
-			ImGui::EndPopup();
+				ImGui::EndPopup();
+			}
 		}
 
 		ImGui::End();
@@ -357,7 +359,7 @@ namespace Neko {
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
-			ImGui::DragFloat2("Size", glm::value_ptr(component.offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
 			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);

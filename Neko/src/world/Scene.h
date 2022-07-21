@@ -18,6 +18,8 @@ namespace Neko {
 		Scene();
 		~Scene();
 
+		static std::shared_ptr<Scene> CopyFrom(std::shared_ptr<Scene> other);
+
 		Entity CreateEntity(const std::string& name = "");
 		Entity CreateEntityWithUUID(UUID id, const std::string& name = "");
 		void DestroyEntity(Entity entity);
@@ -28,6 +30,8 @@ namespace Neko {
 		void OnUpdateRuntime(TimeStep dt);
 		void OnUpdateEditor(TimeStep dt, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
+
+		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 	private:

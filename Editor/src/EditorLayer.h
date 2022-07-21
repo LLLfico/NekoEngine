@@ -25,9 +25,14 @@ namespace Neko {
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
 		void SaveScene();
+		void SaveSceneAs();
+
+		void SerializeScene(std::shared_ptr<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void OnDuplicateEntity();
 
 		void UI_Toolbar();
 
@@ -42,6 +47,8 @@ namespace Neko {
 		std::shared_ptr<Neko::FrameBuffer> m_framebuffer;
 
 		std::shared_ptr<Scene> m_scene;
+		std::shared_ptr<Scene> m_editorScene;
+		std::filesystem::path m_editorScenePath;
 		Entity m_squareEntity;
 		Entity m_cametaEntity;
 		Entity m_secondCamera;
