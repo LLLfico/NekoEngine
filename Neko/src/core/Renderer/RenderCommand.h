@@ -30,6 +30,14 @@ namespace Neko {
 			s_api->DrawElement(vertexArray, count);
 		}
 
+		static void DrawLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count) {
+			s_api->DrawLines(vertexArray, count);
+		}
+
+		static void SetLineWidth(float width) {
+			s_api->SetLineWidth(width);
+		}
+
 		static void DrawArrays(uint32_t size) {
 			s_api->DrawArrays(size);
 		}

@@ -32,6 +32,13 @@ namespace Neko {
 		int entityId;
 	};
 
+	struct LineVertex {
+		glm::vec3 position;
+		glm::vec4 color;
+
+		int entityId;
+	};
+
 	struct Renderer2DData {
 		static const uint32_t maxQuads = 20000;
 		static const uint32_t maxVertices = maxQuads * 4;
@@ -47,6 +54,10 @@ namespace Neko {
 		std::shared_ptr<VertexBuffer> circleVertexBuffer;
 		std::shared_ptr<Shader> circleShader;
 
+		std::shared_ptr<VertexArray> lineVertexArray;
+		std::shared_ptr<VertexBuffer> lineVertexBuffer;
+		std::shared_ptr<Shader> lineShader;
+
 		uint32_t quadIndexCount = 0;					// current num of index 
 		QuadVertex* quadVertexBufferHead = nullptr;
 		QuadVertex* quadVertexBufferPtr = nullptr;
@@ -54,6 +65,11 @@ namespace Neko {
 		uint32_t circleIndexCount = 0;
 		CircleVertex* circleVertexBufferHead = nullptr;
 		CircleVertex* circleVertexBufferPtr = nullptr;
+
+		uint32_t lineIndexCount = 0;
+		LineVertex* lineVertexBufferHead = nullptr;
+		LineVertex* lineVertexBufferPtr = nullptr;
+		float lineWidth = 2.0f;
 
 		std::array<std::shared_ptr<Texture2D>, maxTextureSlots> textureSlots;
 		uint32_t textureSlotIndex = 1; // 0 is default white texture
@@ -79,6 +95,7 @@ namespace Neko {
 			 2, 3, 0,
 		};
 
+		// quads
 		s_data.quadVertexBuffer = VertexBuffer::Create(s_data.maxVertices * sizeof(QuadVertex));
 		s_data.quadVertexBuffer->SetLayout({
 			{"a_position", ShaderDataType::Float3},
@@ -109,6 +126,7 @@ namespace Neko {
 		s_data.quadVertexArray->SetIndexBuffer(ibo);
 		delete[] quadIndices;
 
+		// circles
 		s_data.circleVertexArray = VertexArray::Create();
 		s_data.circleVertexBuffer = VertexBuffer::Create(s_data.maxVertices * sizeof(CircleVertex));
 		s_data.circleVertexBuffer->SetLayout({
@@ -123,6 +141,16 @@ namespace Neko {
 		s_data.circleVertexArray->SetIndexBuffer(ibo);
 		s_data.circleVertexBufferHead = new CircleVertex[s_data.maxVertices];
 
+		// lines
+		s_data.lineVertexArray = VertexArray::Create();
+		s_data.lineVertexBuffer = VertexBuffer::Create(s_data.maxVertices * sizeof(LineVertex));
+		s_data.lineVertexBuffer->SetLayout({
+			{ "a_position", ShaderDataType::Float3 },
+			{ "a_color",    ShaderDataType::Float4 },
+			{ "a_entityId", ShaderDataType::Int    },
+		});
+		s_data.lineVertexArray->AddVertexBuffer(s_data.lineVertexBuffer);
+		s_data.lineVertexBufferHead = new LineVertex[s_data.maxVertices];
 
 		s_data.whiteTexture = Texture2D::Create(1, 1);
 		uint32_t white = 0xffffffff;
@@ -133,8 +161,9 @@ namespace Neko {
 			samplers[i] = i;
 		}
 
-		s_data.quadShader = Shader::Create("assets/shaders/shaderQuad.glsl");
-		s_data.circleShader = Shader::Create("assets/shaders/shaderCircle.glsl");
+		s_data.quadShader = Shader::Create("assets/shaders/ShaderQuad.glsl");
+		s_data.circleShader = Shader::Create("assets/shaders/ShaderCircle.glsl");
+		s_data.lineShader = Shader::Create("assets/shaders/ShaderLine.glsl");
 		s_data.quadShader->Bind();
 		// s_data.shader->SetInt("u_texture", 0);
 		s_data.quadShader->SetIntArray("u_texture", samplers, s_data.maxTextureSlots);
@@ -158,6 +187,9 @@ namespace Neko {
 		s_data.circleShader->Bind();
 		s_data.circleShader->SetMat4("u_viewProjection", camera.GetMatrix());
 
+		s_data.lineShader->Bind();
+		s_data.lineShader->SetMat4("u_viewProjection", camera.GetMatrix());
+
 		StartBatch();
 	}
 
@@ -169,6 +201,9 @@ namespace Neko {
 
 		s_data.circleShader->Bind();
 		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
+
+		s_data.lineShader->Bind();
+		s_data.lineShader->SetMat4("u_viewProjection", viewProjection);
 
 		StartBatch();
 
@@ -182,6 +217,9 @@ namespace Neko {
 
 		s_data.circleShader->Bind();
 		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
+
+		s_data.lineShader->Bind();
+		s_data.lineShader->SetMat4("u_viewProjection", viewProjection);
 
 		StartBatch();
 	}
@@ -211,6 +249,15 @@ namespace Neko {
 			RenderCommand::DrawElement(s_data.circleVertexArray, s_data.circleIndexCount);
 			s_data.statistics.drawCalls++;
 		}
+		if (s_data.lineIndexCount) {
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_data.lineVertexBufferPtr - (uint8_t*)s_data.lineVertexBufferHead);
+			s_data.lineVertexBuffer->SetData(s_data.lineVertexBufferHead, dataSize);
+
+			s_data.lineShader->Bind();
+			RenderCommand::SetLineWidth(s_data.lineWidth);
+			RenderCommand::DrawLines(s_data.lineVertexArray, s_data.lineIndexCount);
+			s_data.statistics.drawCalls++;
+		}
 	}
 
 	void Renderer2D::StartBatch() {
@@ -219,6 +266,9 @@ namespace Neko {
 
 		s_data.circleIndexCount = 0;
 		s_data.circleVertexBufferPtr = s_data.circleVertexBufferHead;
+
+		s_data.lineIndexCount = 0;
+		s_data.lineVertexBufferPtr = s_data.lineVertexBufferHead;
 
 		s_data.textureSlotIndex = 1;
 	}
@@ -335,6 +385,43 @@ namespace Neko {
 		s_data.statistics.quadCount++;
 	}
 
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityId) {
+		s_data.lineVertexBufferPtr->position = p0;
+		s_data.lineVertexBufferPtr->color = color;
+		s_data.lineVertexBufferPtr->entityId = entityId;
+		s_data.lineVertexBufferPtr++;
+
+		s_data.lineVertexBufferPtr->position = p1;
+		s_data.lineVertexBufferPtr->color = color;
+		s_data.lineVertexBufferPtr->entityId = entityId;
+		s_data.lineVertexBufferPtr++;
+
+		s_data.lineIndexCount += 2;
+	}
+
+	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec3& scale, const glm::vec4& color, int entityId) {
+		glm::vec3 p0 = glm::vec3(position.x - scale.x * 0.5f, position.y - scale.y * 0.5f, position.z);
+		glm::vec3 p1 = glm::vec3(position.x + scale.x * 0.5f, position.y - scale.y * 0.5f, position.z);
+		glm::vec3 p2 = glm::vec3(position.x + scale.x * 0.5f, position.y + scale.y * 0.5f, position.z);
+		glm::vec3 p3 = glm::vec3(position.x - scale.x * 0.5f, position.y + scale.y * 0.5f, position.z);
+
+		DrawLine(p0, p1, color);
+		DrawLine(p1, p2, color);
+		DrawLine(p2, p3, color);
+		DrawLine(p3, p0, color);
+	}
+
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityId) {
+		glm::vec3 lineVertices[4];
+		for (size_t i = 0; i < 4; i++) {
+			lineVertices[i] = transform * s_data.quadPoints[i];
+		}
+		DrawLine(lineVertices[0], lineVertices[1], color);
+		DrawLine(lineVertices[1], lineVertices[2], color);
+		DrawLine(lineVertices[2], lineVertices[3], color);
+		DrawLine(lineVertices[3], lineVertices[0], color);
+	}
+
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId) {
 		if (src.texture) {
 			DrawQuad(transform, src.texture, src.tilingFactor, src.color, entityId);
@@ -342,6 +429,14 @@ namespace Neko {
 		else {
 			DrawQuad(transform, src.color, entityId);
 		}
+	}
+
+	float Renderer2D::GetLineWidth() {
+		return s_data.lineWidth;
+	}
+
+	void Renderer2D::SetLineWidth(float width) {
+		s_data.lineWidth = width;
 	}
 
 	void Renderer2D::ResetStatistics() {
