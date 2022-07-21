@@ -258,6 +258,16 @@ namespace Neko {
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Circle Collider 2D")) {
+				if (!m_selectionContext.HasComponent<CircleCollider2DComponent>()) {
+					m_selectionContext.AddComponent<CircleCollider2DComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has circle collider 2d component!");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -376,6 +386,15 @@ namespace Neko {
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component) {
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+			ImGui::DragFloat("Radius", &component.radius);
 			ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
