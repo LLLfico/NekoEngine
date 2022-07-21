@@ -27,7 +27,11 @@ namespace Neko {
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		void OnSimulationStart();
+		void OnSimulationStop();
+
 		void OnUpdateRuntime(TimeStep dt);
+		void OnUpdateSimulation(TimeStep dt, EditorCamera& camera);
 		void OnUpdateEditor(TimeStep dt, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
@@ -42,6 +46,11 @@ namespace Neko {
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
+
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
+
+		void RenderScene(EditorCamera& camera);
 	private:
 		entt::registry m_registry;
 		uint32_t m_viewportWidth = 0, m_viewportHeight = 0;

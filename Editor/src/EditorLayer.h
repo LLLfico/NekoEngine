@@ -32,6 +32,7 @@ namespace Neko {
 		void SerializeScene(std::shared_ptr<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
+		void OnSceneSimulate();
 		void OnSceneStop();
 
 		void OnDuplicateEntity();
@@ -72,8 +73,9 @@ namespace Neko {
 		bool m_showPhysicsColliders = false;
 
 		enum class SceneState {
-			Edit = 0, 
+			Edit = 0,
 			Play = 1,
+			Simulate = 2,
 		};
 		SceneState m_sceneState = SceneState::Edit;
 
@@ -82,6 +84,7 @@ namespace Neko {
 
 		std::shared_ptr<Texture2D> m_playIcon;
 		std::shared_ptr<Texture2D> m_stopIcon;
+		std::shared_ptr<Texture2D> m_simulateIcon;
 	};
 
 }

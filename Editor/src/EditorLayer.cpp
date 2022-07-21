@@ -21,11 +21,13 @@ namespace Neko {
 		m_texture = Texture2D::Create("assets/textures/testpic.png");
 		m_playIcon = Texture2D::Create("resources/icon/PlayButton.png");
 		m_stopIcon = Texture2D::Create("resources/icon/StopButton.png");
+		m_simulateIcon = Texture2D::Create("resources/icon/SimulateButton.png");
 
 		Neko::FrameBufferDesc desc = { 1280, 720, {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::DEPTH24STENCIL8} };
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
 
-		m_scene = std::make_shared<Scene>();
+		m_editorScene = std::make_shared<Scene>();
+		m_scene = m_editorScene;
 		m_editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		#if 0
 		auto square = m_scene->CreateEntity("Green Square");
@@ -105,6 +107,11 @@ namespace Neko {
 				m_editorCamera.OnUpdate(dt);
 
 				m_scene->OnUpdateEditor(dt, m_editorCamera);
+				break;
+			}
+			case SceneState::Simulate: {
+				m_editorCamera.OnUpdate(dt);
+				m_scene->OnUpdateSimulation(dt, m_editorCamera);
 				break;
 			}
 			case SceneState::Play: {
@@ -386,6 +393,8 @@ namespace Neko {
 	void EditorLayer::OnOverlayRender() {
 		if (m_sceneState == SceneState::Play) {
 			Entity camera = m_scene->GetPrimaryCameraEntity();
+			if (!camera)
+				return;
 			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetTransformMatrix());
 		}
 		else {
@@ -478,15 +487,31 @@ namespace Neko {
 	}
 
 	void EditorLayer::OnScenePlay() {
+		if (m_sceneState == SceneState::Simulate)
+			OnSceneStop();
 		m_sceneState = SceneState::Play;
 		m_scene = Scene::CopyFrom(m_editorScene);
 		m_scene->OnRuntimeStart();
 		m_sceneHierarchyPanel.SetContext(m_scene);
 	}
 
+	void EditorLayer::OnSceneSimulate() {
+		if (m_sceneState == SceneState::Play)
+			OnSceneStop();
+		m_sceneState = SceneState::Simulate;
+		m_scene = Scene::CopyFrom(m_editorScene);
+		m_scene->OnSimulationStart();
+
+		m_sceneHierarchyPanel.SetContext(m_scene);
+	}
+
 	void EditorLayer::OnSceneStop() {
+		NEKO_CORE_ASSERT(m_sceneState == SceneState::Play || m_sceneState == SceneState::Simulate);
+		if (m_sceneState == SceneState::Play)
+			m_scene->OnRuntimeStart();
+		else if (m_sceneState == SceneState::Simulate)
+			m_scene->OnSimulationStop();
 		m_sceneState = SceneState::Edit;
-		m_scene->OnRuntimeStop();
 		m_scene = m_editorScene;
 		m_sceneHierarchyPanel.SetContext(m_scene);
 	}
@@ -511,15 +536,35 @@ namespace Neko {
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
+		bool toolbarEnabled = (bool)m_scene;
+
+		ImVec4 tintColor = ImVec4(1, 1, 1, 1);
+		if (!toolbarEnabled)
+			tintColor.w = 0.5f;
+
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		std::shared_ptr<Texture2D> icon = m_sceneState == SceneState::Edit ? m_playIcon : m_stopIcon;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		if (ImGui::ImageButton((ImTextureID)icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0)) {
-			if (m_sceneState == SceneState::Edit)
-				OnScenePlay();
-			else if (m_sceneState == SceneState::Play)
-				OnSceneStop();
+		{
+			std::shared_ptr<Texture2D> icon = (m_sceneState == SceneState::Edit || m_sceneState == SceneState::Simulate) ? m_playIcon : m_stopIcon;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled) {
+				if (m_sceneState == SceneState::Edit || m_sceneState == SceneState::Simulate)
+					OnScenePlay();
+				else if (m_sceneState == SceneState::Play)
+					OnSceneStop();
+			}
 		}
+		ImGui::SameLine();
+		{
+			std::shared_ptr<Texture2D> icon = (m_sceneState == SceneState::Edit || m_sceneState == SceneState::Play) ? m_simulateIcon : m_stopIcon;
+			// ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetId(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled) {
+				if (m_sceneState == SceneState::Edit || m_sceneState == SceneState::Play)
+					OnSceneSimulate();
+				else if (m_sceneState == SceneState::Simulate)
+					OnSceneStop();
+			}
+		}
+		
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
