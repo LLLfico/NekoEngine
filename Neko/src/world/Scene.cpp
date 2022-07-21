@@ -67,6 +67,7 @@ namespace Neko {
 
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
@@ -193,6 +194,12 @@ namespace Neko {
 				Renderer2D::DrawSprite(transform.GetTransformMatrix(), sprite, (int)entity);
 			}
 
+			auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view) {
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.GetTransformMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
+			}
+
 			Renderer2D::EndScene();
 		}
 
@@ -205,6 +212,12 @@ namespace Neko {
 		for (auto entity : group) {
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.GetTransformMatrix(), sprite, (int)entity);
+		}
+
+		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+		for (auto entity : view) {
+			auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+			Renderer2D::DrawCircle(transform.GetTransformMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
 		}
 
 		Renderer2D::EndScene();
@@ -229,6 +242,7 @@ namespace Neko {
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
@@ -266,6 +280,11 @@ namespace Neko {
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component) {
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component) {
 
 	}
 

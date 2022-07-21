@@ -162,6 +162,19 @@ namespace Neko {
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.color;
 			out << YAML::EndMap;
 		}
+
+		if (entity.HasComponent<CircleRendererComponent>()) {
+			out << YAML::Key << "CircleRendererComponent";
+			out << YAML::BeginMap; // CircleRendererComponent
+
+			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << circleRendererComponent.color;
+			out << YAML::Key << "Thickness" << YAML::Value << circleRendererComponent.thickness;
+			out << YAML::Key << "Fade" << YAML::Value << circleRendererComponent.fade;
+
+			out << YAML::EndMap; // CircleRendererComponent
+		}
+
 		if (entity.HasComponent<Rigidbody2DComponent>()) {
 			out << YAML::Key << "Rigidbody2DComponent";
 			out << YAML::BeginMap; // Rigidbody2DComponent
@@ -272,6 +285,14 @@ namespace Neko {
 			if (spriteRendererComponent) {
 				auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 				src.color = spriteRendererComponent["Color"].as<glm::vec4>();
+			}
+
+			auto circleRendererComponent = entity["CircleRendererComponent"];
+			if (circleRendererComponent) {
+				auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+				crc.color = circleRendererComponent["Color"].as<glm::vec4>();
+				crc.thickness = circleRendererComponent["Thickness"].as<float>();
+				crc.fade = circleRendererComponent["Fade"].as<float>();
 			}
 
 			auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

@@ -28,6 +28,8 @@ namespace Neko {
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f), int entityId = -1);
 
+		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickiness = 1.0f, float fade = 0.005f, int entityId = -1);
+
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId);
 
 		struct Statistics {

@@ -53,6 +53,15 @@ namespace Neko {
 		SpriteRendererComponent(const glm::vec4& _color) : color(_color) {}
 	};
 
+	struct CircleRendererComponent {
+		glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float thickness = 1.0f;
+		float fade = 0.005f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+	};
+
 	struct CameraComponent {
 		SceneCamera camera;
 		bool primary = true;

@@ -22,6 +22,16 @@ namespace Neko {
 		int entityId;
 	};
 
+	struct CircleVertex {
+		glm::vec3 worldPosition;
+		glm::vec3 localPosition;
+		glm::vec4 color;
+		float thickness;
+		float fade;
+
+		int entityId;
+	};
+
 	struct Renderer2DData {
 		static const uint32_t maxQuads = 20000;
 		static const uint32_t maxVertices = maxQuads * 4;
@@ -30,12 +40,20 @@ namespace Neko {
 
 		std::shared_ptr<VertexArray> quadVertexArray;
 		std::shared_ptr<VertexBuffer> quadVertexBuffer;
-		std::shared_ptr<Shader> shader;
+		std::shared_ptr<Shader> quadShader;
 		std::shared_ptr<Texture2D> whiteTexture;
+
+		std::shared_ptr<VertexArray> circleVertexArray;
+		std::shared_ptr<VertexBuffer> circleVertexBuffer;
+		std::shared_ptr<Shader> circleShader;
 
 		uint32_t quadIndexCount = 0;					// current num of index 
 		QuadVertex* quadVertexBufferHead = nullptr;
 		QuadVertex* quadVertexBufferPtr = nullptr;
+
+		uint32_t circleIndexCount = 0;
+		CircleVertex* circleVertexBufferHead = nullptr;
+		CircleVertex* circleVertexBufferPtr = nullptr;
 
 		std::array<std::shared_ptr<Texture2D>, maxTextureSlots> textureSlots;
 		uint32_t textureSlotIndex = 1; // 0 is default white texture
@@ -91,6 +109,21 @@ namespace Neko {
 		s_data.quadVertexArray->SetIndexBuffer(ibo);
 		delete[] quadIndices;
 
+		s_data.circleVertexArray = VertexArray::Create();
+		s_data.circleVertexBuffer = VertexBuffer::Create(s_data.maxVertices * sizeof(CircleVertex));
+		s_data.circleVertexBuffer->SetLayout({
+			{ "a_worldPosition", ShaderDataType::Float3 },
+			{ "a_localPosition", ShaderDataType::Float3 },
+			{ "a_color",         ShaderDataType::Float4 },
+			{ "a_thickness",     ShaderDataType::Float  },
+			{ "a_fade",          ShaderDataType::Float  },
+			{ "a_entityId",      ShaderDataType::Int    },
+		});
+		s_data.circleVertexArray->AddVertexBuffer(s_data.circleVertexBuffer);
+		s_data.circleVertexArray->SetIndexBuffer(ibo);
+		s_data.circleVertexBufferHead = new CircleVertex[s_data.maxVertices];
+
+
 		s_data.whiteTexture = Texture2D::Create(1, 1);
 		uint32_t white = 0xffffffff;
 		s_data.whiteTexture->SetData(&white, sizeof(uint32_t));
@@ -100,10 +133,11 @@ namespace Neko {
 			samplers[i] = i;
 		}
 
-		s_data.shader = Shader::Create("assets/shaders/shader2d.glsl");
-		s_data.shader->Bind();
+		s_data.quadShader = Shader::Create("assets/shaders/shaderQuad.glsl");
+		s_data.circleShader = Shader::Create("assets/shaders/shaderCircle.glsl");
+		s_data.quadShader->Bind();
 		// s_data.shader->SetInt("u_texture", 0);
-		s_data.shader->SetIntArray("u_texture", samplers, s_data.maxTextureSlots);
+		s_data.quadShader->SetIntArray("u_texture", samplers, s_data.maxTextureSlots);
 
 		s_data.textureSlots[0] = s_data.whiteTexture;
 
@@ -118,8 +152,11 @@ namespace Neko {
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera) {
-		s_data.shader->Bind();
-		s_data.shader->SetMat4("u_viewProjection", camera.GetMatrix());
+		s_data.quadShader->Bind();
+		s_data.quadShader->SetMat4("u_viewProjection", camera.GetMatrix());
+
+		s_data.circleShader->Bind();
+		s_data.circleShader->SetMat4("u_viewProjection", camera.GetMatrix());
 
 		StartBatch();
 	}
@@ -127,8 +164,11 @@ namespace Neko {
 	void Renderer2D::BeginScene(const Projection& projection, const glm::mat4& transform) {
 		glm::mat4 viewProjection = projection.GetProjection() * glm::inverse(transform);
 
-		s_data.shader->Bind();
-		s_data.shader->SetMat4("u_viewProjection", viewProjection);
+		s_data.quadShader->Bind();
+		s_data.quadShader->SetMat4("u_viewProjection", viewProjection);
+
+		s_data.circleShader->Bind();
+		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
 
 		StartBatch();
 
@@ -137,8 +177,11 @@ namespace Neko {
 	void Renderer2D::BeginScene(const EditorCamera& camera) {
 		glm::mat4 viewProjection = camera.GetMatrix();
 
-		s_data.shader->Bind();
-		s_data.shader->SetMat4("u_viewProjection", viewProjection);
+		s_data.quadShader->Bind();
+		s_data.quadShader->SetMat4("u_viewProjection", viewProjection);
+
+		s_data.circleShader->Bind();
+		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
 
 		StartBatch();
 	}
@@ -148,23 +191,34 @@ namespace Neko {
 	}
 
 	void Renderer2D::Flush() {
-		if (s_data.quadIndexCount == 0)
-			return;
+		if (s_data.quadIndexCount) {
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead);
+			s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);
 
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead);
-		s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);
+			for (uint32_t i = 0; i < s_data.textureSlotIndex; i++) {
+				s_data.textureSlots[i]->Bind(i);
+			}
 
-		for (uint32_t i = 0; i < s_data.textureSlotIndex; i++) {
-			s_data.textureSlots[i]->Bind(i);
+			s_data.quadShader->Bind();
+			RenderCommand::DrawElement(s_data.quadVertexArray, s_data.quadIndexCount);
+			s_data.statistics.drawCalls++;
 		}
+		if (s_data.circleIndexCount) {
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_data.circleVertexBufferPtr - (uint8_t*)s_data.circleVertexBufferHead);
+			s_data.circleVertexBuffer->SetData(s_data.circleVertexBufferHead, dataSize);
 
-		RenderCommand::DrawElement(s_data.quadVertexArray, s_data.quadIndexCount);
-		s_data.statistics.drawCalls++;
+			s_data.circleShader->Bind();
+			RenderCommand::DrawElement(s_data.circleVertexArray, s_data.circleIndexCount);
+			s_data.statistics.drawCalls++;
+		}
 	}
 
 	void Renderer2D::StartBatch() {
 		s_data.quadIndexCount = 0;
 		s_data.quadVertexBufferPtr = s_data.quadVertexBufferHead;
+
+		s_data.circleIndexCount = 0;
+		s_data.circleVertexBufferPtr = s_data.circleVertexBufferHead;
 
 		s_data.textureSlotIndex = 1;
 	}
@@ -264,6 +318,20 @@ namespace Neko {
 
 		s_data.quadIndexCount += 6;
 
+		s_data.statistics.quadCount++;
+	}
+
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickiness, float fade, int entityId) {
+		for (size_t i = 0; i < 4; i++) {
+			s_data.circleVertexBufferPtr->worldPosition = transform * s_data.quadPoints[i];
+			s_data.circleVertexBufferPtr->localPosition = s_data.quadPoints[i] * 2.0f;
+			s_data.circleVertexBufferPtr->color = color;
+			s_data.circleVertexBufferPtr->thickness = thickiness;
+			s_data.circleVertexBufferPtr->fade = fade;
+			s_data.circleVertexBufferPtr->entityId = entityId;
+			s_data.circleVertexBufferPtr++;
+		}
+		s_data.circleIndexCount += 6;
 		s_data.statistics.quadCount++;
 	}
 

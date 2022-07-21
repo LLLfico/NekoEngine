@@ -209,7 +209,7 @@ namespace Neko {
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent")) {
 			if (ImGui::MenuItem("Camera")) {
-				if (m_selectionContext.HasComponent<CameraComponent>()) {
+				if (!m_selectionContext.HasComponent<CameraComponent>()) {
 					m_selectionContext.AddComponent<CameraComponent>();
 				}
 				else {
@@ -219,7 +219,7 @@ namespace Neko {
 			}
 
 			if (ImGui::MenuItem("Sprit Renderer")) {
-				if (m_selectionContext.HasComponent<SpriteRendererComponent>()) {
+				if (!m_selectionContext.HasComponent<SpriteRendererComponent>()) {
 					m_selectionContext.AddComponent<SpriteRendererComponent>();
 				}
 				else {
@@ -228,8 +228,18 @@ namespace Neko {
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Circle Renderer")) {
+				if (!m_selectionContext.HasComponent<CircleRendererComponent>()) {
+					m_selectionContext.AddComponent<CircleRendererComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has circle renderer component!");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
 			if (ImGui::MenuItem("Rigidbody 2D")) {
-				if (m_selectionContext.HasComponent<Rigidbody2DComponent>()) {
+				if (!m_selectionContext.HasComponent<Rigidbody2DComponent>()) {
 					m_selectionContext.AddComponent<Rigidbody2DComponent>();
 				}
 				else {
@@ -239,7 +249,7 @@ namespace Neko {
 			}
 
 			if (ImGui::MenuItem("Box Collider 2D")) {
-				if (m_selectionContext.HasComponent<BoxCollider2DComponent>()) {
+				if (!m_selectionContext.HasComponent<BoxCollider2DComponent>()) {
 					m_selectionContext.AddComponent<BoxCollider2DComponent>();
 				}
 				else {
@@ -337,6 +347,12 @@ namespace Neko {
 				ImGui::EndDragDropTarget();
 			}
 			ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
+		});
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component) {
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+			ImGui::DragFloat("Thickness", &component.thickness, 0.025, 0.0f, 1.0f);
+			ImGui::DragFloat("Fade", &component.fade, 0.00025, 0.0f, 1.0f);
 		});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component) {

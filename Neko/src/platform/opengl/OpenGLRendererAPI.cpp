@@ -10,6 +10,7 @@ namespace Neko {
 	void OpenGLRendererAPI::Init() {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// blend and depth test somewhere confilct, need to deal
 		glEnable(GL_DEPTH_TEST);
 	}
 	void OpenGLRendererAPI::SetViewPort(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -23,9 +24,9 @@ namespace Neko {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	void OpenGLRendererAPI::DrawElement(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count) {
+		vertexArray->Bind();
 		uint32_t cnt = count <= 0 ? vertexArray->GetIndexBuffer()->Count() : count;
 		glDrawElements(GL_TRIANGLES, cnt, GL_UNSIGNED_INT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void OpenGLRendererAPI::DrawArrays(uint32_t size) {
