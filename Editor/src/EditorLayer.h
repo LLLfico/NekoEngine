@@ -21,6 +21,8 @@ namespace Neko {
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonEvent& e);
 
+		void OnOverlayRender();
+
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
@@ -66,6 +68,8 @@ namespace Neko {
 		glm::vec4 m_squareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
 		int m_gizmoType = -1;
+
+		bool m_showPhysicsColliders = false;
 
 		enum class SceneState {
 			Edit = 0, 

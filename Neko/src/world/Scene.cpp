@@ -134,7 +134,7 @@ namespace Neko {
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(cc2d.offset.x, cc2d.offset.y);
-				circleShape.m_radius = cc2d.radius;
+				circleShape.m_radius = transform.scale.x * cc2d.radius;
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;

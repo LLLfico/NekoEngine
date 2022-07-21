@@ -131,17 +131,8 @@ namespace Neko {
 			// NEKO_CORE_WARN("Pixel data = {0}", pixelData);
 			m_hoveredEntity = (pixelData == -1) ? Entity() : Entity((entt::entity)pixelData, m_scene.get());
 		}
-
-		// Neko::Renderer2D::EndScene();
-
-		/*Neko::Renderer2D::BeginScene(m_cameraController.GetCamera());
-		for (float y = -5.0f; y < 5.0f; y += 0.5f) {
-			for (float x = -5.0f; x < 5.0f; x += 0.5f) {
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Neko::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);\
-			}
-		}
-		Neko::Renderer2D::EndScene();*/
+		OnOverlayRender();
+		
 		m_framebuffer->Unbind();
 	}
 
@@ -236,6 +227,10 @@ namespace Neko {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
+		ImGui::End();
+
+		ImGui::Begin("Settings");
+		ImGui::Checkbox("Show Physics Colliders", &m_showPhysicsColliders);
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -386,6 +381,44 @@ namespace Neko {
 			}
 		}
 		return false;
+	}
+
+	void EditorLayer::OnOverlayRender() {
+		if (m_sceneState == SceneState::Play) {
+			Entity camera = m_scene->GetPrimaryCameraEntity();
+			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetTransformMatrix());
+		}
+		else {
+			Renderer2D::BeginScene(m_editorCamera);
+		}
+
+		if (m_showPhysicsColliders) {
+			// box colliders
+			{
+				auto view = m_scene->GetAllEntityWithComponent<TransformComponent, BoxCollider2DComponent>();
+				for (auto entity : view) {
+					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+					auto translation = tc.translation + glm::vec3(bc2d.offset, 0.001f);
+					auto scale = tc.scale * glm::vec3(bc2d.size * 2.0f, 1.0f);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), tc.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) * glm::scale(glm::mat4(1.0f), scale);
+					Renderer2D::DrawRect(transform, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+			}
+
+			// circle colliders
+			{
+				auto view = m_scene->GetAllEntityWithComponent<TransformComponent, CircleCollider2DComponent>();
+				for (auto entity : view) {
+					auto [tc, cc2d] = view.get< TransformComponent, CircleCollider2DComponent>(entity);
+					auto translation = tc.translation + glm::vec3(cc2d.offset, 0.001f);
+					auto scale = tc.scale * glm::vec3(cc2d.radius * 2.0f);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+					Renderer2D::DrawCircle(transform, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), 0.01f);
+				}
+			}
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void EditorLayer::NewScene() {
