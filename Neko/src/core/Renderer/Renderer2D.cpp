@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "RenderCommand.h"
 #include "Texture.h"
+#include "UniformBuffer.h"
 
 #include "world/Component.h"
 
@@ -77,6 +78,12 @@ namespace Neko {
 		std::array<glm::vec4, 4> quadPoints;
 
 		Renderer2D::Statistics statistics;
+
+		struct CameraData {
+			glm::mat4 viewProjection;
+		};
+		CameraData cameraBuffer;
+		std::shared_ptr<UniformBuffer> cameraUniformBuffer;
 	};
 
 	static Renderer2DData s_data;
@@ -174,6 +181,8 @@ namespace Neko {
 		s_data.quadPoints[1] = { +0.5f, -0.5f, +0.0f, 1.0f };
 		s_data.quadPoints[2] = { +0.5f, +0.5f, +0.0f, 1.0f };
 		s_data.quadPoints[3] = { -0.5f, +0.5f, +0.0f, 1.0f };
+
+		s_data.cameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
 	void Renderer2D::Shutdown() {
@@ -181,14 +190,8 @@ namespace Neko {
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera) {
-		s_data.quadShader->Bind();
-		s_data.quadShader->SetMat4("u_viewProjection", camera.GetMatrix());
-
-		s_data.circleShader->Bind();
-		s_data.circleShader->SetMat4("u_viewProjection", camera.GetMatrix());
-
-		s_data.lineShader->Bind();
-		s_data.lineShader->SetMat4("u_viewProjection", camera.GetMatrix());
+		s_data.cameraBuffer.viewProjection = camera.GetMatrix();
+		s_data.cameraUniformBuffer->SetData(&s_data.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
 	}
@@ -196,31 +199,16 @@ namespace Neko {
 	void Renderer2D::BeginScene(const Projection& projection, const glm::mat4& transform) {
 		glm::mat4 viewProjection = projection.GetProjection() * glm::inverse(transform);
 
-		s_data.quadShader->Bind();
-		s_data.quadShader->SetMat4("u_viewProjection", viewProjection);
-
-		s_data.circleShader->Bind();
-		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
-
-		s_data.lineShader->Bind();
-		s_data.lineShader->SetMat4("u_viewProjection", viewProjection);
+		s_data.cameraBuffer.viewProjection = viewProjection;
+		s_data.cameraUniformBuffer->SetData(&s_data.cameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
 
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera) {
-		glm::mat4 viewProjection = camera.GetMatrix();
-
-		s_data.quadShader->Bind();
-		s_data.quadShader->SetMat4("u_viewProjection", viewProjection);
-
-		s_data.circleShader->Bind();
-		s_data.circleShader->SetMat4("u_viewProjection", viewProjection);
-
-		s_data.lineShader->Bind();
-		s_data.lineShader->SetMat4("u_viewProjection", viewProjection);
-
+		s_data.cameraBuffer.viewProjection = camera.GetMatrix();
+		s_data.cameraUniformBuffer->SetData(&s_data.cameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
 	}
 

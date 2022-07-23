@@ -4,7 +4,9 @@ layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec4 a_color;
 layout(location = 2) in int a_entityId;
 
-uniform mat4 u_viewProjection;
+layout (std140, binding = 0) uniform camera{
+	mat4 u_viewProjection;
+};
 
 struct vertexOutput{
 	vec4 color;

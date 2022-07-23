@@ -214,6 +214,16 @@ namespace Neko {
 
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
+
+		if (entity.HasComponent<MeshComponent>()) {
+			out << YAML::Key << "MeshComponent";
+			out << YAML::BeginMap; // 
+
+			auto& meshComponent = entity.GetComponent<MeshComponent>();
+			out << YAML::Key << "FilePath" << YAML::Value << meshComponent.mesh->GetPath();
+
+			out << YAML::EndMap; // MeshComponent
+		}
 		out << YAML::EndMap;
 	}
 
@@ -337,6 +347,12 @@ namespace Neko {
 				cc2d.friction = circleCollider2DComponent["Friction"].as<float>();
 				cc2d.restitution = circleCollider2DComponent["Restitution"].as<float>();
 				cc2d.restitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+			}
+
+			auto meshComponent = entity["MeshComponent"];
+			if (meshComponent) {
+				auto path = meshComponent["FilePath"].as<std::string>();
+				auto& mc = deserializedEntity.AddComponent<MeshComponent>(path);
 			}
 		}
 

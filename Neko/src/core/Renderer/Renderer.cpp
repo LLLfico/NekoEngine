@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Renderer2D.h"
+#include "Renderer3D.h"
 
 
 namespace Neko {
@@ -15,6 +16,7 @@ namespace Neko {
 	void Renderer::Init() {
 		RenderCommand::Init();
 		Renderer2D::Init();
+		Renderer3D::Init();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height) {

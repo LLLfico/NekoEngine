@@ -3,6 +3,7 @@
 #include "SceneCamera.h"
 #include "core/UUID.h"
 #include "core/renderer/Texture.h"
+#include "Mesh.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -129,5 +130,13 @@ namespace Neko {
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
+	struct MeshComponent {
+		std::shared_ptr<Mesh> mesh;
+
+		MeshComponent() { mesh = std::make_shared<Mesh>(); }
+		MeshComponent(const MeshComponent&) = default;
+		MeshComponent(const std::string& path) { mesh = std::make_shared<Mesh>(path); }
 	};
 }

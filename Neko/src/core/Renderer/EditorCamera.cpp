@@ -72,7 +72,7 @@ namespace Neko {
 	void EditorCamera::MousePan(const glm::vec2& delta) {
 		auto [xSpeed, ySpeed] = PanSpeed();
 		m_focalPoint += -GetRight() * delta.x * xSpeed * m_distance;
-		m_focalPoint -= GetUp() * delta.y * ySpeed * m_distance;
+		m_focalPoint += GetUp() * delta.y * ySpeed * m_distance;
 	}
 
 	void EditorCamera::MouseRotate(const glm::vec2& delta) {

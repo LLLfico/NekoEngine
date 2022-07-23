@@ -27,6 +27,7 @@ IncludeDir["entt"] = "Neko/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Neko/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Neko/vendor/ImGuizmo"
 IncludeDir["Box2D"] = "Neko/vendor/Box2D/include"
+IncludeDir["assimp"] = "Neko/vendor/assimp/include"
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
@@ -34,6 +35,7 @@ include "Neko/vendor/Glad"
 include "Neko/vendor/imgui"
 include "Neko/vendor/yaml-cpp"
 include "Neko/vendor/Box2D"
+include "Neko/vendor/assimp"
 
 
 project "Neko"
@@ -79,6 +81,7 @@ project "Neko"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.Box2D}",
+		"%{IncludeDir.assimp}"
 	}
 
 	links{
@@ -87,6 +90,7 @@ project "Neko"
 		"ImGui",
 		"yaml-cpp",
 		"Box2D",
+		"assimp",
 		"opengl32.lib",
 	}
 	filter "files:Neko/vendor/ImGuizmo/**.cpp"
@@ -182,6 +186,7 @@ project "Editor"
 		"Neko/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.assimp}",
 	}
 
 	links{

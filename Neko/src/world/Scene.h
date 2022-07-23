@@ -10,6 +10,7 @@ namespace Neko {
 
 	class UUID;
 	class Entity;
+	class Mesh;
 	class NEKO_API Scene {
 		friend class Entity;
 		friend class SceneHierarchyPanel;
@@ -56,6 +57,8 @@ namespace Neko {
 		uint32_t m_viewportWidth = 0, m_viewportHeight = 0;
 
 		std::shared_ptr<b2World> m_physicsWorld = nullptr;
+
+		std::shared_ptr<Mesh> m_mesh;
 	};
 
 }

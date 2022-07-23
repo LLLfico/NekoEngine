@@ -2,6 +2,7 @@
 #include "SceneHierarchyPanel.h"
 
 #include "core/Core.h"
+#include "core/utils/PlatformUtils.h"
 #include "world/Scene.h"
 #include "world/Component.h"
 
@@ -268,6 +269,16 @@ namespace Neko {
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Mesh")) {
+				if (!m_selectionContext.HasComponent<MeshComponent>()) {
+					m_selectionContext.AddComponent<MeshComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has mesh component!");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -399,6 +410,38 @@ namespace Neko {
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.restitutionThreshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<MeshComponent>("Mesh", entity, [](auto& component) {
+			ImGui::Columns(2, nullptr, false);
+			ImGui::SetColumnWidth(0, 100.0f);
+			ImGui::Text("Mesh Path");
+			ImGui::NextColumn();
+
+			ImGui::Button("Mesh", ImVec2{ 100.0f, 0.0f });
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					auto meshPath = g_assetPath / path;
+					component.mesh = std::make_shared<Mesh>(meshPath.string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("...")) {
+				auto file = FileDialogs::OpenFile("Model (*.obj *.fbx)\0");
+				auto filepath = *file;
+				if (filepath.find("assets") != std::string::npos) {
+					filepath = filepath.substr(filepath.find("assets"));
+				}
+				else {
+					// TODO
+					NEKO_CORE_ASSERT(false, "Not support import model from other directory currently");
+					return;
+				}
+				component.mesh = std::make_shared<Mesh>(filepath);
+			}
+			ImGui::EndColumns();
 		});
 	}
 

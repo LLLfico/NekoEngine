@@ -7,6 +7,7 @@
 
 #include "core/UUID.h"
 #include "core/renderer/Renderer2D.h"
+#include "core/renderer/Renderer3D.h"
 
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
@@ -74,6 +75,7 @@ namespace Neko {
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
 	}
@@ -217,6 +219,7 @@ namespace Neko {
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<MeshComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity() {
@@ -286,20 +289,35 @@ namespace Neko {
 
 	void Scene::RenderScene(EditorCamera& camera) {
 		Renderer2D::BeginScene(camera);
-
-		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group) {
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawSprite(transform.GetTransformMatrix(), sprite, (int)entity);
+		{
+			// sprite / quad
+			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group) {
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawSprite(transform.GetTransformMatrix(), sprite, (int)entity);
+			}
 		}
-
-		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
-		for (auto entity : view) {
-			auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-			Renderer2D::DrawCircle(transform.GetTransformMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
+		{
+			// circle
+			auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view) {
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.GetTransformMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
+			}
 		}
 		// Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 		Renderer2D::EndScene();
+		Renderer3D::BeginScene(camera);
+		{
+			// mesh3d
+			auto view = m_registry.view<TransformComponent, MeshComponent>();
+			for (auto entity : view) {
+				auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
+				Renderer3D::DrawMesh(transform.GetTransformMatrix(), mesh.mesh, (int)entity);
+			}
+		}
+		Renderer3D::EndScene();
+		
 	}
 
 	template<typename T>
@@ -349,5 +367,9 @@ namespace Neko {
 
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component) {
+	}
+
+	template<>
+	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component) {
 	}
 }

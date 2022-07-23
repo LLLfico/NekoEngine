@@ -7,7 +7,9 @@ layout(location = 3) in float a_thickness;
 layout(location = 4) in float a_fade;
 layout(location = 5) in int a_entityId;
 
-uniform mat4 u_viewProjection;
+layout (std140, binding = 0) uniform camera{
+	mat4 u_viewProjection;
+};
 
 struct vertexOutput{
 	vec3 localPosition;

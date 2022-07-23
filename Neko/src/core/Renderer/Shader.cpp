@@ -20,7 +20,7 @@ namespace Neko {
 		}
 
 		NEKO_CORE_ASSERT(false, "Unknown RendererAPI!");
-		return std::shared_ptr<Shader>();
+		return nullptr;
 	}
 
 	std::shared_ptr<Shader> Shader::Create(const std::string& name, const std::string& vertexDesc, const std::string& fragDesc) {
@@ -35,7 +35,7 @@ namespace Neko {
 		}
 
 		NEKO_CORE_ASSERT(false, "Unknown RendererAPI!");
-		return std::shared_ptr<Shader>();
+		return nullptr;
 	}
 
 	void ShaderManager::Add(const std::shared_ptr<Shader> shader) {
