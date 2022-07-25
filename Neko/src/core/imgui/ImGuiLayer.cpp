@@ -50,7 +50,7 @@ namespace Neko {
 
 		SetDarkThemeColors();
 
-		Application& app = Application::GetCurrent();
+		Application& app = Application::GetInstance();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer backends
@@ -83,7 +83,7 @@ namespace Neko {
 
 	void ImGuiLayer::End() {
 		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::GetCurrent();
+		Application& app = Application::GetInstance();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		// Rendering

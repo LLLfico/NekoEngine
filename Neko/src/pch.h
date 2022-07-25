@@ -18,6 +18,7 @@
 #include <functional>
 #include <filesystem>
 #include <optional>
+#include <regex>
 
 #include <cstdint>
 

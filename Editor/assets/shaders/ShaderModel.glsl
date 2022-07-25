@@ -25,7 +25,6 @@ void main()
 	outputs.color = a_color;
 	v_entityId = a_entityId;
 	gl_Position = u_viewProjection * u_model * vec4(a_position, 1.0);
-	// gl_Position = u_model * vec4(a_position, 1.0);
 }
 
 
@@ -43,11 +42,13 @@ struct vertexOutput{
 layout(location = 0) in vertexOutput inputs;
 layout(location = 3) in flat int v_entityId;
 
+uniform sampler2D albedoMap;
+
 void main()
 {
 	// color = texture(u_texture, v_texCoord);
 	// o_color = inputs.color;
-
-	o_color = vec4(inputs.normal, 1.0f);
+	o_color = texture(albedoMap, inputs.texcoord);
+	// o_color = vec4(inputs.texcoord, 1.0f, 1.0f);
 	o_entityId = v_entityId; 
 } 

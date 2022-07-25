@@ -33,7 +33,7 @@ namespace Neko {
 
 		ImGuiLayer* GetImGuiLayer() { return m_imguiLayer; }
 
-		static Application& GetCurrent() { return *s_instance; }
+		static Application& GetInstance() { return *s_instance; }
 		
 	private:
 		void Run();

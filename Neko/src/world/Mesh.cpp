@@ -14,19 +14,22 @@ namespace Neko {
 
 	void Mesh::Draw(const glm::mat4& transform, std::shared_ptr<Shader> shader, int entityId) {
 		for (auto& submesh : m_submeshes) {
-			submesh.Draw(transform, shader, entityId);
+			submesh.Draw(transform, shader, entityId, this);
 		}
 	}
 
 	void Mesh::LoadModel(const std::string& path) {
+		m_materials.resize(200);
+		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
+
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
 			return;
 		}
-		m_directory = path.substr(0, path.find_last_of('/'));
+		m_directory = filepath.substr(0, filepath.find_last_of('/'));
 
 		uint32_t submeshIndex = 0;
 
@@ -50,25 +53,15 @@ namespace Neko {
 
 		for (size_t i = 0; i < mesh->mNumVertices; ++i) {
 			MeshVertex vertex;
-			glm::vec3 vector;
 
-			vector.x = mesh->mVertices[i].x;
-			vector.y = mesh->mVertices[i].y;
-			vector.z = mesh->mVertices[i].z;
-			vertex.position = vector;
+			vertex.position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
 
 			if (mesh->HasNormals()) {
-				vector.x = mesh->mNormals[i].x;
-				vector.y = mesh->mNormals[i].y;
-				vector.z = mesh->mNormals[i].z;
-				vertex.normal = vector;
+				vertex.normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
 			}
 
 			if (mesh->mTextureCoords[0]) {
-				glm::vec2 vec2;
-				vec2.x = mesh->mTextureCoords[0][i].x;
-				vec2.y = mesh->mTextureCoords[0][i].y;
-				vertex.texcoord = vec2;
+				vertex.texcoord = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
 			}
 			else {
 				vertex.texcoord = glm::vec2(0.0f, 0.0f);
@@ -77,6 +70,7 @@ namespace Neko {
 			if (mesh->HasTangentsAndBitangents()) {
 				// TODO
 				// tangent
+				glm::vec3 vector;
 				vector.x = mesh->mTangents[i].x;
 				vector.y = mesh->mTangents[i].y;
 				vector.z = mesh->mTangents[i].z;
@@ -102,11 +96,53 @@ namespace Neko {
 		}
 
 		// TODO: material
+		if (mesh->mMaterialIndex >= 0) {
+			auto material = scene->mMaterials[mesh->mMaterialIndex];
+			auto diffuseMaps = LoadMaterialTexture(material, aiTextureType_DIFFUSE, submeshIndex);
+		}
 
-		return SubMesh(vertices, indices);
+		return SubMesh(vertices, indices, submeshIndex);
 	}
 
-	SubMesh::SubMesh(const std::vector<MeshVertex>& vertices, const std::vector<uint32_t>& indices) : m_vertices(vertices), m_indices(indices) {
+	std::vector<MaterialTexture> Mesh::LoadMaterialTexture(aiMaterial* material, aiTextureType type, uint32_t submeshIndex) {
+		std::vector<MaterialTexture> textures;
+
+		for (size_t i = 0; i < material->GetTextureCount(type); i++) {
+			aiString str;
+			material->GetTexture(type, i, &str);
+			bool skip = false;
+			for (size_t j = 0; j < m_materials[submeshIndex].GetTexturesNum(); j++) {
+				if (strcmp(str.C_Str(), m_materials[submeshIndex].GetTextures()[j].path.data()) == 0) {
+					// already has the texture
+					textures.push_back(m_materials[submeshIndex].GetTextures()[j]);
+					skip = true;
+					break;
+				}
+			}
+			if (!skip) {
+				MaterialTexture texture;
+				auto filename = std::string(str.C_Str());
+				filename = m_directory + '/' + filename;
+				texture.texture = Texture2D::Create(filename);
+				switch (type) {
+					case aiTextureType_DIFFUSE: {
+						texture.type = TextureType::Albedo;
+						m_materials[submeshIndex].SetAlbedoMap(texture.texture);
+						break;
+					}
+					default: {
+						NEKO_CORE_TRACE("Unknown texture type {0}", type);
+					}
+				}
+				texture.path = str.C_Str();
+				textures.push_back(texture);
+				m_materials[submeshIndex].AddTexture(texture);
+			}
+		}
+		return textures;
+	}
+
+	SubMesh::SubMesh(const std::vector<MeshVertex>& vertices, const std::vector<uint32_t>& indices, int submeshIndex) : m_vertices(vertices), m_indices(indices), m_submeshIndex(submeshIndex) {
 		m_vao = VertexArray::Create();
 		m_vbo = VertexBuffer::Create(m_vertices.size() * sizeof(MeshVertex));
 		m_vbo->SetLayout({
@@ -133,12 +169,26 @@ namespace Neko {
 		m_vbo->SetData(m_vertices.data(), m_vertices.size() * sizeof(MeshVertex));
 	}
 
-	void SubMesh::Draw(const glm::mat4& transform, std::shared_ptr<Shader> shader, int entityId) {
+	void SubMesh::Draw(const glm::mat4& transform, std::shared_ptr<Shader> shader, int entityId, Mesh* mesh) {
 		SetupMesh(entityId);
 
 		m_vao->Bind();
 		shader->Bind();
 		shader->SetMat4("u_model", transform);
+
+		auto material = mesh->GetMaterial(m_submeshIndex);
+		constexpr uint32_t diffuse_slot = 3;
+		if (material.m_useAlbedo) {
+			material.m_albedoMap->Bind(diffuse_slot);
+		}
+		else {
+			unsigned char color[4];
+			for (size_t i = 0; i < 4; i++)
+				color[i] = (unsigned char)(material.m_color[i] * 255.0f);
+			material.m_albedoColor->SetData(color, 4 * sizeof(unsigned char));
+			material.m_albedoColor->Bind(diffuse_slot);
+		}
+		shader->SetInt("albedoMap", diffuse_slot);
 
 		RenderCommand::DrawElement(m_vao, m_ibo->Count());
 	}

@@ -38,6 +38,11 @@ namespace Neko {
 
 		bool Exist(const std::string& name) const;
 
+		static ShaderManager GetInstance() {
+			static ShaderManager s_instance;
+			return s_instance;
+		}
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
 	};

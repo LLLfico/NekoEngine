@@ -210,7 +210,7 @@ namespace Neko {
 					SaveScene();
 				}
 
-				if (ImGui::MenuItem("Exit")) Neko::Application::GetCurrent().Close();
+				if (ImGui::MenuItem("Exit")) Neko::Application::GetInstance().Close();
 				ImGui::EndMenu();
 			}
 
@@ -250,7 +250,7 @@ namespace Neko {
 
 		m_viewportFocused = ImGui::IsWindowFocused();
 		m_viewportHovered = ImGui::IsWindowHovered();
-		Application::GetCurrent().GetImGuiLayer()->BlockEvent(!m_viewportFocused && !m_viewportHovered);
+		Application::GetInstance().GetImGuiLayer()->BlockEvent(!m_viewportFocused && !m_viewportHovered);
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
 		m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };

@@ -37,5 +37,4 @@ namespace Neko {
 	void Neko::Renderer3D::EndScene() {
 	}
 
-
 }

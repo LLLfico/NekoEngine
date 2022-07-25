@@ -8,13 +8,13 @@
 namespace Neko {
 
 	bool WindowsInput::IsKeyPressedImpl(KeyCode key) {
-		auto window = static_cast<GLFWwindow*>(Application::GetCurrent().GetWindow().GetNativeWindow());
+		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 
 		auto state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 	bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button) {
-		auto window = static_cast<GLFWwindow*>(Application::GetCurrent().GetWindow().GetNativeWindow());
+		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 
 		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
@@ -28,7 +28,7 @@ namespace Neko {
 		return y;
 	}
 	std::pair<float, float> WindowsInput::GetMousePositionImpl() {
-		auto window = static_cast<GLFWwindow*>(Application::GetCurrent().GetWindow().GetNativeWindow());
+		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 		return { (float)xpos, (float)ypos };
