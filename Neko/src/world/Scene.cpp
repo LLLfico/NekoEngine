@@ -164,10 +164,11 @@ namespace Neko {
 			auto focal = position + lightDir;
 			auto view = glm::lookAt(position, focal, glm::vec3(0.0f, 1.0f, 0.0f));
 			// auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, camera.GetNearPlane(), camera.GetFarPlane());
-			auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+			auto projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
 			auto viewProj = projection * view;
 			m_depthShader->Bind();
 			m_depthShader->SetMat4("u_viewProjection", viewProj);
+			Renderer3D::SetLightSpaceMatrix(viewProj);
 			break;
 		}
 		Renderer3D::s_shadowFbo->Bind();
@@ -360,18 +361,6 @@ namespace Neko {
 	}
 
 	void Scene::RenderScene(EditorCamera& camera) {
-
-		{
-			// depth map debug
-			m_vao->Bind();
-			m_testShader->Bind();
-			m_testShader->SetInt("u_shadowMap", 8);
-			// Renderer3D::s_shadowFbo->BindDepthTexture(8);
-			glBindTextureUnit(8, Renderer3D::s_shadowFbo->GetDepthAttachmentId());
-			// glBindTextureUnit(8, Renderer3D::s_shadowFbo->GetColorAttachmentId(0));
-			// m_texture->Bind(8);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-		}
 		Renderer2D::BeginScene(camera);
 		{
 			// sprite / quad
@@ -400,7 +389,6 @@ namespace Neko {
 				for (auto entity : view) {
 					auto [transform, light] = view.get<TransformComponent, DirectionalLightComponent>(entity);
 					glm::vec3 lightDir = glm::mat3(transform.GetTransformMatrix()) * glm::vec3(0.0f, 0.0f, -1.0f);
-					// Renderer3D::SetDirectionalLight(glm::normalize(glm::eulerAngles(glm::quat(transform.rotation))), light.radiance);
 					Renderer3D::SetDirectionalLight(glm::normalize(lightDir), light.radiance);
 					break;
 				}
@@ -423,10 +411,6 @@ namespace Neko {
 				auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
 				Renderer3D::DrawMesh(transform.GetTransformMatrix(), mesh.mesh, (int)entity);
 			}
-			//for (auto entity : view) {
-			//	auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-			//	mesh.mesh->Draw(transform.GetTransformMatrix(), m_depthShader, (int)entity);
-			//}
 		}
 		Renderer3D::EndScene();
 		

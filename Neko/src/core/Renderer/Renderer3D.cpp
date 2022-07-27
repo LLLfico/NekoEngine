@@ -26,7 +26,7 @@ namespace Neko {
 		s_data3d.shaderModel = Shader::Create("assets/shaders/ShaderModel.glsl");
 		s_data3d.shaderDepth = Shader::Create("assets/shaders/ShaderDepth.glsl");
 
-		FrameBufferDesc desc = { 1024, 1024, { FrameBufferTextureFormat::RGBA8 , FrameBufferTextureFormat::DEPTH32F } };
+		FrameBufferDesc desc = { 1024, 1024, { FrameBufferTextureFormat::RGBA8 , FrameBufferTextureFormat::DEPTH } };
 		s_shadowFbo = FrameBuffer::Create(desc);
 	}
 
@@ -35,17 +35,25 @@ namespace Neko {
 
 		s_data3d.shaderModel->Bind();
 		s_data3d.shaderModel->SetMat4("u_viewProjection", viewProjection);
+
+		BindDepthTexture(8);
 	}
 
 	void Renderer3D::BindDepthTexture(uint32_t slot) {
-		s_data3d.shaderDepth->Bind();
-		s_data3d.shaderDepth->SetInt("u_shadowMap", slot);
+		s_data3d.shaderModel->Bind();
+		s_data3d.shaderModel->SetInt("u_shadowMap", slot);
+		s_shadowFbo->BindDepthTexture(8);
 	}
 
 	void Renderer3D::SetDirectionalLight(const glm::vec3& direction, const glm::vec3& radiance) {
 		s_data3d.shaderModel->Bind();
 		s_data3d.shaderModel->SetVec3("u_directionallight.direction", direction);
 		s_data3d.shaderModel->SetVec3("u_directionallight.radiance", radiance);
+	}
+
+	void Renderer3D::SetLightSpaceMatrix(const glm::mat4& matrix) {
+		s_data3d.shaderModel->Bind();
+		s_data3d.shaderModel->SetMat4("u_lightSpaceMatrix", matrix);
 	}
 
 	void Renderer3D::SetPointLight(const glm::vec3& position, const glm::vec3& radiance, int index) {

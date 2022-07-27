@@ -15,6 +15,7 @@ namespace Neko {
 		static void BeginScene(const EditorCamera& camera);
 		static void BindDepthTexture(uint32_t slot);
 		static void SetDirectionalLight(const glm::vec3& direction, const glm::vec3& radiance);
+		static void SetLightSpaceMatrix(const glm::mat4& matrix);
 		static void SetPointLight(const glm::vec3& position, const glm::vec3& radiance, int index);
 		static void SetPointLightNum(int num);
 		static void DrawMesh(const glm::mat4& transform, std::shared_ptr<Mesh> mesh, int entityId = -1);

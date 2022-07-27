@@ -10,9 +10,7 @@ namespace Neko {
 		RED_INTEGER,
 		// depth-stencil
 		DEPTH24STENCIL8,
-		DEPTH32F,
-		// defaults
-		Depth = DEPTH32F,
+		DEPTH
 	};
 
 	struct FrameBufferTextureDesc {

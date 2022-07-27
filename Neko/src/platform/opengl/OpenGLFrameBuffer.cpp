@@ -57,7 +57,7 @@ namespace Neko {
 
 		static bool IsDepthFormat(FrameBufferTextureFormat format) {
 			switch (format) {
-			case FrameBufferTextureFormat::DEPTH32F:
+			case FrameBufferTextureFormat::DEPTH:
 			case FrameBufferTextureFormat::DEPTH24STENCIL8: return true;
 			}
 			return false;
@@ -129,7 +129,7 @@ namespace Neko {
 					Utils::AttachDepthTexture(m_depthAttachment, m_desc.samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_desc.width, m_desc.height);
 					break;
 				}
-				case FrameBufferTextureFormat::DEPTH32F: {
+				case FrameBufferTextureFormat::DEPTH: {
 					Utils::AttachDepthTexture(m_depthAttachment, m_desc.samples, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT, m_desc.width, m_desc.height);
 				}
 			}
