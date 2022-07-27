@@ -11,10 +11,16 @@ namespace Neko {
 	class UUID;
 	class Entity;
 	class Mesh;
+	class Shader;
+	class VertexArray;
+	class VertexBuffer;
+	class IndexBuffer;
+	class Texture2D;
 	class NEKO_API Scene {
 		friend class Entity;
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
+		friend class Renderer3D;
 	public:
 		Scene();
 		~Scene();
@@ -30,6 +36,8 @@ namespace Neko {
 
 		void OnSimulationStart();
 		void OnSimulationStop();
+
+		void OnShadow(EditorCamera& camera);
 
 		void OnUpdateRuntime(TimeStep dt);
 		void OnUpdateSimulation(TimeStep dt, EditorCamera& camera);
@@ -58,7 +66,13 @@ namespace Neko {
 
 		std::shared_ptr<b2World> m_physicsWorld = nullptr;
 
-		std::shared_ptr<Mesh> m_mesh;
+		std::shared_ptr<Shader> m_depthShader;
+
+		std::shared_ptr<Shader> m_testShader;
+		std::shared_ptr<VertexArray> m_vao;
+		std::shared_ptr<VertexBuffer> m_vbo;
+		std::shared_ptr<IndexBuffer> m_ibo;
+		std::shared_ptr<Texture2D> m_texture;
 	};
 
 }

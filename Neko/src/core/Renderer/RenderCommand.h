@@ -42,6 +42,10 @@ namespace Neko {
 			s_api->DrawArrays(size);
 		}
 
+		static void BindDrawFramebuffer() {
+			s_api->BindDrawFramebuffer();
+		}
+
 	private:
 		static std::unique_ptr<RendererAPI> s_api;
 	};

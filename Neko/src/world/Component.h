@@ -139,4 +139,20 @@ namespace Neko {
 		MeshComponent(const MeshComponent&) = default;
 		MeshComponent(const std::string& path) { mesh = std::make_shared<Mesh>(path); }
 	};
+
+	struct PointLightComponent {
+		glm::vec3 radiance = { 1.0f, 1.0f, 1.0f };
+
+		PointLightComponent() = default;
+		PointLightComponent(const PointLightComponent&) = default;
+	};
+
+	struct DirectionalLightComponent {
+		glm::vec3 radiance = { 1.0f, 1.0f, 1.0f };
+
+		DirectionalLightComponent() = default;
+		DirectionalLightComponent(const DirectionalLightComponent&) = default;
+	};
+
+
 }

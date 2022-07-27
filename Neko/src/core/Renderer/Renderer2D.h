@@ -35,6 +35,7 @@ namespace Neko {
 		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityId = -1);
 
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId);
+		static void DrawQuadTemp(uint32_t texture);
 
 		static float GetLineWidth();
 		static void SetLineWidth(float width);

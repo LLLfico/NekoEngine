@@ -15,9 +15,10 @@ namespace Neko {
 		void OnUpdate(TimeStep dt);
 		void OnEvent(Event& e);
 
-		inline float GetDistance() { return m_distance; }
-		const glm::mat4& GetViewMatrix() { return m_view; }
-		glm::mat4 GetMatrix() const { return m_projection * m_view; }
+		float GetDistance() const { return m_distance; }
+		const glm::mat4& GetViewMatrix() const { return m_view; }
+		const glm::mat4& GetProjectionMatrix() const { return m_projection; }
+		const glm::mat4 GetMatrix() const { return m_projection * m_view; }
 		glm::vec3 GetUp() const;
 		glm::vec3 GetRight() const;
 		glm::vec3 GetForward() const;
@@ -25,9 +26,11 @@ namespace Neko {
 		glm::quat GetOrientation() const;
 		float GetPitch() const { return m_pitch; }
 		float GetYaw() const { return m_yaw; }
+		float GetNearPlane() const { return m_zNear; }
+		float GetFarPlane() const { return m_zFar; }
 
-		inline void SetDistance(float distance) { m_distance = distance; }
-		inline void SetViewportSize(float width, float height) {
+		void SetDistance(float distance) { m_distance = distance; }
+		void SetViewportSize(float width, float height) {
 			m_viewportWidth = width;
 			m_viewportHeight = height;
 			UpdateProjection();

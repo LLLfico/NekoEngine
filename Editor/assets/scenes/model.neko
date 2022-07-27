@@ -1,0 +1,86 @@
+Scene: Untitled
+Entities:
+  - Entity: 17455155590246336360
+    TagComponent:
+      Tag: paimeng
+    TransformComponent:
+      Translation: [-2.97768348e-13, 7.67885808e-07, 2.00883198]
+      Rotation: [-3.14159226, 0, -3.14159226]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      FilePath: assets\models\paimeng\paimeng.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material1:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material2:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material3:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material4:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material5:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material6:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+        Material7:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]
+  - Entity: 4245347992613621969
+    TagComponent:
+      Tag: light_point1
+    TransformComponent:
+      Translation: [0.173415422, 14.4089775, 7.77962017]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    PointLightComponent:
+      Radiance: [0.4627451, 0.4627451, 0.4627451]
+  - Entity: 4292397588683342277
+    TagComponent:
+      Tag: plane_bottom
+    TransformComponent:
+      Translation: [0, -5, 3]
+      Rotation: [0, 0, 0]
+      Scale: [50, 1, 30]
+    MeshComponent:
+      FilePath: assets\models\basic_geometry\plane.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: false
+          AlbedoColor: [0.722007751, 0.284342796, 0.507399857, 1]
+  - Entity: 12827270919007677193
+    TagComponent:
+      Tag: plane_back
+    TransformComponent:
+      Translation: [-0.368039131, 10, -12]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [50, 0.99995029, 29.9984303]
+    MeshComponent:
+      FilePath: assets\models\basic_geometry\plane.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: false
+          AlbedoColor: [0.386010945, 0.606987357, 0.826254845, 1]
+  - Entity: 12505613083103755004
+    TagComponent:
+      Tag: light_directional
+    TransformComponent:
+      Translation: [-8.01378632, 24.5539093, 49.0959549]
+      Rotation: [-0.503385663, 0, 0]
+      Scale: [0.99999404, 0.999998212, 0.999999881]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+    DirectionalLightComponent:
+      Radiance: [0.776470602, 0.776470602, 0.776470602]

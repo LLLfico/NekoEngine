@@ -13,6 +13,7 @@ namespace Neko {
 		// blend and depth test somewhere confilct, need to deal
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_MULTISAMPLE);
 	}
 	void OpenGLRendererAPI::SetViewPort(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 		glViewport(x, y, width, height);
@@ -41,6 +42,11 @@ namespace Neko {
 
 	void OpenGLRendererAPI::DrawArrays(uint32_t size) {
 		glDrawArrays(GL_TRIANGLES, 0, size);
+	}
+
+	void OpenGLRendererAPI::BindDrawFramebuffer() {
+		int id;
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER, &id);
 	}
 
 }

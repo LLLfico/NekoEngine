@@ -43,7 +43,8 @@ namespace Neko {
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
 			}
 			else {
-				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+				// glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -56,6 +57,7 @@ namespace Neko {
 
 		static bool IsDepthFormat(FrameBufferTextureFormat format) {
 			switch (format) {
+			case FrameBufferTextureFormat::DEPTH32F:
 			case FrameBufferTextureFormat::DEPTH24STENCIL8: return true;
 			}
 			return false;
@@ -127,6 +129,9 @@ namespace Neko {
 					Utils::AttachDepthTexture(m_depthAttachment, m_desc.samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_desc.width, m_desc.height);
 					break;
 				}
+				case FrameBufferTextureFormat::DEPTH32F: {
+					Utils::AttachDepthTexture(m_depthAttachment, m_desc.samples, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT, m_desc.width, m_desc.height);
+				}
 			}
 		}
 		if (m_colorAttachments.size() > 1) {
@@ -151,6 +156,18 @@ namespace Neko {
 
 	void OpenGLFrameBuffer::Unbind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void OpenGLFrameBuffer::BindDrawFrameBuffer() {
+		glBindBuffer(GL_DRAW_FRAMEBUFFER, m_id);
+	}
+
+	void OpenGLFrameBuffer::BindDepthTexture(uint32_t slot) {
+		glBindTextureUnit(slot, m_depthAttachment);
+	}
+
+	void OpenGLFrameBuffer::UnbindDepthTexture(uint32_t slot) {
+		glBindTextureUnit(slot, 0);
 	}
 
 	void OpenGLFrameBuffer::Resize(uint32_t width, uint32_t height) {

@@ -25,6 +25,7 @@ namespace Neko {
 
 		Neko::FrameBufferDesc desc = { 1280, 720, {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::DEPTH24STENCIL8} };
 		m_framebuffer = Neko::FrameBuffer::Create(desc);
+		m_framebuffer->BindDrawFrameBuffer();
 
 		m_editorScene = std::make_shared<Scene>();
 		m_scene = m_editorScene;
@@ -91,6 +92,8 @@ namespace Neko {
 			m_cameraController.OnUpdate(dt);
 
 		m_editorCamera.OnUpdate(dt);
+
+		m_scene->OnShadow(m_editorCamera);
 
 		Neko::Renderer2D::ResetStatistics();
 		m_framebuffer->Bind();
@@ -474,7 +477,7 @@ namespace Neko {
 
 	void EditorLayer::SaveSceneAs() {
 		auto filepath = FileDialogs::SaveFile("Neko Scene (*.neko)\0*.neko\0");
-		if (filepath)
+		if (!filepath)
 			return;
 		NEKO_CORE_INFO("Save scene as {0}", *filepath);
 		SerializeScene(m_scene, *filepath);

@@ -6,14 +6,23 @@
 #include "ScriptableEntity.h"
 
 #include "core/UUID.h"
+#include "core/renderer/Shader.h"
+#include "core/renderer/Texture.h"
 #include "core/renderer/Renderer2D.h"
 #include "core/renderer/Renderer3D.h"
+#include "core/renderer/RenderCommand.h"
+#include "core/renderer/FrameBuffer.h"
+
+#include "core/renderer/VertexArray.h"
+#include "core/renderer/Buffer.h"
 
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
+
+#include <glad/glad.h>
 
 namespace Neko {
 
@@ -24,6 +33,33 @@ namespace Neko {
 	};
 
 	Scene::Scene() {
+		m_depthShader = Shader::Create("assets/shaders/ShaderDepth.glsl");
+		m_testShader = Shader::Create("assets/shaders/DebugDepth.glsl");
+		m_texture = Texture2D::Create("assets/textures/testpic.png");
+
+		float vertices[] = {
+			-0.5f, -0.5f,   0.0f, 0.0f,
+			 0.5f, -0.5f,   1.0f, 0.0f,
+			 0.5f,  0.5f,   1.0f, 1.0f,
+			-0.5f,  0.5f,   0.0f, 1.0f,
+		};
+		uint32_t indices[] = {
+			 0, 1, 2,
+			 2, 3, 0,
+		};
+		m_vao = VertexArray::Create();
+		m_vbo = VertexBuffer::Create(vertices, sizeof(vertices));
+		m_vao->Bind();
+		m_vbo->SetLayout({
+			{"a_position", ShaderDataType::Float2},
+			{"a_texcoord", ShaderDataType::Float2},
+		});
+		m_vao->AddVertexBuffer(m_vbo);
+		m_ibo = IndexBuffer::Create(indices, sizeof(indices));
+		m_vao->SetIndexBuffer(m_ibo);
+
+		m_testShader->Bind();
+		m_testShader->SetInt("u_shadowMap", 0);
 	}
 
 	Scene::~Scene() {
@@ -76,6 +112,8 @@ namespace Neko {
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<MeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
 	}
@@ -112,6 +150,38 @@ namespace Neko {
 
 	void Scene::OnSimulationStop() {
 		OnPhysics2DStop();
+	}
+
+	void Scene::OnShadow(EditorCamera& camera) {
+		constexpr uint32_t shadowMapSlot = 8;
+		// shadow map
+		
+		auto view = m_registry.view<TransformComponent, DirectionalLightComponent>();
+		for (auto entity : view) {
+			auto [transform, light] = view.get<TransformComponent, DirectionalLightComponent>(entity);
+			auto position = transform.translation;
+			glm::vec3 lightDir = glm::normalize(glm::mat3(transform.GetTransformMatrix()) * glm::vec3(0.0f, 0.0f, -1.0f));
+			auto focal = position + lightDir;
+			auto view = glm::lookAt(position, focal, glm::vec3(0.0f, 1.0f, 0.0f));
+			// auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, camera.GetNearPlane(), camera.GetFarPlane());
+			auto projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+			auto viewProj = projection * view;
+			m_depthShader->Bind();
+			m_depthShader->SetMat4("u_viewProjection", viewProj);
+			break;
+		}
+		Renderer3D::s_shadowFbo->Bind();
+		Neko::RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1.0f });
+		Neko::RenderCommand::Clear();
+		Renderer3D::BeginScene(camera);
+		m_depthShader->Bind();
+		auto meshview = m_registry.view<TransformComponent, MeshComponent>();
+		for (auto entity : meshview) {
+			auto [transform, mesh] = meshview.get<TransformComponent, MeshComponent>(entity);
+			mesh.mesh->Draw(transform.GetTransformMatrix(), m_depthShader, (int)entity);
+		}
+		Renderer3D::EndScene();
+		Renderer3D::s_shadowFbo->Unbind();
 	}
 
 	void Scene::OnUpdateRuntime(TimeStep dt) {
@@ -220,6 +290,8 @@ namespace Neko {
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<MeshComponent>(newEntity, entity);
+		CopyComponentIfExists<DirectionalLightComponent>(newEntity, entity);
+		CopyComponentIfExists<PointLightComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity() {
@@ -288,6 +360,18 @@ namespace Neko {
 	}
 
 	void Scene::RenderScene(EditorCamera& camera) {
+
+		{
+			// depth map debug
+			m_vao->Bind();
+			m_testShader->Bind();
+			m_testShader->SetInt("u_shadowMap", 8);
+			// Renderer3D::s_shadowFbo->BindDepthTexture(8);
+			glBindTextureUnit(8, Renderer3D::s_shadowFbo->GetDepthAttachmentId());
+			// glBindTextureUnit(8, Renderer3D::s_shadowFbo->GetColorAttachmentId(0));
+			// m_texture->Bind(8);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		}
 		Renderer2D::BeginScene(camera);
 		{
 			// sprite / quad
@@ -307,14 +391,42 @@ namespace Neko {
 		}
 		// Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 		Renderer2D::EndScene();
+
 		Renderer3D::BeginScene(camera);
 		{
+			// directional light
+			{
+				auto view = m_registry.view<TransformComponent, DirectionalLightComponent>();
+				for (auto entity : view) {
+					auto [transform, light] = view.get<TransformComponent, DirectionalLightComponent>(entity);
+					glm::vec3 lightDir = glm::mat3(transform.GetTransformMatrix()) * glm::vec3(0.0f, 0.0f, -1.0f);
+					// Renderer3D::SetDirectionalLight(glm::normalize(glm::eulerAngles(glm::quat(transform.rotation))), light.radiance);
+					Renderer3D::SetDirectionalLight(glm::normalize(lightDir), light.radiance);
+					break;
+				}
+			}
+			// point lights
+			{
+				auto view = m_registry.view<TransformComponent, PointLightComponent>();
+				int i = 0;
+				for (auto entity : view) {
+					auto [transform, light] = view.get<TransformComponent, PointLightComponent>(entity);
+					Renderer3D::SetPointLight(transform.translation, light.radiance, i);
+					i++;
+				}
+				Renderer3D::SetPointLightNum(i);
+			}
+
 			// mesh3d
 			auto view = m_registry.view<TransformComponent, MeshComponent>();
 			for (auto entity : view) {
 				auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
 				Renderer3D::DrawMesh(transform.GetTransformMatrix(), mesh.mesh, (int)entity);
 			}
+			//for (auto entity : view) {
+			//	auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
+			//	mesh.mesh->Draw(transform.GetTransformMatrix(), m_depthShader, (int)entity);
+			//}
 		}
 		Renderer3D::EndScene();
 		
@@ -371,5 +483,13 @@ namespace Neko {
 
 	template<>
 	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component) {
+	}
+
+	template<>
+	void Scene::OnComponentAdded<DirectionalLightComponent>(Entity entity, DirectionalLightComponent& component) {
+	}
+
+	template<>
+	void Scene::OnComponentAdded<PointLightComponent>(Entity entity, PointLightComponent& component) {
 	}
 }

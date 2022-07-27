@@ -279,6 +279,26 @@ namespace Neko {
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Directional Light")) {
+				if (!m_selectionContext.HasComponent<DirectionalLightComponent>()) {
+					m_selectionContext.AddComponent<DirectionalLightComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has directional light component!");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Point Light")) {
+				if (!m_selectionContext.HasComponent<PointLightComponent>()) {
+					m_selectionContext.AddComponent<PointLightComponent>();
+				}
+				else {
+					NEKO_CORE_WARN("Entity already has point light component!");
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -442,6 +462,37 @@ namespace Neko {
 				component.mesh = std::make_shared<Mesh>(filepath);
 			}
 			ImGui::EndColumns();
+			
+			auto& materials = component.mesh->GetMaterialsRef();
+			for (size_t materialIndex = 0; materialIndex < component.mesh->GetSubMeshNum(); materialIndex++) {
+				std::string label = std::string("material") + std::to_string(materialIndex);
+				ImGui::PushID(label.c_str());
+				if (ImGui::TreeNode((void*)label.c_str(), std::to_string(materialIndex).c_str())) {
+					std::string nodeLabel = std::string("Albedo") + std::to_string(materialIndex);
+					ImGui::PushID(nodeLabel.c_str());
+					ImGui::SameLine();
+					ImGui::Checkbox("Use", &materials[materialIndex].m_useAlbedo);
+					if (ImGui::ColorEdit4("##albedo", glm::value_ptr(materials[materialIndex].m_color))) {
+						if (!materials[materialIndex].m_useAlbedo) {
+							unsigned char color[4];
+							for (size_t i = 0; i < 4; i++)
+								color[i] = (unsigned char)(materials[materialIndex].m_color[i] * 255.0f);
+							materials[materialIndex].m_albedoColor->SetData(color, 4 * sizeof(unsigned char));
+						}
+					}
+					ImGui::PopID();
+					ImGui::TreePop();
+				}
+				ImGui::PopID();
+			}
+		});
+
+		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component) {
+			ImGui::ColorEdit3("Radiance", glm::value_ptr(component.radiance));
+		});
+
+		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component) {
+			ImGui::ColorEdit3("Radiance", glm::value_ptr(component.radiance));
 		});
 	}
 

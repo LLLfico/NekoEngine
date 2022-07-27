@@ -222,8 +222,44 @@ namespace Neko {
 			auto& meshComponent = entity.GetComponent<MeshComponent>();
 			out << YAML::Key << "FilePath" << YAML::Value << meshComponent.mesh->GetPath();
 
+			auto mesh = meshComponent.mesh;
+			auto materials = mesh->GetMaterials();
+			size_t num = mesh->GetSubMeshNum();
+			out << YAML::Key << "Materials";
+			out << YAML::BeginMap; // materials
+			for (size_t i = 0; i < num; i++) {
+				out << YAML::Key << "Material" + std::to_string(i);
+				out << YAML::BeginMap; // material[i]
+				auto material = materials[i];
+				out << YAML::Key << "UseAlbedoMap" << YAML::Value << material.m_useAlbedo;
+				out << YAML::Key << "AlbedoColor" << YAML::Value << material.m_color;
+				out << YAML::EndMap; // material[i]
+			}
+			out << YAML::EndMap; // materials
+
 			out << YAML::EndMap; // MeshComponent
 		}
+
+		if (entity.HasComponent<DirectionalLightComponent>()) {
+			out << YAML::Key << "DirectionalLightComponent";
+			out << YAML::BeginMap; // DirectionalLightComponent
+
+			auto& directionalLightComponent = entity.GetComponent<DirectionalLightComponent>();
+			out << YAML::Key << "Radiance" << YAML::Value << directionalLightComponent.radiance;
+
+			out << YAML::EndMap; // DirectionalLightComponent
+		}
+
+		if (entity.HasComponent<PointLightComponent>()) {
+			out << YAML::Key << "PointLightComponent";
+			out << YAML::BeginMap; // PointLightComponent
+
+			auto& pointLightComponent = entity.GetComponent<PointLightComponent>();
+			out << YAML::Key << "Radiance" << YAML::Value << pointLightComponent.radiance;
+
+			out << YAML::EndMap; // PointLightComponent
+		}
+
 		out << YAML::EndMap;
 	}
 
@@ -353,6 +389,32 @@ namespace Neko {
 			if (meshComponent) {
 				auto path = meshComponent["FilePath"].as<std::string>();
 				auto& mc = deserializedEntity.AddComponent<MeshComponent>(path);
+
+				auto materials = meshComponent["Materials"];
+				if (materials) {
+					constexpr size_t maxMaterialNum = 256;
+					for (size_t i = 0; i < maxMaterialNum; i++) {
+						std::string name = "Material" + std::to_string(i);
+						auto material = materials[name.c_str()];
+						if (material) {
+							auto& mat = mc.mesh->GetMaterialsRef()[i];
+							mat.m_useAlbedo = material["UseAlbedoMap"].as<bool>();
+							mat.m_color = material["AlbedoColor"].as<glm::vec4>();
+						}
+					}
+				}
+			}
+
+			auto directionalLightComponent = entity["DirectionalLightComponent"];
+			if (directionalLightComponent) {
+				auto& dlc = deserializedEntity.AddComponent<DirectionalLightComponent>();
+				dlc.radiance = directionalLightComponent["Radiance"].as<glm::vec3>();
+			}
+
+			auto pointLightComponent = entity["PointLightComponent"];
+			if (pointLightComponent) {
+				auto& plc = deserializedEntity.AddComponent<PointLightComponent>();
+				plc.radiance = pointLightComponent["Radiance"].as<glm::vec3>();
 			}
 		}
 

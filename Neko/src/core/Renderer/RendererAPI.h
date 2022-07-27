@@ -27,6 +27,8 @@ namespace Neko {
 		virtual void SetLineWidth(float width) = 0;
 		virtual void DrawArrays(uint32_t size) = 0;
 
+		virtual void BindDrawFramebuffer() = 0;
+
 		static API GetAPI() { return s_api; }
 	private:
 		static API s_api;

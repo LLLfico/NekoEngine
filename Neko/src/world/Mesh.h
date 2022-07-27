@@ -17,7 +17,6 @@ namespace Neko {
 		glm::vec3 position;
 		glm::vec3 normal;
 		glm::vec2 texcoord;
-		glm::vec4 color;
 		int entityId;
 	};
 
@@ -52,6 +51,9 @@ namespace Neko {
 
 		const std::string& GetPath() const { return m_path; }
 		const Material& GetMaterial(uint32_t submeshIndex) const { return m_materials[submeshIndex]; }
+		const std::vector<Material>& GetMaterials() const { return m_materials; }
+		size_t GetSubMeshNum() const { return m_submeshes.size(); }
+		std::vector<Material>& GetMaterialsRef() { return m_materials; }
 
 	private:
 		void LoadModel(const std::string& path);

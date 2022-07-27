@@ -43,6 +43,8 @@ namespace Neko {
 		m_context = std::make_unique<OpenGLContext>(m_window);
 		m_context->Init();
 
+		glfwWindowHint(GLFW_SAMPLES, 4);
+
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
 

@@ -16,6 +16,8 @@ namespace Neko {
 		virtual void DrawLines(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) override;
 		virtual void SetLineWidth(float width) override;
 		virtual void DrawArrays(uint32_t size) override;
+
+		virtual void BindDrawFramebuffer() override;
 	};
 
 }

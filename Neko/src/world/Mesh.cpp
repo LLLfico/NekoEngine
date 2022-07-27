@@ -19,7 +19,7 @@ namespace Neko {
 	}
 
 	void Mesh::LoadModel(const std::string& path) {
-		m_materials.resize(200);
+		m_materials.resize(256);
 		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
 
 		Assimp::Importer importer;
@@ -149,7 +149,6 @@ namespace Neko {
 			{ "a_position", ShaderDataType::Float3 },
 			{ "a_normal",   ShaderDataType::Float3 },
 			{ "a_texcoord", ShaderDataType::Float2 },
-			{ "a_color",    ShaderDataType::Float4 },
 			{ "a_entityId", ShaderDataType::Int    },
 		});
 		m_vao->AddVertexBuffer(m_vbo);
@@ -164,7 +163,6 @@ namespace Neko {
 
 		for (size_t i = 0; i < m_vertices.size(); ++i) {
 			m_vertices[i].entityId = entityId;
-			m_vertices[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		m_vbo->SetData(m_vertices.data(), m_vertices.size() * sizeof(MeshVertex));
 	}
@@ -188,7 +186,7 @@ namespace Neko {
 			material.m_albedoColor->SetData(color, 4 * sizeof(unsigned char));
 			material.m_albedoColor->Bind(diffuse_slot);
 		}
-		shader->SetInt("albedoMap", diffuse_slot);
+		shader->SetInt("u_albedoMap", diffuse_slot);
 
 		RenderCommand::DrawElement(m_vao, m_ibo->Count());
 	}

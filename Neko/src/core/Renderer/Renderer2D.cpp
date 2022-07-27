@@ -92,10 +92,10 @@ namespace Neko {
 		s_data.quadVertexArray = VertexArray::Create();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f,   1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f,   1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f,   0.0f, 1.0f,
 		};
 		uint32_t indices[] = {
 			 0, 1, 2,
@@ -357,6 +357,31 @@ namespace Neko {
 		s_data.quadIndexCount += 6;
 
 		s_data.statistics.quadCount++;
+	}
+
+	void Renderer2D::DrawQuadTemp(uint32_t texture) {
+		StartBatch();
+		constexpr size_t quadVertexCount = 4;
+		constexpr glm::vec2 texcoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
+		glm::vec4 tintColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		for (size_t i = 0; i < quadVertexCount; i++) {
+			s_data.quadVertexBufferPtr->position = s_data.quadPoints[i];
+			s_data.quadVertexBufferPtr->color = tintColor;
+			s_data.quadVertexBufferPtr->texcoord = texcoords[i];
+			s_data.quadVertexBufferPtr->texIndex = texture;
+			s_data.quadVertexBufferPtr->tilingFactor = 1.0f;
+			s_data.quadVertexBufferPtr->entityId = -1;
+			s_data.quadVertexBufferPtr++;
+		}
+
+		s_data.quadIndexCount += 6;
+
+		s_data.statistics.quadCount++;
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_data.quadVertexBufferPtr - (uint8_t*)s_data.quadVertexBufferHead);
+		s_data.quadVertexBuffer->SetData(s_data.quadVertexBufferHead, dataSize);
+
+		RenderCommand::DrawElement(s_data.quadVertexArray, s_data.quadIndexCount);
+		s_data.statistics.drawCalls++;
 	}
 
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickiness, float fade, int entityId) {

@@ -10,8 +10,9 @@ namespace Neko {
 		RED_INTEGER,
 		// depth-stencil
 		DEPTH24STENCIL8,
+		DEPTH32F,
 		// defaults
-		Depth = DEPTH24STENCIL8,
+		Depth = DEPTH32F,
 	};
 
 	struct FrameBufferTextureDesc {
@@ -42,12 +43,17 @@ namespace Neko {
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
+		virtual void BindDrawFrameBuffer() = 0;
+		virtual void BindDepthTexture(uint32_t slot) = 0;
+		virtual void UnbindDepthTexture(uint32_t slot) = 0;
+
 		virtual void Resize(uint32_t width, uint32_t height) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
 		virtual void ClearAttachment(uint32_t index, int value) = 0;
 
 		virtual uint32_t GetColorAttachmentId(uint32_t index) const = 0;
+		virtual uint32_t GetDepthAttachmentId() const = 0;
 
 		virtual const FrameBufferDesc& GetDesc() const = 0;
 
