@@ -488,11 +488,11 @@ namespace Neko {
 		});
 
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component) {
-			ImGui::ColorEdit3("Radiance", glm::value_ptr(component.radiance));
+			ImGui::DragFloat3("Radiance", glm::value_ptr(component.radiance));
 		});
 
 		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component) {
-			ImGui::ColorEdit3("Radiance", glm::value_ptr(component.radiance));
+			ImGui::DragFloat3("Radiance", glm::value_ptr(component.radiance));
 		});
 	}
 

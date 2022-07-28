@@ -141,7 +141,7 @@ namespace Neko {
 	};
 
 	struct PointLightComponent {
-		glm::vec3 radiance = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 radiance = { 100.0f, 100.0f, 100.0f };
 
 		PointLightComponent() = default;
 		PointLightComponent(const PointLightComponent&) = default;

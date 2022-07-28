@@ -74,15 +74,16 @@ namespace Neko {
 				vector.x = mesh->mTangents[i].x;
 				vector.y = mesh->mTangents[i].y;
 				vector.z = mesh->mTangents[i].z;
-				// vertex.Tangent = vector;
+				vertex.tangent = { mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z };
 				// bitangent
 				vector.x = mesh->mBitangents[i].x;
 				vector.y = mesh->mBitangents[i].y;
 				vector.z = mesh->mBitangents[i].z;
-				// vertex.Bitangent = vector;
+				vertex.bitangent = { mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z };
 			}
 			else {
-
+				vertex.tangent = glm::vec3(0.0f);
+				vertex.bitangent = glm::vec3(0.0f);
 			}
 			vertex.entityId = -1;
 			vertices.push_back(vertex);
@@ -99,6 +100,12 @@ namespace Neko {
 		if (mesh->mMaterialIndex >= 0) {
 			auto material = scene->mMaterials[mesh->mMaterialIndex];
 			auto diffuseMaps = LoadMaterialTexture(material, aiTextureType_DIFFUSE, submeshIndex);
+			NEKO_CORE_INFO("submesh {0}", submeshIndex);
+			for (int i = aiTextureType_NONE; i < aiTextureType_UNKNOWN; i++) {
+				size_t cnt = material->GetTextureCount(aiTextureType(i));
+				NEKO_CORE_INFO("type {0} has {1} textures", i, cnt);
+				
+			}
 		}
 
 		return SubMesh(vertices, indices, submeshIndex);
@@ -149,6 +156,8 @@ namespace Neko {
 			{ "a_position", ShaderDataType::Float3 },
 			{ "a_normal",   ShaderDataType::Float3 },
 			{ "a_texcoord", ShaderDataType::Float2 },
+			{ "a_tangent",  ShaderDataType::Float3 },
+			{ "a_bitangent",ShaderDataType::Float3 },
 			{ "a_entityId", ShaderDataType::Int    },
 		});
 		m_vao->AddVertexBuffer(m_vbo);

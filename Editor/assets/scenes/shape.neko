@@ -1,0 +1,72 @@
+Scene: Untitled
+Entities:
+  - Entity: 9233418413282771467
+    TagComponent:
+      Tag: cube
+    TransformComponent:
+      Translation: [3.42149925, 1.69655454, -1.24811912]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      FilePath: assets\models\basic_geometry\cube.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: false
+          AlbedoColor: [0.833976865, 0.823620439, 0.450798333, 1]
+  - Entity: 243583311120242286
+    TagComponent:
+      Tag: light2
+    TransformComponent:
+      Translation: [-7.40025854, 2.07260323, 5.43653965]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    PointLightComponent:
+      Radiance: [100, 100, 100]
+  - Entity: 5134070450390999749
+    TagComponent:
+      Tag: plane
+    TransformComponent:
+      Translation: [0, -3.19427538, 0]
+      Rotation: [0, 0, 0]
+      Scale: [44.8509521, 1, 46.2522583]
+    MeshComponent:
+      FilePath: assets\models\basic_geometry\plane.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: false
+          AlbedoColor: [0.629343629, 0.369344532, 0.537992835, 1]
+  - Entity: 8693301418136173761
+    TagComponent:
+      Tag: light1
+    TransformComponent:
+      Translation: [3.32318878, 6.0462265, -4.68436193]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    PointLightComponent:
+      Radiance: [100, 100, 100]
+  - Entity: 14860347627675380065
+    TagComponent:
+      Tag: sphere
+    TransformComponent:
+      Translation: [-1.06571722, 1.17268145, 0.27315712]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      FilePath: assets\models\basic_geometry\sphere.obj
+      Materials:
+        Material0:
+          UseAlbedoMap: false
+          AlbedoColor: [0.354899287, 0.691119671, 0.601547241, 1]
+  - Entity: 10929847177321260678
+    TagComponent:
+      Tag: light3(d)
+    TransformComponent:
+      Translation: [-0.295645267, 5.7199111, -7.63692284]
+      Rotation: [-2.51798129, 0, 0]
+      Scale: [1, 0.999999762, 0.999999762]
+    DirectionalLightComponent:
+      Radiance: [1, 1, 1]
