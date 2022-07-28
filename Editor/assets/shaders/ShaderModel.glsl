@@ -182,8 +182,12 @@ void main()
 	// res += CaculateDirectionalLight(basecolor.xyz, normal);
 	res += CaculatePointLights(basecolor.xyz, normal, inputs.worldPos, viewdir);
 	
+	// hdr
+	res = res / (res + vec3(1.0f));
+	// gamma
+	res = pow(res, vec3(1.0/2.2));
+
 	float visibility = CaculateShadowVisibility(inputs.worldPos);
-	visibility = 1.0f;
 	// o_color = vec4(vec3(currentDepth), 1.0f);
 	o_color = vec4(res * visibility, 1.0f);
 	o_entityId = v_entityId; 
