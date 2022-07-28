@@ -19,7 +19,7 @@ namespace Neko {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_path(path) {
-		int width, height, channels;
+		int width = 0, height = 0, channels = 0;
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		// NEKO_CORE_ASSERT(data, "Failed to load image!");
@@ -69,5 +69,33 @@ namespace Neko {
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const {
 		glBindTextureUnit(slot, m_id);
+	}
+
+	OpenGLTextureCubeMap::OpenGLTextureCubeMap(const std::vector<std::string>& paths) : m_paths(paths) {
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+
+		int width = 0, height = 0, channels = 0;
+		// stbi_set_flip_vertically_on_load(1);
+		for (size_t i = 0; i < m_paths.size(); i++) {
+			stbi_uc* data = stbi_load(m_paths[i].c_str(), &width, &height, &channels, 0);
+			if (!data) continue;
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}
+		m_width = width;
+		m_height = height;
+
+		glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+	void OpenGLTextureCubeMap::SetData(void* data, uint32_t size) {
+	}
+
+	void OpenGLTextureCubeMap::Bind(uint32_t slot) const {
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
 	}
 }

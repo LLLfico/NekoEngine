@@ -31,4 +31,28 @@ namespace Neko {
 		GLenum m_internalFormat, m_dataFormat;
 	};
 
+	class OpenGLTextureCubeMap : public TextureCubeMap {
+	public:
+		OpenGLTextureCubeMap(const std::vector<std::string>& paths);
+
+		virtual uint32_t GetWidth() const override { return m_width; }
+		virtual uint32_t GetHeight() const override { return m_height; }
+		virtual uint32_t GetId() const override { return m_id; }
+
+		virtual void SetData(void* data, uint32_t size) override;
+
+		virtual void Bind(uint32_t slot = 0) const override;
+
+		virtual bool IsLoaded() const override { return m_isloaded; }
+
+		virtual bool operator==(const Texture& tex) const override {
+			return m_id == tex.GetId();
+		}
+	private:
+		std::vector<std::string> m_paths;
+		uint32_t m_id;
+		bool m_isloaded = false;
+		uint32_t m_width, m_height;
+	};
+
 }

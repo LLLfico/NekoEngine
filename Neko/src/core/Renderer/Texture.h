@@ -26,4 +26,9 @@ namespace Neko {
 		static std::shared_ptr<Texture2D> Create(uint32_t width, uint32_t height);
 	};
 
+
+	class TextureCubeMap : public Texture {
+	public:
+		static std::shared_ptr<TextureCubeMap> Create(const std::vector<std::string>& paths);
+	};
 }

@@ -17,6 +17,10 @@ namespace Neko {
 	struct Renderer3DData{
 		std::shared_ptr<Shader> shaderModel;
 		std::shared_ptr<Shader> shaderDepth;
+		std::shared_ptr<Shader> shaderCubeMap;
+		std::shared_ptr<TextureCubeMap> textureCubeMap;
+
+		std::shared_ptr<Mesh> backgroundCube;
 	};
 
 	static Renderer3DData s_data3d;
@@ -25,6 +29,20 @@ namespace Neko {
 		NEKO_CORE_INFO("Renderer3D Init");
 		s_data3d.shaderModel = Shader::Create("assets/shaders/ShaderModel.glsl");
 		s_data3d.shaderDepth = Shader::Create("assets/shaders/ShaderDepth.glsl");
+		s_data3d.shaderCubeMap = Shader::Create("assets/shaders/ShaderBackground.glsl");
+
+		s_data3d.backgroundCube = std::make_shared<Mesh>("assets/models/basic_geometry/cube.obj");
+
+		std::vector<std::string> cubeMapPaths = {
+			"assets/textures/cubemap/beach/px.png", // left
+			"assets/textures/cubemap/beach/nx.png", // right 
+			"assets/textures/cubemap/beach/py.png", // top
+			"assets/textures/cubemap/beach/ny.png", // bottom
+			"assets/textures/cubemap/beach/pz.png", // back
+			"assets/textures/cubemap/beach/nz.png", // front
+		};
+
+		s_data3d.textureCubeMap = TextureCubeMap::Create(cubeMapPaths);
 
 		FrameBufferDesc desc = { 1024, 1024, { FrameBufferTextureFormat::RGBA8 , FrameBufferTextureFormat::DEPTH } };
 		s_shadowFbo = FrameBuffer::Create(desc);
@@ -41,8 +59,12 @@ namespace Neko {
 		s_data3d.shaderModel->SetFloat("u_metallic", 0.90f);
 		s_data3d.shaderModel->SetFloat("u_roughness", 0.4f);
 		s_data3d.shaderModel->SetFloat("u_ao", 1.0f);
-
 		BindDepthTexture(8);
+
+		glm::mat4 backgroundVPMatrix = camera.GetProjection() * glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		s_data3d.shaderCubeMap->Bind();
+		s_data3d.shaderCubeMap->SetMat4("u_viewProjection", backgroundVPMatrix);
+		s_data3d.shaderCubeMap->SetInt("u_cubemap", 0);
 	}
 
 	void Renderer3D::BindDepthTexture(uint32_t slot) {
@@ -80,6 +102,9 @@ namespace Neko {
 	}
 
 	void Neko::Renderer3D::EndScene() {
+		glDepthFunc(GL_LEQUAL);
+		s_data3d.backgroundCube->Draw(glm::mat4(1.0f), s_data3d.shaderCubeMap, -1);
+		glDepthFunc(GL_LESS);
 	}
 
 }

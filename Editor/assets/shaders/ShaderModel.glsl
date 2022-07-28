@@ -171,6 +171,7 @@ vec3 CaculatePointLights(vec3 color, vec3 normal, vec3 worldPos, vec3 viewdir){
 }
 
 uniform vec3 u_cameraPos;
+uniform samplerCube cubemap;
 
 void main()
 {
@@ -179,7 +180,7 @@ void main()
 	vec3 viewdir = normalize(u_cameraPos - inputs.worldPos);
 
 	vec3 res = vec3(0.03f) * basecolor.xyz * u_ao;
-	// res += CaculateDirectionalLight(basecolor.xyz, normal);
+	res += CaculateDirectionalLight(basecolor.xyz, normal);
 	res += CaculatePointLights(basecolor.xyz, normal, inputs.worldPos, viewdir);
 	
 	// hdr
