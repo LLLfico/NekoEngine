@@ -100,10 +100,10 @@ namespace Neko {
 		if (mesh->mMaterialIndex >= 0) {
 			auto material = scene->mMaterials[mesh->mMaterialIndex];
 			auto diffuseMaps = LoadMaterialTexture(material, aiTextureType_DIFFUSE, submeshIndex);
-			NEKO_CORE_INFO("submesh {0}", submeshIndex);
+			// NEKO_CORE_INFO("submesh {0}", submeshIndex);
 			for (int i = aiTextureType_NONE; i < aiTextureType_UNKNOWN; i++) {
 				size_t cnt = material->GetTextureCount(aiTextureType(i));
-				NEKO_CORE_INFO("type {0} has {1} textures", i, cnt);
+				// NEKO_CORE_INFO("type {0} has {1} textures", i, cnt);
 				
 			}
 		}

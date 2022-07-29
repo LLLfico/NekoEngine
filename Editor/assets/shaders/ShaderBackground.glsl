@@ -42,6 +42,19 @@ uniform samplerCube u_cubemap;
 
 void main()
 {
-	o_color = texture(u_cubemap, inputs.texcoord);
+	vec3 envColor = texture(u_cubemap, normalize(inputs.texcoord)).rgb;
+
+	// for pre compute test
+	// vec3 irradiance = vec3(0.0f);
+	// 
+	// vec3 normal = normalize(inputs.texcoord);
+	// vec3 up = vec3(0.0f, 1.0f, 0.0f);
+	// vec3 right = vec3(
+
+
+	envColor = envColor / (envColor + vec3(1.0));
+    envColor = pow(envColor, vec3(1.0/2.2)); 
+
+	o_color = vec4(envColor, 1.0f);
 	o_entityId = v_entityId; 
 } 

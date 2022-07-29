@@ -53,10 +53,10 @@ namespace Neko {
 		float ZoomSpeed() const;
 
 	private:
-		float m_fov = 45.0f;
+		float m_fov = 90.0f;
 		float m_aspectRatio = 1.778f;
 		float m_zNear = 0.1f;
-		float m_zFar = 1000.0f;
+		float m_zFar = 100.0f;
 
 		glm::mat4 m_view;
 		glm::vec3 m_position{ 0.0f, 0.0f, 0.0f };

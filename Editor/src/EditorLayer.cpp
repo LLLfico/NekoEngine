@@ -29,7 +29,7 @@ namespace Neko {
 
 		m_editorScene = std::make_shared<Scene>();
 		m_scene = m_editorScene;
-		m_editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+		m_editorCamera = EditorCamera(90.0f, 1.778f, 0.1f, 1000.0f);
 		#if 0
 		auto square = m_scene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));

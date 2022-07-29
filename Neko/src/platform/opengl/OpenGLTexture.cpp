@@ -21,38 +21,61 @@ namespace Neko {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_path(path) {
 		int width = 0, height = 0, channels = 0;
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+		stbi_uc* data = nullptr;
+		float* dataf = nullptr;
+		GLenum internalFormat = 0, format = 0;
+		if (path.find_last_of(".") != std::string::npos && path.substr(path.find_last_of(".") + 1) == "hdr") {
+			dataf = stbi_loadf(path.c_str(), &width, &height, &channels, 0);
+		}
+		else {
+			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		}
 		// NEKO_CORE_ASSERT(data, "Failed to load image!");
 
-		if (!data) return;
+		if (!data && !dataf) return;
+
 		m_isloaded = true;
 		m_width = width;
 		m_height = height;
 
-		GLenum internalFormat = 0, format = 0;
-		if (channels == 4) {
-			internalFormat = GL_RGBA8;
-			format = GL_RGBA;
+		if (data) {
+			if (channels == 4) {
+				internalFormat = GL_RGBA8;
+				format = GL_RGBA;
+			}
+			else if (channels == 3) {
+				internalFormat = GL_RGB8;
+				format = GL_RGB;
+			}
+			else {
+				NEKO_ASSERT(false, "Unknown Image Channel {0}!", channels);
+			}
 		}
-		else if (channels == 3) {
-			internalFormat = GL_RGB8;
+		else if (dataf){
+			internalFormat = GL_RGB16F;
 			format = GL_RGB;
 		}
 		else {
-			NEKO_ASSERT(false, "Unknown Image Channel {0}!", channels);
+			NEKO_ASSERT(false, "Unknown texture type!");
 		}
 		m_internalFormat = internalFormat;
 		m_dataFormat = format;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
-		glTextureStorage2D(m_id, 1, internalFormat, m_width, m_height);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+		// glTextureStorage2D(m_id, 1, internalFormat, m_width, m_height);
+		if (data)
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		else if (dataf)
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_FLOAT, dataf);
 
 		glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data);
+		// glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
 	}
