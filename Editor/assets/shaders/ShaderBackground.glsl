@@ -30,7 +30,6 @@ void main()
 layout(location = 0) out vec4 o_color;
 layout(location = 1) out int o_entityId;
 
-
 struct vertexOutput{
 	vec3 texcoord;
 };
@@ -43,14 +42,6 @@ uniform samplerCube u_cubemap;
 void main()
 {
 	vec3 envColor = texture(u_cubemap, normalize(inputs.texcoord)).rgb;
-
-	// for pre compute test
-	// vec3 irradiance = vec3(0.0f);
-	// 
-	// vec3 normal = normalize(inputs.texcoord);
-	// vec3 up = vec3(0.0f, 1.0f, 0.0f);
-	// vec3 right = vec3(
-
 
 	envColor = envColor / (envColor + vec3(1.0));
     envColor = pow(envColor, vec3(1.0/2.2)); 
