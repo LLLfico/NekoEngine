@@ -23,7 +23,7 @@ namespace Neko {
 		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
 
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
