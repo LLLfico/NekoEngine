@@ -23,7 +23,7 @@ namespace Neko {
 		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
 
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -100,10 +100,10 @@ namespace Neko {
 		if (mesh->mMaterialIndex >= 0) {
 			auto material = scene->mMaterials[mesh->mMaterialIndex];
 			auto diffuseMaps = LoadMaterialTexture(material, aiTextureType_DIFFUSE, submeshIndex);
-			// NEKO_CORE_INFO("submesh {0}", submeshIndex);
+			NEKO_CORE_INFO("submesh {0}", submeshIndex);
 			for (int i = aiTextureType_NONE; i < aiTextureType_UNKNOWN; i++) {
 				size_t cnt = material->GetTextureCount(aiTextureType(i));
-				// NEKO_CORE_INFO("type {0} has {1} textures", i, cnt);
+				NEKO_CORE_INFO("type {0} has {1} textures", i, cnt);
 				
 			}
 		}

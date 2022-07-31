@@ -144,6 +144,9 @@
     <ClInclude Include="src\core\renderer\GraphicsContext.h">
       <Filter>src\core\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\renderer\Material.h">
+      <Filter>src\core\renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\core\renderer\Projection.h">
       <Filter>src\core\renderer</Filter>
     </ClInclude>
@@ -1485,7 +1488,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\renderer\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -1531,6 +1533,9 @@
       <Filter>src\core\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\core\renderer\FrameBuffer.cpp">
+      <Filter>src\core\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\renderer\Material.cpp">
       <Filter>src\core\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\core\renderer\RenderCommand.cpp">
@@ -1620,6 +1625,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\renderer\Material.cpp" />
   </ItemGroup>
 </Project>
