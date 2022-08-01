@@ -194,6 +194,9 @@
     <ClInclude Include="src\platform\opengl\OpenGLVertexArray.h" />
     <ClInclude Include="src\platform\windows\WindowsInput.h" />
     <ClInclude Include="src\platform\windows\WindowsWindow.h" />
+    <ClInclude Include="src\world\Animation.h" />
+    <ClInclude Include="src\world\Animator.h" />
+    <ClInclude Include="src\world\Bone.h" />
     <ClInclude Include="src\world\Component.h" />
     <ClInclude Include="src\world\Entity.h" />
     <ClInclude Include="src\world\Mesh.h" />
@@ -659,6 +662,9 @@
     <ClCompile Include="src\platform\windows\WindowsInput.cpp" />
     <ClCompile Include="src\platform\windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\platform\windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\world\Animation.cpp" />
+    <ClCompile Include="src\world\Animator.cpp" />
+    <ClCompile Include="src\world\Bone.cpp" />
     <ClCompile Include="src\world\Entity.cpp" />
     <ClCompile Include="src\world\Mesh.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />

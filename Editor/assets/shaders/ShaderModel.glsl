@@ -7,8 +7,17 @@ layout (location = 3) in vec3 a_tangent;
 layout (location = 4) in vec3 a_bitangent;
 layout (location = 5) in int a_entityId;
 
+layout (location = 6) in ivec4 a_boneIds;
+layout (location = 7) in vec4 a_weights;
+
 uniform mat4 u_model;
 uniform mat4 u_viewProjection;
+
+uniform bool u_animated;
+
+const int MAX_BONE_NUMS = 100;
+const int MAX_BONE_INFLUENCE = 4;
+uniform mat4 u_finalBoneMatrices[MAX_BONE_NUMS];
 
 struct vertexOutput{
 	vec3 worldPos;
@@ -23,13 +32,28 @@ layout (location = 1) out vertexOutput outputs;
 
 void main()
 {
-	outputs.worldPos = vec3(u_model * vec4(a_position, 1.0));
-	outputs.normal = mat3(u_model) * a_normal;
 	outputs.texcoord = a_texcoord;
-	outputs.tangent = a_tangent;
-	outputs.bitangent = a_bitangent;
 	v_entityId = a_entityId;
-	gl_Position = u_viewProjection * vec4(outputs.worldPos, 1.0f);
+	if (u_animated){
+		mat4 boneTransformMatrix = u_finalBoneMatrices[a_boneIds[0]] * a_weights[0];
+			 boneTransformMatrix += u_finalBoneMatrices[a_boneIds[1]] * a_weights[1];
+			 boneTransformMatrix += u_finalBoneMatrices[a_boneIds[2]] * a_weights[2];
+			 boneTransformMatrix += u_finalBoneMatrices[a_boneIds[3]] * a_weights[3];
+		mat3 normalMatrix = transpose(inverse(mat3(boneTransformMatrix)));
+		outputs.normal = normalMatrix * a_normal;
+		vec4 pos = u_model * boneTransformMatrix * vec4(a_position, 1.0f);
+		outputs.worldPos = pos.xyz;
+		gl_Position = u_viewProjection * vec4(outputs.worldPos, 1.0f);
+	}
+	else {
+		outputs.worldPos = vec3(u_model * vec4(a_position, 1.0));
+		outputs.normal = mat3(u_model) * a_normal;
+		outputs.tangent = a_tangent;
+		outputs.bitangent = a_bitangent;
+		gl_Position = u_viewProjection * vec4(outputs.worldPos, 1.0f);
+	}
+
+	
 }
 
 

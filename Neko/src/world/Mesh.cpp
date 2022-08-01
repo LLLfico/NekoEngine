@@ -13,6 +13,16 @@ namespace Neko {
 	}
 
 	void Mesh::Draw(const glm::mat4& transform, std::shared_ptr<Shader> shader, int entityId) {
+		shader->Bind();
+		shader->SetBool("u_animated", m_animated);
+		if (m_animated) {
+			m_animator.UpdateAnimation(0.05f);
+			auto boneTransforms = m_animator.GetFinalBoneMatrices();
+			for (size_t i = 0; i < boneTransforms.size(); i++) {
+				shader->SetMat4("u_finalBoneMatrices[" + std::to_string(i) + "]", boneTransforms[i]);
+			}
+		}
+		
 		for (auto& submesh : m_submeshes) {
 			submesh.Draw(transform, shader, entityId, this);
 		}
@@ -33,7 +43,16 @@ namespace Neko {
 
 		uint32_t submeshIndex = 0;
 
-		ProcessNode(scene->mRootNode, scene, submeshIndex);
+		if (scene->HasAnimations()) {
+			m_animated = true;
+			ProcessNode(scene->mRootNode, scene, submeshIndex);
+			m_animation = Animation::Animation(filepath, this);
+			m_animator = Animator::Animator(&m_animation);
+		}
+		else {
+			ProcessNode(scene->mRootNode, scene, submeshIndex);
+		}
+		m_materials.resize(submeshIndex);
 	}
 
 	void Mesh::ProcessNode(aiNode* node, const aiScene* scene, uint32_t& submeshIndex) {
@@ -108,6 +127,10 @@ namespace Neko {
 			}
 		}
 
+		if (m_animated) {
+			ExtractBoneWeightForVertices(vertices, mesh, scene);
+		}
+
 		return SubMesh(vertices, indices, submeshIndex);
 	}
 
@@ -149,6 +172,55 @@ namespace Neko {
 		return textures;
 	}
 
+	void Mesh::SetVertexBoneDataDefault(MeshVertex& vertex) {
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+			vertex.boneIds[i] = -1;
+			vertex.weights[i] = 0.0f;
+		}
+	}
+
+	void Mesh::ExtractBoneWeightForVertices(std::vector<MeshVertex>& vertices, aiMesh* mesh, const aiScene* scene) {
+		for (size_t boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++) {
+			int boneId = -1;
+			std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+			if (m_boneInfoMap.count(boneName)) {
+				boneId = m_boneInfoMap[boneName].id;
+			}
+			else {
+				BoneInfo boneInfo;
+				boneInfo.id = m_boneCounter;
+				boneId = m_boneCounter;
+				m_boneCounter++;
+				auto& from = mesh->mBones[boneIndex]->mOffsetMatrix;
+				glm::mat4 to;
+				//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
+				to[0][0] = from.a1; to[1][0] = from.a2; to[2][0] = from.a3; to[3][0] = from.a4;
+				to[0][1] = from.b1; to[1][1] = from.b2; to[2][1] = from.b3; to[3][1] = from.b4;
+				to[0][2] = from.c1; to[1][2] = from.c2; to[2][2] = from.c3; to[3][2] = from.c4;
+				to[0][3] = from.d1; to[1][3] = from.d2; to[2][3] = from.d3; to[3][3] = from.d4;
+				boneInfo.offset = to;
+				m_boneInfoMap[boneName] = boneInfo;
+			}
+			NEKO_CORE_ASSERT(boneId == -1, "Bone import failed!");
+			auto weights = mesh->mBones[boneIndex]->mWeights;
+			int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+			for (size_t weightIndex = 0; weightIndex < numWeights; weightIndex++) {
+				int vertexId = weights[weightIndex].mVertexId;
+				float weight = weights[weightIndex].mWeight;
+				NEKO_CORE_ASSERT(vertexId <= vertices.size(), "Unexpected vertex id");
+				for (size_t i = 0; i < MAX_BONE_INFLUENCE; i++) {
+					// select a slot add id and weight
+					if (vertices[vertexId].boneIds[i] < 0) {
+						vertices[vertexId].weights[i] = weight;
+						vertices[vertexId].boneIds[i] = boneId;
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	SubMesh::SubMesh(const std::vector<MeshVertex>& vertices, const std::vector<uint32_t>& indices, int submeshIndex) : m_vertices(vertices), m_indices(indices), m_submeshIndex(submeshIndex) {
 		m_vao = VertexArray::Create();
 		m_vbo = VertexBuffer::Create(m_vertices.size() * sizeof(MeshVertex));
@@ -159,6 +231,9 @@ namespace Neko {
 			{ "a_tangent",  ShaderDataType::Float3 },
 			{ "a_bitangent",ShaderDataType::Float3 },
 			{ "a_entityId", ShaderDataType::Int    },
+
+			{ "a_boneIds",  ShaderDataType::Int4   },
+			{ "a_weights",  ShaderDataType::Float4 },
 		});
 		m_vao->AddVertexBuffer(m_vbo);
 

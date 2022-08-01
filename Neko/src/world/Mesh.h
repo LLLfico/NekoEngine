@@ -1,10 +1,15 @@
 #pragma once
 #include "core/renderer/Material.h"
 
+#include "Animation.h"
+#include "Animator.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glm/glm.hpp>
+
+#define MAX_BONE_INFLUENCE 4
 
 namespace Neko {
 
@@ -20,6 +25,14 @@ namespace Neko {
 		glm::vec3 tangent;
 		glm::vec3 bitangent;
 		int entityId;
+
+		int boneIds[MAX_BONE_INFLUENCE];
+		float weights[MAX_BONE_INFLUENCE];
+	};
+
+	struct BoneInfo {
+		int id;
+		glm::mat4 offset;
 	};
 
 	class Mesh;
@@ -56,6 +69,8 @@ namespace Neko {
 		const std::vector<Material>& GetMaterials() const { return m_materials; }
 		size_t GetSubMeshNum() const { return m_submeshes.size(); }
 		std::vector<Material>& GetMaterialsRef() { return m_materials; }
+		std::map<std::string, BoneInfo>& GetBoneInfoMap() { return m_boneInfoMap; }
+		int& GetBoneCount() { return m_boneCounter; }
 
 	private:
 		void LoadModel(const std::string& path);
@@ -63,11 +78,21 @@ namespace Neko {
 		SubMesh ProcessMesh(aiMesh* mesh, const aiScene* scene, uint32_t& submeshIndex);
 		std::vector<MaterialTexture> LoadMaterialTexture(aiMaterial* material, aiTextureType type, uint32_t submeshIndex);
 
+		void SetVertexBoneDataDefault(MeshVertex& vertex);
+		void ExtractBoneWeightForVertices(std::vector<MeshVertex>& vertices, aiMesh* mesh, const aiScene* scene);
+
 	private:
 		std::vector<Material> m_materials;
 		std::vector<SubMesh> m_submeshes;
 		std::string m_path;
 		std::string m_directory;
+
+		Animation m_animation;
+		Animator m_animator;
+
+		bool m_animated = false;
+		std::map<std::string, BoneInfo> m_boneInfoMap;
+		int m_boneCounter = 0;
 	};
 
 }
