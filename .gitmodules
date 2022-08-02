@@ -19,6 +19,3 @@
 [submodule "Neko/vendor/Box2D"]
 	path = Neko/vendor/Box2D
 	url = https://github.com/TheCherno/box2d.git
-[submodule "Neko/vendor/assimp"]
-	path = Neko/vendor/assimp
-	url = https://github.com/LLLfico/assimp.git
