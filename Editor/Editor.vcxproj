@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NEKO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;..\Neko\vendor\assimp\build\x64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NEKO_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;..\Neko\vendor\assimp\build\x64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +118,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NEKO_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Neko\vendor\spdlog\include;..\Neko\src;..\Neko\vendor;..\Neko\vendor\glm;..\Neko\vendor\entt\include;..\Neko\vendor\assimp\include;..\Neko\vendor\assimp\build\x64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

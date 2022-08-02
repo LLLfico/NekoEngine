@@ -28,6 +28,7 @@ IncludeDir["yaml_cpp"] = "Neko/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Neko/vendor/ImGuizmo"
 IncludeDir["Box2D"] = "Neko/vendor/Box2D/include"
 IncludeDir["assimp"] = "Neko/vendor/assimp/include"
+IncludeDir["assimpBuild"] = "Neko/vendor/assimp/build/x64/include"
 
 -- include premake file like c++ include (copy text here)
 include "Neko/vendor/GLFW"
@@ -81,7 +82,8 @@ project "Neko"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.Box2D}",
-		"%{IncludeDir.assimp}"
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.assimpBuild}"
 	}
 
 	links{
@@ -187,6 +189,7 @@ project "Editor"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.assimp}",
+		"%{IncludeDir.assimpBuild}",
 	}
 
 	links{

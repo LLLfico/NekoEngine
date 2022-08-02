@@ -33,6 +33,8 @@ layout (location = 1) out vertexOutput outputs;
 void main()
 {
 	outputs.texcoord = a_texcoord;
+	outputs.tangent = a_tangent;
+	outputs.bitangent = a_bitangent;
 	v_entityId = a_entityId;
 	if (u_animated){
 		mat4 boneTransformMatrix = u_finalBoneMatrices[a_boneIds[0]] * a_weights[0];
@@ -48,8 +50,7 @@ void main()
 	else {
 		outputs.worldPos = vec3(u_model * vec4(a_position, 1.0));
 		outputs.normal = mat3(u_model) * a_normal;
-		outputs.tangent = a_tangent;
-		outputs.bitangent = a_bitangent;
+		
 		gl_Position = u_viewProjection * vec4(outputs.worldPos, 1.0f);
 	}
 

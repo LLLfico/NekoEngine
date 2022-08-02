@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bone.h"
+#include "BoneInfo.h"
 
 #include <assimp/scene.h>
 #include <glm/glm.hpp>
@@ -36,10 +37,9 @@ namespace Neko {
 		void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
 	private:
 		float m_duration = 0.0f;
-		int m_ticksPerSecond = 0;
+		float m_ticksPerSecond = 0.0f;
 		std::vector<Bone> m_bones;
 		AssimpNodeData m_rootNode;
 		std::map<std::string, BoneInfo> m_boneInfoMap;
 	};
-
 }

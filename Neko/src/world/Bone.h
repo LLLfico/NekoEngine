@@ -2,7 +2,9 @@
 
 #include <assimp/scene.h>
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace Neko {
 	struct KeyPosition {

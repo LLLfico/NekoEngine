@@ -19,6 +19,7 @@ namespace Neko {
 		if (m_currentAnimation) {
 			m_currentTime += m_currentAnimation->GetTicksPerSecond() * dt;
 			m_currentTime = fmod(m_currentTime, m_currentAnimation->GetDuration());
+			// m_currentTime = 0.0f;
 			CaculateBoneTransform(&m_currentAnimation->GetRootNode(), glm::mat4(1.0f));
 		}
 	}
@@ -36,12 +37,14 @@ namespace Neko {
 
 		if (bone) {
 			bone->OnUpdate(m_currentTime);
+			// bone->Update(m_currentTime);
 			nodeTransform = bone->GetLocalTransform();
 		}
 
 		glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
 		auto boneInfoMap = m_currentAnimation->GetBoneMap();
+		// auto boneInfoMap = m_currentAnimation->GetBoneIDMap();
 		if (boneInfoMap.count(nodeName)) {
 			int index = boneInfoMap[nodeName].id;
 			glm::mat4 offset = boneInfoMap[nodeName].offset;

@@ -3,6 +3,7 @@
 
 #include "Animation.h"
 #include "Animator.h"
+#include "BoneInfo.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -28,11 +29,6 @@ namespace Neko {
 
 		int boneIds[MAX_BONE_INFLUENCE];
 		float weights[MAX_BONE_INFLUENCE];
-	};
-
-	struct BoneInfo {
-		int id;
-		glm::mat4 offset;
 	};
 
 	class Mesh;
@@ -68,9 +64,13 @@ namespace Neko {
 		const Material& GetMaterial(uint32_t submeshIndex) const { return m_materials[submeshIndex]; }
 		const std::vector<Material>& GetMaterials() const { return m_materials; }
 		size_t GetSubMeshNum() const { return m_submeshes.size(); }
+		const std::vector<glm::mat4> GetBoneMatrices() const { return m_animator.GetFinalBoneMatrices(); }
+		int GetBoneCount() const { return m_boneCounter; }
+
 		std::vector<Material>& GetMaterialsRef() { return m_materials; }
-		std::map<std::string, BoneInfo>& GetBoneInfoMap() { return m_boneInfoMap; }
-		int& GetBoneCount() { return m_boneCounter; }
+		std::map<std::string, BoneInfo>& GetBoneInfoMapRef() { return m_boneInfoMap; }
+		int& GetBoneCountRef() { return m_boneCounter; }
+
 
 	private:
 		void LoadModel(const std::string& path);

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Bone.h"
 
+#include <glm/gtx/matrix_decompose.hpp>
+
 namespace Neko {
 
 	glm::vec3 GLMVec3(const aiVector3D& in) {
@@ -12,7 +14,7 @@ namespace Neko {
 
 	Bone::Bone(const std::string& name, int id, const aiNodeAnim* channel) : m_name(name), m_id(id), m_localTransform(1.0f) {
 		m_numPositions = channel->mNumPositionKeys;
-		for (size_t positionIndex = 0; positionIndex < m_numPositions; ++positionIndex) {
+		for (int positionIndex = 0; positionIndex < m_numPositions; ++positionIndex) {
 			aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
 			float timeStep = channel->mPositionKeys[positionIndex].mTime;
 			// KeyPosition data{ GLMVec(aiPosition), timeStep };
@@ -32,6 +34,11 @@ namespace Neko {
 			float timeStep = channel->mScalingKeys[scaleIndex].mTime;
 			m_scales.push_back({ GLMVec3(aiScale), timeStep });
 		}
+
+
+		NEKO_CORE_TRACE("Name {0}, Rotation {1}, {2}, {3}, {4}", name, m_rotations[0].orientation.w, m_rotations[0].orientation.x, m_rotations[0].orientation.y, m_rotations[0].orientation.z);
+		// NEKO_CORE_TRACE("Name {0}, Rotation {1}, {2}, {3}", name, m_positions[0].position.x, m_positions[0].position.y, m_positions[0].position.z);
+		// NEKO_CORE_TRACE("Name {0}, Quat {1}, {2}, {3}, {4}", name, qt0.w, qt0.x, qt0.y, qt0.z);
 	}
 
 	void Bone::OnUpdate(float animationTime) {
@@ -73,17 +80,6 @@ namespace Neko {
 		return scaleFactor;
 	}
 
-	glm::mat4 Bone::InterpolatePosition(float animationTime) {
-		if (m_numPositions == 1) {
-			return glm::translate(glm::mat4(1.0f), m_positions[0].position);
-		}
-		int p0 = GetPositionIndex(animationTime);
-		int p1= p0 + 1;
-		float scaleFactor = GetScaleFactor(m_positions[p0].timeStep, m_positions[p1].timeStep, animationTime);
-		glm::vec3 finalPosition = glm::mix(m_positions[p0].position, m_positions[p1].position, scaleFactor);
-		return glm::translate(glm::mat4(1.0f), finalPosition);
-	}
-
 	glm::mat4 Bone::InterpolateRotation(float animationTime) {
 		if (m_numRotations == 1) {
 			auto rotation = glm::normalize(m_rotations[0].orientation);
@@ -92,12 +88,13 @@ namespace Neko {
 		int p0 = GetRotationIndex(animationTime);
 		int p1 = p0 + 1;
 		float scaleFactor = GetScaleFactor(m_rotations[p0].timeStep, m_rotations[p1].timeStep, animationTime);
-		auto finalRotation = glm::slerp(m_rotations[p0].orientation, m_rotations[p1].orientation, animationTime);
+		glm::quat finalRotation = glm::slerp(m_rotations[p0].orientation, m_rotations[p1].orientation, scaleFactor);
+		finalRotation = glm::normalize(finalRotation);
 		return glm::toMat4(finalRotation);
 	}
 
 	glm::mat4 Bone::InterpolateScaling(float animationTime) {
-		if (m_numScales) {
+		if (m_numScales == 1) {
 			return glm::scale(glm::mat4(1.0f), m_scales[0].scale);
 		}
 		int p0 = GetScaleIndex(animationTime);
@@ -107,4 +104,16 @@ namespace Neko {
 		return glm::scale(glm::mat4(1.0f), finalScale);
 	}
 
+	glm::mat4 Bone::InterpolatePosition(float animationTime) {
+		if (1 == m_numPositions)
+			return glm::translate(glm::mat4(1.0f), m_positions[0].position);
+
+		int p0Index = GetPositionIndex(animationTime);
+		int p1Index = p0Index + 1;
+		float scaleFactor = GetScaleFactor(m_positions[p0Index].timeStep,
+			m_positions[p1Index].timeStep, animationTime);
+		glm::vec3 finalPosition = glm::mix(m_positions[p0Index].position, m_positions[p1Index].position
+			, scaleFactor);
+		return glm::translate(glm::mat4(1.0f), finalPosition);
+	}
 }

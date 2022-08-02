@@ -19,13 +19,9 @@ namespace Neko {
 		Assimp::Importer importer;
 
 		static const uint32_t s_MeshImportFlags =
-			aiProcess_CalcTangentSpace |        
-			aiProcess_Triangulate |             
-			aiProcess_SortByPType |             
-			aiProcess_GenNormals |              
-			aiProcess_GenUVCoords |             
-			//aiProcess_OptimizeMeshes |        
-			aiProcess_ValidateDataStructure;    
+			aiProcess_CalcTangentSpace |
+			aiProcess_Triangulate;
+		importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		const aiScene* scene = importer.ReadFile(animationPath, s_MeshImportFlags);
 		NEKO_CORE_ASSERT(scene && scene->mRootNode);
 		auto animation = scene->mAnimations[0];
@@ -44,14 +40,14 @@ namespace Neko {
 	void Animation::ReadMissBones(const aiAnimation* animation, Mesh& mesh) {
 		int size = animation->mNumChannels;
 
-		auto& boneInfoMap = mesh.GetBoneInfoMap();
-		int& boneCount = mesh.GetBoneCount();
+		auto& boneInfoMap = mesh.GetBoneInfoMapRef();
+		int& boneCount = mesh.GetBoneCountRef();
 
-		for (size_t i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			auto channel = animation->mChannels[i];
 			std::string boneName = channel->mNodeName.data;
 
-			if (!boneInfoMap.count(boneName)) {
+			if (boneInfoMap.find(boneName) == boneInfoMap.end()) {
 				boneInfoMap[boneName].id = boneCount;
 				boneCount++;
 			}
@@ -67,11 +63,10 @@ namespace Neko {
 		dest.transformation = GLMMat4(src->mTransformation);
 		dest.childrenCount = src->mNumChildren;
 
-		for (size_t i = 0; i < src->mNumChildren; ++i) {
+		for (int i = 0; i < src->mNumChildren; ++i) {
 			AssimpNodeData child;
 			ReadHeirarchyData(child, src->mChildren[i]);
 			dest.children.push_back(child);
 		}
 	}
-
 }

@@ -16,7 +16,7 @@ namespace Neko {
 		shader->Bind();
 		shader->SetBool("u_animated", m_animated);
 		if (m_animated) {
-			m_animator.UpdateAnimation(0.05f);
+			m_animator.UpdateAnimation(0.1f);
 			auto boneTransforms = m_animator.GetFinalBoneMatrices();
 			for (size_t i = 0; i < boneTransforms.size(); i++) {
 				shader->SetMat4("u_finalBoneMatrices[" + std::to_string(i) + "]", boneTransforms[i]);
@@ -33,6 +33,7 @@ namespace Neko {
 		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
 
 		Assimp::Importer importer;
+		// importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -72,6 +73,8 @@ namespace Neko {
 
 		for (size_t i = 0; i < mesh->mNumVertices; ++i) {
 			MeshVertex vertex;
+
+			SetVertexBoneDataDefault(vertex);
 
 			vertex.position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
 

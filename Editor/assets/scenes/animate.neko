@@ -1,0 +1,15 @@
+Scene: Untitled
+Entities:
+  - Entity: 3881832887265452972
+    TagComponent:
+      Tag: animate
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      FilePath: assets\models\stormtrooper\source\silly_dancing.fbx
+      Materials:
+        Material0:
+          UseAlbedoMap: true
+          AlbedoColor: [0.5, 0.300000012, 0, 1]

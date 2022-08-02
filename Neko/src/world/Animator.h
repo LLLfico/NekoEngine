@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Animation.h"
+#include "Bone.h"
+#include "BoneInfo.h"
 
 #include <glm/glm.hpp>
 
@@ -17,12 +20,11 @@ namespace Neko {
 		void UpdateAnimation(float dt);
 		void PlayAnimation(Animation* animation);
 		void CaculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
-		const std::vector<glm::mat4>& GetFinalBoneMatrices() { return m_finalBoneMatrice; }
+		const std::vector<glm::mat4>& GetFinalBoneMatrices() const { return m_finalBoneMatrice; }
 	private:
 		std::vector<glm::mat4> m_finalBoneMatrice;
 		Animation* m_currentAnimation = nullptr;;
 		float m_currentTime = 0.0f;
 		float m_deltaTime = 0.0f;
 	};
-
 }
