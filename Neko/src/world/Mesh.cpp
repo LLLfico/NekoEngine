@@ -16,7 +16,7 @@ namespace Neko {
 		shader->Bind();
 		shader->SetBool("u_animated", m_animated);
 		if (m_animated) {
-			m_animator.UpdateAnimation(0.1f);
+			m_animator.UpdateAnimation(1.0f);
 			auto boneTransforms = m_animator.GetFinalBoneMatrices();
 			for (size_t i = 0; i < boneTransforms.size(); i++) {
 				shader->SetMat4("u_finalBoneMatrices[" + std::to_string(i) + "]", boneTransforms[i]);
@@ -33,7 +33,7 @@ namespace Neko {
 		std::string filepath = std::regex_replace(path, std::regex("\\\\"), "/");
 
 		Assimp::Importer importer;
-		// importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+		importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -262,18 +262,60 @@ namespace Neko {
 		shader->SetMat4("u_model", transform);
 
 		auto material = mesh->GetMaterial(m_submeshIndex);
-		constexpr uint32_t diffuse_slot = 3;
-		if (material.m_useAlbedo) {
-			material.m_albedoMap->Bind(diffuse_slot);
+		constexpr uint32_t albedoSlot = 3;
+		constexpr uint32_t metallicSlot = 4;
+		constexpr uint32_t roughnessSlot = 5;
+		constexpr uint32_t aoSlot = 6;
+		if (material.m_useAlbedoMap) {
+			material.m_albedoMap->Bind(albedoSlot);
 		}
 		else {
 			unsigned char color[4];
 			for (size_t i = 0; i < 4; i++)
 				color[i] = (unsigned char)(material.m_color[i] * 255.0f);
-			material.m_albedoColor->SetData(color, 4 * sizeof(unsigned char));
-			material.m_albedoColor->Bind(diffuse_slot);
+			material.m_albedoSprite->SetData(color, 4 * sizeof(unsigned char));
+			material.m_albedoSprite->Bind(albedoSlot);
 		}
-		shader->SetInt("u_albedoMap", diffuse_slot);
+		shader->SetInt("u_albedoMap", albedoSlot);
+
+		if (material.m_useMetallicMap) {
+			material.m_metallicMap->Bind(metallicSlot);
+		}
+		else {
+			unsigned char color[4];
+			for (size_t i = 0; i < 3; i++)
+				color[i] = (unsigned char)(material.m_metalllic * 255.0f);
+			color[3] = 255.0f;
+			material.m_metallicSprite->SetData(color, 4 * sizeof(unsigned char));
+			material.m_metallicSprite->Bind(metallicSlot);
+		}
+		shader->SetInt("u_metallicMap", metallicSlot);
+
+		if (material.m_useRoughnessMap) {
+			material.m_roughnessMap->Bind(roughnessSlot);
+		}
+		else {
+			unsigned char color[4];
+			for (size_t i = 0; i < 3; i++)
+				color[i] = (unsigned char)(material.m_roughness * 255.0f);
+			color[3] = 255.0f;
+			material.m_roughnessSprite->SetData(color, 4 * sizeof(unsigned char));
+			material.m_roughnessSprite->Bind(roughnessSlot);
+		}
+		shader->SetInt("u_roughnessMap", roughnessSlot);
+
+		if (material.m_useAOMap) {
+			material.m_aoMap->Bind(aoSlot);
+		}
+		else {
+			unsigned char color[4];
+			for (size_t i = 0; i < 3; i++)
+				color[i] = (unsigned char)(material.m_ao * 255.0f);
+			color[3] = 255.0f;
+			material.m_aoSprite->SetData(color, 4 * sizeof(unsigned char));
+			material.m_aoSprite->Bind(aoSlot);
+		}
+		shader->SetInt("u_aoMap", aoSlot);
 
 		RenderCommand::DrawElement(m_vao, m_ibo->Count());
 	}

@@ -378,21 +378,6 @@ namespace Neko {
 				Renderer2D::DrawCircle(transform.GetTransformMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
 			}
 		}
-		{
-			// bones for test
-			auto view = m_registry.view<TransformComponent, MeshComponent>();
-			for (auto entity : view) {
-				auto [transform, meshComponent] = view.get<TransformComponent, MeshComponent>(entity);
-				auto mesh = meshComponent.mesh;
-				int boneCnt = mesh->GetBoneCount();
-				auto boneMatrices = mesh->GetBoneMatrices();
-				for (size_t i = 0; i < boneCnt; i++) {
-					auto finalMatrix = transform.GetTransformMatrix() * boneMatrices[i] * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
-					Renderer2D::DrawCircle(finalMatrix, glm::vec4(0.0f, 0.2f, 0.6f, 1.0f), 1.0f, 0.005f, -1);
-				}
-
-			}
-		}
 		// Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 		Renderer2D::EndScene();
 

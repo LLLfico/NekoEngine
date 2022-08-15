@@ -29,23 +29,5 @@ namespace Neko {
 		static std::shared_ptr<Shader> Create(const std::string& name, const std::string& vertexDesc, const std::string& fragDesc);
 	};
 
-	class ShaderManager {
-	public:
-		void Add(const std::shared_ptr<Shader> shader);
-		std::shared_ptr<Shader> Load(const std::string& filePath);
-
-		std::shared_ptr<Shader> GetShader(const std::string& name);
-
-		bool Exist(const std::string& name) const;
-
-		static ShaderManager GetInstance() {
-			static ShaderManager s_instance;
-			return s_instance;
-		}
-
-	private:
-		std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
-	};
-
 }
 

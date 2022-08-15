@@ -20,8 +20,6 @@
     <ClCompile Include="src\panels\ContentBrowserPanel.cpp">
       <Filter>panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\panels\SceneHierarchyPanel.cpp">
-      <Filter>panels</Filter>
-    </ClCompile>
+    <ClCompile Include="src\panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
 </Project>

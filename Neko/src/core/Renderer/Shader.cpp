@@ -38,27 +38,4 @@ namespace Neko {
 		return nullptr;
 	}
 
-	void ShaderManager::Add(const std::shared_ptr<Shader> shader) {
-		auto name = shader->GetName();
-		NEKO_CORE_ASSERT(!Exist(name), "Shader already exists!");
-		m_shaders[name] = shader;
-	}
-
-	std::shared_ptr<Shader> ShaderManager::Load(const std::string& filePath) {
-		auto shader = Shader::Create(filePath);
-		Add(shader);
-		return shader;
-	}
-
-	std::shared_ptr<Shader> ShaderManager::GetShader(const std::string& name) {
-		if (Exist(name)) {
-			return m_shaders[name];
-		}
-		return nullptr;
-	}
-
-	bool ShaderManager::Exist(const std::string& name) const {
-		return m_shaders.count(name);
-	}
-
 }

@@ -144,6 +144,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\renderer\ShaderLibrary.h" />
+    <ClInclude Include="src\core\renderer\TextureLibrary.h" />
     <ClInclude Include="src\Neko.h" />
     <ClInclude Include="src\core\Application.h" />
     <ClInclude Include="src\core\Assert.h" />
@@ -630,6 +632,8 @@
     <ClCompile Include="src\core\Layer.cpp" />
     <ClCompile Include="src\core\LayerStack.cpp" />
     <ClCompile Include="src\core\Log.cpp" />
+    <ClCompile Include="src\core\renderer\ShaderLibrary.cpp" />
+    <ClCompile Include="src\core\renderer\TextureLibrary.cpp" />
     <ClCompile Include="src\core\UUID.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\imgui\ImGuiBuild.cpp" />

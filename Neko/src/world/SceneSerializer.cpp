@@ -231,7 +231,7 @@ namespace Neko {
 				out << YAML::Key << "Material" + std::to_string(i);
 				out << YAML::BeginMap; // material[i]
 				auto material = materials[i];
-				out << YAML::Key << "UseAlbedoMap" << YAML::Value << material.m_useAlbedo;
+				out << YAML::Key << "UseAlbedoMap" << YAML::Value << material.m_useAlbedoMap;
 				out << YAML::Key << "AlbedoColor" << YAML::Value << material.m_color;
 				out << YAML::EndMap; // material[i]
 			}
@@ -398,7 +398,7 @@ namespace Neko {
 						auto material = materials[name.c_str()];
 						if (material) {
 							auto& mat = mc.mesh->GetMaterialsRef()[i];
-							mat.m_useAlbedo = material["UseAlbedoMap"].as<bool>();
+							mat.m_useAlbedoMap = material["UseAlbedoMap"].as<bool>();
 							mat.m_color = material["AlbedoColor"].as<glm::vec4>();
 						}
 					}

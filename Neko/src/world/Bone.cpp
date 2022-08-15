@@ -34,11 +34,6 @@ namespace Neko {
 			float timeStep = channel->mScalingKeys[scaleIndex].mTime;
 			m_scales.push_back({ GLMVec3(aiScale), timeStep });
 		}
-
-
-		NEKO_CORE_TRACE("Name {0}, Rotation {1}, {2}, {3}, {4}", name, m_rotations[0].orientation.w, m_rotations[0].orientation.x, m_rotations[0].orientation.y, m_rotations[0].orientation.z);
-		// NEKO_CORE_TRACE("Name {0}, Rotation {1}, {2}, {3}", name, m_positions[0].position.x, m_positions[0].position.y, m_positions[0].position.z);
-		// NEKO_CORE_TRACE("Name {0}, Quat {1}, {2}, {3}, {4}", name, qt0.w, qt0.x, qt0.y, qt0.z);
 	}
 
 	void Bone::OnUpdate(float animationTime) {

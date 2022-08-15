@@ -148,7 +148,7 @@ namespace Neko {
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
 		ImGui::PopItemWidth();
-		
+
 		ImGui::PopStyleVar();
 
 		ImGui::Columns(1);
@@ -158,8 +158,8 @@ namespace Neko {
 
 	template<typename T, typename UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, UIFunction uifunction) {
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | 
-											ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
+			ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 		if (!entity.HasComponent<T>()) {
 			return;
 		}
@@ -311,7 +311,7 @@ namespace Neko {
 			component.rotation = glm::radians(rotation);
 
 			DrawVec3Control("Scale", component.scale);
-		});
+			});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
 			auto& camera = component.camera;
@@ -369,7 +369,7 @@ namespace Neko {
 
 				ImGui::Checkbox("Fixed Aspect Ratio", &component.fixedAspectRatio);
 			}
-		});
+			});
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component) {
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
@@ -388,13 +388,13 @@ namespace Neko {
 				ImGui::EndDragDropTarget();
 			}
 			ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
-		});
+			});
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component) {
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
 			ImGui::DragFloat("Thickness", &component.thickness, 0.025, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.fade, 0.00025, 0.0f, 1.0f);
-		});
+			});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component) {
 			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
@@ -412,7 +412,7 @@ namespace Neko {
 				ImGui::EndCombo();
 			}
 			ImGui::Checkbox("Fixed Rotation", &component.fixedRotation);
-		});
+			});
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
@@ -421,7 +421,7 @@ namespace Neko {
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.restitutionThreshold, 0.01f, 0.0f);
-		});
+			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
@@ -430,7 +430,7 @@ namespace Neko {
 			ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.restitutionThreshold, 0.01f, 0.0f);
-		});
+			});
 
 		DrawComponent<MeshComponent>("Mesh", entity, [](auto& component) {
 			ImGui::Columns(2, nullptr, false);
@@ -462,25 +462,116 @@ namespace Neko {
 				component.mesh = std::make_shared<Mesh>(filepath);
 			}
 			ImGui::EndColumns();
-			
+
 			auto& materials = component.mesh->GetMaterialsRef();
 			for (size_t materialIndex = 0; materialIndex < component.mesh->GetSubMeshNum(); materialIndex++) {
-				std::string label = std::string("material") + std::to_string(materialIndex);
+				std::string label = std::string("Material") + std::to_string(materialIndex);
 				ImGui::PushID(label.c_str());
-				if (ImGui::TreeNode((void*)label.c_str(), std::to_string(materialIndex).c_str())) {
-					std::string nodeLabel = std::string("Albedo") + std::to_string(materialIndex);
-					ImGui::PushID(nodeLabel.c_str());
-					ImGui::SameLine();
-					ImGui::Checkbox("Use", &materials[materialIndex].m_useAlbedo);
-					if (ImGui::ColorEdit4("##albedo", glm::value_ptr(materials[materialIndex].m_color))) {
-						if (!materials[materialIndex].m_useAlbedo) {
-							unsigned char color[4];
-							for (size_t i = 0; i < 4; i++)
-								color[i] = (unsigned char)(materials[materialIndex].m_color[i] * 255.0f);
-							materials[materialIndex].m_albedoColor->SetData(color, 4 * sizeof(unsigned char));
+				if (ImGui::TreeNode((void*)label.c_str(), label.c_str())) {
+					{
+						// albedo
+						std::string nodeName = "Albedo";
+						std::string nodeLabel = nodeName + std::to_string(materialIndex);
+						ImGui::PushID(nodeLabel.c_str());
+
+						if (ImGui::TreeNode((void*)nodeName.c_str(), nodeName.c_str())) {
+							ImGui::SameLine();
+							ImGui::Checkbox("UseMap", &materials[materialIndex].m_useAlbedoMap);
+							if (materials[materialIndex].m_useAlbedoMap) {
+								ImGui::Image((ImTextureID)materials[materialIndex].m_albedoMap->GetId(), ImVec2{ 64, 64 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+								if (ImGui::BeginDragDropTarget()) {
+									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+										const wchar_t* path = (const wchar_t*)payload->Data;
+										auto texturePath = g_assetPath / path;
+										auto texture = TextureLibrary::GetInstance().Load(texturePath.string());
+										materials[materialIndex].m_albedoMap = texture;
+									}
+									ImGui::EndDragDropTarget();
+								}
+							}
+							else {
+								if (ImGui::ColorEdit4("##albedo", glm::value_ptr(materials[materialIndex].m_color))) {
+									unsigned char color[4];
+									for (size_t i = 0; i < 4; i++)
+										color[i] = (unsigned char)(materials[materialIndex].m_color[i] * 255.0f);
+									materials[materialIndex].m_albedoSprite->SetData(color, 4 * sizeof(unsigned char));
+								}
+							}
+							ImGui::TreePop();
 						}
+						ImGui::PopID();
 					}
-					ImGui::PopID();
+
+					{
+						// metallic 
+						std::string nodeName = "Metallic";
+						std::string nodeLabel = nodeName + std::to_string(materialIndex);
+						ImGui::PushID(nodeLabel.c_str());
+
+						if (ImGui::TreeNode((void*)nodeName.c_str(), nodeName.c_str())) {
+							ImGui::SameLine();
+							ImGui::Checkbox("UseMap", &materials[materialIndex].m_useMetallicMap);
+							if (materials[materialIndex].m_useMetallicMap) {
+								ImGui::Image((ImTextureID)materials[materialIndex].m_metallicMap->GetId(), ImVec2{ 64, 64 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+								if (ImGui::BeginDragDropTarget()) {
+									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+										const wchar_t* path = (const wchar_t*)payload->Data;
+										auto texturePath = g_assetPath / path;
+										auto texture = TextureLibrary::GetInstance().Load(texturePath.string());
+										materials[materialIndex].m_metallicMap = texture;
+									}
+									ImGui::EndDragDropTarget();
+								}
+							}
+							else {
+								if (ImGui::DragFloat("##metallic", &materials[materialIndex].m_metalllic, 0.01f, 0.0f, 1.0f)) {
+									unsigned char color[4];
+									for (size_t i = 0; i < 3; i++)
+									color[i] = (unsigned char)(materials[materialIndex].m_metalllic * 255.0f);
+									color[3] = 255.0f;
+									materials[materialIndex].m_metallicSprite->SetData(color, 4 * sizeof(unsigned char));
+								}
+							}
+							ImGui::TreePop();
+						}
+						ImGui::PopID();
+					}
+
+					{
+						// roughness
+						std::string nodeName = "Roughness";
+						std::string nodeLabel = nodeName + std::to_string(materialIndex);
+						ImGui::PushID(nodeLabel.c_str());
+
+						if (ImGui::TreeNode((void*)nodeName.c_str(), nodeName.c_str())) {
+							ImGui::SameLine();
+							ImGui::Checkbox("UseMap", &materials[materialIndex].m_useRoughnessMap);
+							if (materials[materialIndex].m_useRoughnessMap) {
+								ImGui::Image((ImTextureID)materials[materialIndex].m_roughnessMap->GetId(), ImVec2{ 64, 64 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+								if (ImGui::BeginDragDropTarget()) {
+									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+										const wchar_t* path = (const wchar_t*)payload->Data;
+										auto texturePath = g_assetPath / path;
+										auto texture = TextureLibrary::GetInstance().Load(texturePath.string());
+										materials[materialIndex].m_roughnessMap = texture;
+									}
+									ImGui::EndDragDropTarget();
+								}
+							}
+							else {
+								if (ImGui::DragFloat("##roughness", &materials[materialIndex].m_roughness, 0.01f, 0.0f, 1.0f)) {
+									unsigned char color[4];
+									for (size_t i = 0; i < 3; i++)
+										color[i] = (unsigned char)(materials[materialIndex].m_roughness * 255.0f);
+									color[3] = 255.0f;
+									materials[materialIndex].m_roughnessSprite->SetData(color, 4 * sizeof(unsigned char));
+								}
+							}
+							ImGui::TreePop();
+						}
+						ImGui::PopID();
+					}
+
 					ImGui::TreePop();
 				}
 				ImGui::PopID();
@@ -489,11 +580,11 @@ namespace Neko {
 
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component) {
 			ImGui::DragFloat3("Radiance", glm::value_ptr(component.radiance));
-		});
+			});
 
 		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component) {
 			ImGui::DragFloat3("Radiance", glm::value_ptr(component.radiance));
-		});
+			});
 	}
 
 }

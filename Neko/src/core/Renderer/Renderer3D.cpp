@@ -277,9 +277,7 @@ namespace Neko {
 		s_data3d.shaderModel->SetVec3("u_cameraPos", camera.GetPosition());
 
 		// temp
-		s_data3d.shaderModel->SetFloat("u_metallic", 0.04f);
-		s_data3d.shaderModel->SetFloat("u_roughness", 0.4f);
-		s_data3d.shaderModel->SetFloat("u_ao", 1.0f);
+
 		s_data3d.shaderModel->SetInt("u_iradianceMap", 0);
 		s_data3d.shaderModel->SetInt("u_prefliterMap", 1);
 		s_data3d.shaderModel->SetInt("u_brdfLUT", 2);

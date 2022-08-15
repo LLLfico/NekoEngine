@@ -107,7 +107,7 @@ public:
 	}
 
 private:
-	Neko::ShaderManager m_shaderManager;
+	Neko::ShaderLibrary m_shaderManager;
 
 	std::shared_ptr<Neko::VertexArray> m_cubeVAO;
 

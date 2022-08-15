@@ -78,9 +78,9 @@ layout (location = 1) in vertexOutput inputs;
 
 // pbr
 uniform sampler2D u_albedoMap;
-uniform float u_metallic;
-uniform float u_roughness;
-uniform float u_ao;
+uniform sampler2D u_metallicMap;
+uniform sampler2D u_roughnessMap;
+uniform sampler2D u_aoMap;
 
 vec3 FresnelSchlick(float cosTheta, vec3 F0){
 	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0f);
@@ -161,11 +161,11 @@ struct PointLight{
 uniform PointLight u_pointlights[MAX_POINT_LIGHT_NUM];
 uniform int u_pointLightsNum;
 
-vec3 CaculateDirectionalLight(vec3 color, vec3 normal, vec3 viewdir){
+vec3 CaculateDirectionalLight(vec3 color, vec3 normal, vec3 viewdir, float roughness, float metallic){
 	vec3 Lo = vec3(0.0f);
 
 	vec3 F0 = vec3(0.04);
-	F0 = mix(F0, color, u_metallic);
+	F0 = mix(F0, color, metallic);
 
 	vec3 lightdir = normalize(-u_directionallight.direction);
 
@@ -174,8 +174,8 @@ vec3 CaculateDirectionalLight(vec3 color, vec3 normal, vec3 viewdir){
 	vec3 radiance = u_directionallight.radiance;
 	
 	vec3 F = FresnelSchlick(max(dot(halfNormal, viewdir), 0.0), F0);
-	float D = DistributionGGX(normal, halfNormal, u_roughness);
-	float G = GemotrySmith(normal, viewdir, lightdir, u_roughness);
+	float D = DistributionGGX(normal, halfNormal, roughness);
+	float G = GemotrySmith(normal, viewdir, lightdir, roughness);
 
 	vec3 numerator = D * F * G;
 	float denominator = 4.0 * max(dot(normal, viewdir), 0.0) * max(dot(normal, lightdir), 0.0) + 0.0001;
@@ -183,17 +183,17 @@ vec3 CaculateDirectionalLight(vec3 color, vec3 normal, vec3 viewdir){
 
 	vec3 ks = F;
 	vec3 kd = vec3(1.0) - ks;
-	kd *= 1.0 - u_metallic;
+	kd *= 1.0 - metallic;
 
 	float cosTheta = max(dot(normal, lightdir), 0.0);
 	Lo = (kd * color / PI + ks * specular) * radiance * cosTheta;
 	return Lo;
 }
-vec3 CaculatePointLights(vec3 color, vec3 normal, vec3 worldPos, vec3 viewdir){
+vec3 CaculatePointLights(vec3 color, vec3 normal, vec3 worldPos, vec3 viewdir, float roughness, float metallic){
 	vec3 Lo = vec3(0.0f);
 
 	vec3 F0 = vec3(0.04);
-	F0 = mix(F0, color, u_metallic);
+	F0 = mix(F0, color, metallic);
 
 	for (int i = 0; i < u_pointLightsNum; i++){
 		PointLight pointlight = u_pointlights[i];
@@ -205,8 +205,8 @@ vec3 CaculatePointLights(vec3 color, vec3 normal, vec3 worldPos, vec3 viewdir){
 		vec3 radiance = pointlight.radiance * attenuation;
 		
 		vec3 F = FresnelSchlick(max(dot(halfNormal, viewdir), 0.0), F0);
-		float D = DistributionGGX(normal, halfNormal, u_roughness);
-		float G = GemotrySmith(normal, viewdir, lightdir, u_roughness);
+		float D = DistributionGGX(normal, halfNormal, roughness);
+		float G = GemotrySmith(normal, viewdir, lightdir, roughness);
 
 		vec3 numerator = D * F * G;
 		float denominator = 4.0 * max(dot(normal, viewdir), 0.0) * max(dot(normal, lightdir), 0.0) + 0.0001;
@@ -214,7 +214,7 @@ vec3 CaculatePointLights(vec3 color, vec3 normal, vec3 worldPos, vec3 viewdir){
 
 		vec3 ks = F;
 		vec3 kd = vec3(1.0) - ks;
-		kd *= 1.0 - u_metallic;
+		kd *= 1.0 - metallic;
 
 		float cosTheta = max(dot(normal, lightdir), 0.0);
 		Lo += (kd * color / PI + ks * specular) * radiance * cosTheta;
@@ -234,25 +234,29 @@ void main()
 	vec3 viewdir = normalize(u_cameraPos - inputs.worldPos);
 	vec3 reflectionDir = reflect(-viewdir, normal);
 
+	float roughness = texture(u_roughnessMap, inputs.texcoord).r;
+	float metallic = texture(u_metallicMap, inputs.texcoord).r;
+	float ao = texture(u_aoMap, inputs.texcoord).r;
+
 	vec3 res = vec3(0.0f);
 
 	vec3 F0 = vec3(0.04);
-	vec3 F = FresnelSchlickRoughness(max(dot(normal, viewdir), 0.0), F0, u_roughness);
+	vec3 F = FresnelSchlickRoughness(max(dot(normal, viewdir), 0.0), F0, roughness);
 	vec3 ks = F;
 	vec3 kd = vec3(1.0f) - ks;
-	kd *= 1.0 - u_metallic;
+	kd *= 1.0 - metallic;
 	vec3 iradiance = texture(u_iradianceMap, normal).rgb;
 	vec3 diffuse = iradiance * basecolor.rgb;
 
 	const float MAX_REFLECTION_LOD = 4;
-	vec3 prefliteredColor = textureLod(u_prefliterMap, reflectionDir, u_roughness * MAX_REFLECTION_LOD).rgb;
-	vec2 envBRDF = texture(u_brdfLUT, vec2(max(dot(normal, viewdir), 0.0), u_roughness)).rg;
+	vec3 prefliteredColor = textureLod(u_prefliterMap, reflectionDir, roughness * MAX_REFLECTION_LOD).rgb;
+	vec2 envBRDF = texture(u_brdfLUT, vec2(max(dot(normal, viewdir), 0.0), roughness)).rg;
 	vec3 specular = prefliteredColor * (F * envBRDF.x + envBRDF.y);
-	vec3 ambient = (kd * diffuse + specular) * u_ao; // F already has ks
+	vec3 ambient = (kd * diffuse + specular) * ao; // F already has ks
 
 	res += ambient;
-	res += CaculateDirectionalLight(basecolor.xyz, normal, viewdir);
-	res += CaculatePointLights(basecolor.xyz, normal, inputs.worldPos, viewdir);
+	res += CaculateDirectionalLight(basecolor.xyz, normal, viewdir, roughness, metallic);
+	res += CaculatePointLights(basecolor.xyz, normal, inputs.worldPos, viewdir, roughness, metallic);
 	
 	// hdr
 	res = res / (res + vec3(1.0f));
