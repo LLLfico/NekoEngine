@@ -1,7 +1,7 @@
 # NekoEngine
 Neko engine based OpenGL
 
-![demo1](SandBox\assets\media\demo1.png)![demo2](SandBox\assets\media\demo2.png)
+![demo1](SandBox/assets/media/demo1.png)![demo2](SandBox/assets/media/demo2.png)
 
 ## Dependencies
 
