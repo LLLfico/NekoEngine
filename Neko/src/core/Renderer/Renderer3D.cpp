@@ -79,8 +79,8 @@ namespace Neko {
 		};
 
 		s_data3d.textureCubeMap = TextureCubeMap::Create(cubeMapPaths);
-		// s_data3d.textureHdr = Texture2D::Create("assets/textures/hdr/newport_loft/Newport_Loft_Ref.hdr");
-		s_data3d.textureHdr = Texture2D::Create("assets/textures/hdr/snow_field.hdr");
+		s_data3d.textureHdr = Texture2D::Create("assets/textures/hdr/newport_loft/Newport_Loft_Ref.hdr");
+		// s_data3d.textureHdr = Texture2D::Create("assets/textures/hdr/snow_field.hdr");
 
 		FrameBufferDesc descShadow = { 1024, 1024, { FrameBufferTextureFormat::RGBA8 , FrameBufferTextureFormat::DEPTH } };
 		s_shadowFbo = FrameBuffer::Create(descShadow);

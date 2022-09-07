@@ -48,7 +48,7 @@ namespace Neko {
 		std::shared_ptr<Texture2D> m_roughnessMap = TextureLibrary::GetInstance().Get("DefaultRoughness");
 
 		bool m_useAOMap = false;
-		float m_ao = 1.0f;
+		float m_ao = 0.4f;
 		std::shared_ptr<Texture2D> m_aoSprite = Texture2D::Create(1, 1);
 		std::shared_ptr<Texture2D> m_aoMap = TextureLibrary::GetInstance().Get("White");
 

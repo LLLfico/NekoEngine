@@ -255,7 +255,8 @@ void main()
 	vec3 ambient = (kd * diffuse + specular) * ao; // F already has ks
 
 	res += ambient;
-	res += CaculateDirectionalLight(basecolor.xyz, normal, viewdir, roughness, metallic);
+	float visibility = CaculateShadowVisibility(inputs.worldPos);
+	res += CaculateDirectionalLight(basecolor.xyz, normal, viewdir, roughness, metallic) * visibility;
 	res += CaculatePointLights(basecolor.xyz, normal, inputs.worldPos, viewdir, roughness, metallic);
 	
 	// hdr
@@ -263,8 +264,7 @@ void main()
 	// gamma
 	res = pow(res, vec3(1.0/2.2));
 
-	float visibility = CaculateShadowVisibility(inputs.worldPos);
 	// o_color = vec4(vec3(currentDepth), 1.0f);
-	o_color = vec4(res * visibility, 1.0f);
+	o_color = vec4(res, 1.0f);
 	o_entityId = v_entityId; 
 } 
